@@ -1,0 +1,17 @@
+@use '../../../scss/base/variables' as va;
+@use 'sass:color';
+
+
+input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ad9daa;
+    border-radius: va.$border-radius;
+    background-color: #d8d0d6;
+    &:focus{
+        border-color: color.scale(#ad9daa, $lightness: -10%);
+        box-shadow: #ad9daa 0 0 10px 2.5px;
+        outline: none;
+        transition: border-color 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+}

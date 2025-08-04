@@ -1,0 +1,18 @@
+@use '../../../scss/base/variables' as va;
+@use 'sass:color';
+
+
+button {
+    width: 100%;
+    padding: 1rem;
+    background-color: va.$primary-color;
+    color: white;
+    border: none;
+    border-radius: va.$border-radius;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: color.adjust(va.$primary-color, $lightness: -10%);
+    }
+}

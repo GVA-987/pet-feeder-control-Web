@@ -1,0 +1,59 @@
+@use 'sass:color';
+@use '../../scss/base/variables' as va;
+@import '../../../node_modules/normalize.css/normalize.css';
+
+.loginContainer {
+  font-size: 1.5rem;
+  background-color: #7c83ad;
+  padding: 3rem;
+  max-width: 400px;
+  margin: 5rem auto;
+  border-radius: va.$border-radius;
+  box-shadow: 0 6px 10px rgba(189, 165, 185, 0.5);
+  font-family: va.$fuente_principal;
+
+  h2 {
+    color: va.$primary-color;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+  img {
+
+    display: block;
+    background-color: #bfa9ba;
+    border-radius: 50%;
+    padding: 5px;
+    margin:  4rem auto 4rem;
+    width: 130px; // Adjust as needed
+    height: auto; // Maintain aspect ratio
+    transition: transform 0.5s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    &:hover{
+      transform: scale(1.08);
+      transition: transform 0.5s ease-in-out;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+  }
+  input {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #ad9daa;
+    border-radius: va.$border-radius;
+    background-color: #d8d0d6;
+  }
+  .registerPrompt{
+    text-align: center;
+    a{
+      text-decoration: none;
+      color: va.$primary-color;
+      font-weight: bold;
+      &:hover{
+        text-decoration: underline;
+        color: #bfa9ba;
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+//Base styles
+@use 'sass:color';
+@use './base/variables';
+@use './base/mixins';
+@use './base/globales';
+
+
+@import '../../node_modules/normalize.css/normalize.css';

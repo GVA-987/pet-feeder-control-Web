@@ -1,0 +1,34 @@
+@use 'sass:color';
+@use '../../scss/base/variables' as va;
+
+.loginContainer {
+  font-size: 1.5rem;
+  background-color: #7c83ad;
+  padding: 3rem;
+  max-width: 400px;
+  margin: 5rem auto;
+  border-radius: va.$border-radius;
+  box-shadow: 0 6px 10px rgba(189, 165, 185, 0.5);
+  font-family: va.$fuente_principal;
+
+  h2 {
+    color: va.$primary-color;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  input{
+    margin-bottom: 1.5rem;
+  }
+  .registerPrompt{
+    text-align: center;
+    a{
+      text-decoration: none;
+      color: va.$primary-color;
+      font-weight: bold;
+      &:hover{
+        text-decoration: underline;
+        color: #bfa9ba;
+      }
+    }
+  }
+}

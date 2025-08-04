@@ -1,0 +1,22 @@
+@use 'variables' as va;
+
+html{
+    font-size: 62.5%; // 1rem = 10px
+    box-sizing: border-box;
+    scrollbar-width: 8rem; // Firefox
+}
+
+*,
+*:before,
+*:after{
+    box-sizing: inherit;
+}
+
+
+body {
+    font-family: va.$fuente_principal;
+    font-optical-sizing: auto;
+    font-style: normal;
+    color: va.$negro;
+    background-color: va.$background-color;
+}
