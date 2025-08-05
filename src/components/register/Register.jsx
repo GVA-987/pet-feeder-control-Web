@@ -2,6 +2,9 @@ import { countryCode } from '../../utils/countryCode';
 import styles from './Register.module.scss';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { createUserWithEmailAndPassword } from '../../../node_modules/firebase/auth';
+import { doc, setDoc } from '../../../node_modules/firebase/firestore';
+import { auth, db } from '../../firebase/firebase-config.js';
 import ButtonForm from '../common/button/ButtonForm';
 import InputForm from '../common/input/InputForm';
 
@@ -13,31 +16,45 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit =  async (e) => {
     e.preventDefault();
+    setError('');
     // Aquí iría la lógica de autenticación
-    console.log('Nombre:', name);
-    console.log('Apellido:', lastname);
-    console.log('Código de país:', selectCode);
-    console.log('Número de teléfono:', number);
-    console.log('Email:', email);
-    console.log('Password:', password);
 
-    setName('');
-    setLastname('');
-    setNumber('');
-    setEmail('');
-    setPassword('');
-    setConfirmPassword('');
-    navigate('/login');
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+        nombre: name,
+        apellido: lastname,
+        celular: number,
+        email: user.email,
+      });
+
+      console.log('Usuario registrado con exito', user);
+      setName('');
+      setLastname('');
+      setNumber('');
+      setEmail('');
+      setPassword('');
+      // Redirigir al usuario a la página de inicio o dashboard
+      navigate('/login');
+      
+    }catch (e){
+      console.log("Erro al registrar el usaurio", e);
+      setError(e.message);
+    }
   };
 
     return (
     <div className={styles.loginContainer}>
       <h2>Registrate</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <InputForm 
         type="text"
@@ -73,62 +90,7 @@ export default function Register() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
-        />
-        <InputForm
-        type="password"
-        placeholder="Repita su contraseña"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-        required
-        />
-
-        {/* <input
-          type="text"
-          placeholder="Nombre"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Apellido"
-          value={lastname}
-          onChange={(e) => setLastname(e.target.value)}
-          required
-        />
-        <select 
-        id="country-code"
-        value={selectCode}
-        onChange={(e) => setSelectCode(e.target.value)}>
-          {countryCode.map((country) => (
-            <option key={country.code} value={country.code}>
-              {country.name} ({country.code})
-            </option>
-
-          ))}
-        </select>
-        <input
-          type="tel"
-          placeholder="Telefono"
-          value={number}
-          onChange={(e) => setNumber(e.target.value)}
-          required
-        />
-        <input
-          type="email"
-          placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        /> */}
-        
+        />        
         <ButtonForm type="submit">Registrate</ButtonForm>
       </form>
         <p className={styles.registerPrompt}>

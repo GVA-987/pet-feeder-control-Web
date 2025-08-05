@@ -16,6 +16,8 @@ export default function Login() {
 
     setEmail('');
     setPassword('');
+    // Redirigir al usuario a la página de inicio o dashboard
+    window.location.href = '/home';
   };
 
   return (

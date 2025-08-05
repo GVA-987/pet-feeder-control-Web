@@ -3,6 +3,7 @@ import RegisterPage from './pages/RegisterPage';
 import { Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import React from 'react';
+import HomeControl from './components/dashboard/HomeControl';
 
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
       <Routes location={location} key={location.pathname}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/home" element={<HomeControl />} />
         <Route path="/" element={<LoginPage />} />
       </Routes>
     </AnimatePresence>
