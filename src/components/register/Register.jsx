@@ -6,7 +6,9 @@ import { createUserWithEmailAndPassword } from '../../../node_modules/firebase/a
 import { doc, setDoc } from '../../../node_modules/firebase/firestore';
 import { auth, db } from '../../firebase/firebase-config.js';
 import ButtonForm from '../common/button/ButtonForm';
+// import styles from '../common/button/ButtonForm.module.scss';
 import InputForm from '../common/input/InputForm';
+import { div, style } from 'framer-motion/client';
 
 export default function Register() {
   const [name, setName] = useState('');
@@ -17,15 +19,21 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit =  async (e) => {
     e.preventDefault();
     setError('');
+    setSuccessMessage('');
     // Aquí iría la lógica de autenticación
 
     try {
+
+      setIsLoading(true);
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
@@ -36,7 +44,7 @@ export default function Register() {
         email: user.email,
       });
 
-      console.log('Usuario registrado con exito', user);
+      setSuccessMessage('¡Registro exitoso! Ya puedes iniciar sesión.');
       setName('');
       setLastname('');
       setNumber('');
@@ -46,8 +54,18 @@ export default function Register() {
       navigate('/login');
       
     }catch (e){
-      console.log("Erro al registrar el usaurio", e);
-      setError(e.message);
+      console.error("Error al registrar el usuario:", e.code);
+      if (e.code === 'auth/email-already-in-use') {
+        setError('El correo electrónico ya está registrado. Intenta iniciar sesión.');
+      } 
+      // else if (e.code === 'auth/weak-password') {
+      //   setError('La contraseña es demasiado débil. Usa al menos 6 caracteres.');
+      // }
+      else {
+        setError('Ocurrió un error inesperado. Intenta de nuevo más tarde.');
+      }
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -55,21 +73,10 @@ export default function Register() {
     <div className={styles.loginContainer}>
       <h2>Registrate</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
+      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
       <form onSubmit={handleSubmit}>
-        <InputForm 
-        type="text"
-        placeholder="Nombre"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
-        />
-        <InputForm
-        type="text"
-        placeholder="Apellido"
-        value={lastname}
-        onChange={(e) => setLastname(e.target.value)}
-        required
-        />
+        <InputForm type="text" placeholder="Nombre" value={name} onChange={(e) => setName(e.target.value)} required/>
+        <InputForm type="text" placeholder="Apellido" value={lastname} onChange={(e) => setLastname(e.target.value)} required/>
         <InputForm
         type="tel"
         placeholder="Telefono"
@@ -91,7 +98,12 @@ export default function Register() {
         onChange={(e) => setPassword(e.target.value)}
         required
         />        
-        <ButtonForm type="submit">Registrate</ButtonForm>
+        <ButtonForm type="submit" disabled={isLoading}>
+        {isLoading ? (
+          // Si esta carganndo, muestra el estado de carga
+          <div className={styles["circle-loader"]}></div>
+        ): ("Registrar")}
+        </ButtonForm>
       </form>
         <p className={styles.registerPrompt}>
             ¿Ya tienes una cuenta? <Link to="/login">Inicia sesión</Link>

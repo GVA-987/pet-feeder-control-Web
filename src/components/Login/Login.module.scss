@@ -44,6 +44,33 @@
     border-radius: va.$border-radius;
     background-color: #d8d0d6;
   }
+  button{
+    .circle-loader{
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-left-color: #fff;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: circle-loader-circ 1.2s linear infinite;
+      margin: 0 auto;
+      cursor: not-allowed; // Cambia el cursor a un círculo con una línea diagonal
+      
+    }
+
+    @keyframes circle-loader-circ {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  }
+  .button:disabled {
+  background-color: #cccccc; // Color gris para indicar que está inactivo
+  cursor: not-allowed; // Cambia el cursor a un círculo con una línea diagonal
+  opacity: 0.7; // Reduce la opacidad
+}
   .registerPrompt{
     text-align: center;
     a{
