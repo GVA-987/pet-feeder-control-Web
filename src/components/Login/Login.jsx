@@ -4,8 +4,7 @@ import { Link } from 'react-router-dom';
 import logo from '../../assets/petlog.png';
 import ButtonForm from '../common/button/ButtonForm';
 import { signInWithEmailAndPassword } from '../../../node_modules/firebase/auth';
-import { doc, setDoc } from '../../../node_modules/firebase/firestore';
-import { auth, db } from '../../firebase/firebase-config.js';
+import { auth } from '../../firebase/firebase-config.js';
 
 export default function Login() {
   const [email, setEmail] = useState('');

@@ -30,7 +30,11 @@ export default function Register() {
     setError('');
     setSuccessMessage('');
     // Aquí iría la lógica de autenticación
-
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
+    
     try {
 
       setIsLoading(true);
@@ -44,14 +48,18 @@ export default function Register() {
         email: user.email,
       });
 
+      // Cerrar sesión después del registro para forzar al usuario a loguearse
+      // await signOut(auth); // <--- Línea añadida para cerrar sesión
+
       setSuccessMessage('¡Registro exitoso! Ya puedes iniciar sesión.');
       setName('');
       setLastname('');
       setNumber('');
       setEmail('');
       setPassword('');
+      setConfirmPassword('');
       // Redirigir al usuario a la página de inicio o dashboard
-      navigate('/login');
+      navigate('/home');
       
     }catch (e){
       console.error("Error al registrar el usuario:", e.code);
@@ -61,6 +69,7 @@ export default function Register() {
       // else if (e.code === 'auth/weak-password') {
       //   setError('La contraseña es demasiado débil. Usa al menos 6 caracteres.');
       // }
+      
       else {
         setError('Ocurrió un error inesperado. Intenta de nuevo más tarde.');
       }
@@ -77,27 +86,11 @@ export default function Register() {
       <form onSubmit={handleSubmit}>
         <InputForm type="text" placeholder="Nombre" value={name} onChange={(e) => setName(e.target.value)} required/>
         <InputForm type="text" placeholder="Apellido" value={lastname} onChange={(e) => setLastname(e.target.value)} required/>
-        <InputForm
-        type="tel"
-        placeholder="Telefono"
-        value={number}
-        onChange={(e) => setNumber(e.target.value)}
-        required
-        />
-        <InputForm
-        type="email"
-        placeholder="Correo electronico"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-        />
-        <InputForm
-        type="password"
-        placeholder="Contraseña"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-        />        
+        <InputForm type="tel"  placeholder="Telefono" value={number} onChange={(e) => setNumber(e.target.value)} required />
+        <InputForm type="email" placeholder="Correo electronico" value={email} onChange={(e) => setEmail(e.target.value)} required/>
+        <InputForm type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required/>        
+        <InputForm type="password" placeholder="Confirmar contraseña" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required/>        
+        
         <ButtonForm type="submit" disabled={isLoading}>
         {isLoading ? (
           // Si esta carganndo, muestra el estado de carga
