@@ -1,0 +1,83 @@
+@use '../../../../node_modules/normalize.css/normalize.css';
+
+
+.sidebar{
+    background-color: #292929;
+    font-size: 2.1rem;
+    color: #ecf0f1;
+    width: 350px;
+    height: 100vh;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    //align-items: center;
+    .logo{
+        display: flex;
+        text-align: center;
+        align-items: center;
+        padding: 10px;
+        margin-bottom: 38px;
+        img{
+            width: 60px;
+            height: 60px;
+            margin: 0 15px 0 0;
+        }
+        .logoText{
+            font-size: 2rem;
+            color: #cfdae2;
+        }
+    }
+    .navPet{
+        ul{
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            .navLink{
+                display: flex;
+                align-items: center;
+                padding: 25px 30px;
+                text-decoration: none;
+                color: #cfdae2;
+                border-radius: 30px;
+                margin-bottom: 25px;
+                transition: background-color 0.3s ease, color 0.3s ease;
+                &:hover{
+                    background-color: #cfdae2;
+                    color: #2c3e50;
+                    transform: scale(1.05);
+                }
+                svg{
+                    margin-right: 15px;
+                    font-size: 2.5rem;
+                }
+        
+            }
+            .active{
+                background-color: #3b40db;
+            }
+            
+        
+        }
+        .logoutButton {
+            background: none;
+            font-size: 2.1rem;            
+            border: none;
+            cursor: pointer;
+            color: #e74c3c;
+            padding: 10px 20px 10px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            transition: color 0.3s ease;
+            &:hover {
+                color: #3498db;
+            };
+            svg{
+                margin-right: 15px;
+                font-size: 1.5rem;
+            }
+        }
+    }
+}

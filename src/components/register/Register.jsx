@@ -84,12 +84,12 @@ export default function Register() {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
       <form onSubmit={handleSubmit}>
-        <InputForm type="text" placeholder="Nombre" value={name} onChange={(e) => setName(e.target.value)} required/>
-        <InputForm type="text" placeholder="Apellido" value={lastname} onChange={(e) => setLastname(e.target.value)} required/>
-        <InputForm type="tel"  placeholder="Telefono" value={number} onChange={(e) => setNumber(e.target.value)} required />
-        <InputForm type="email" placeholder="Correo electronico" value={email} onChange={(e) => setEmail(e.target.value)} required/>
-        <InputForm type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required/>        
-        <InputForm type="password" placeholder="Confirmar contraseña" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required/>        
+        <InputForm type="text" placeholder="Nombre" value={name} onChange={(e) => setName(e.target.value)} required={true} iconType="user"/>
+        <InputForm type="text" placeholder="Apellido" value={lastname} onChange={(e) => setLastname(e.target.value)} required={true} iconType="user"/>
+        <InputForm type="tel"  placeholder="Telefono" value={number} onChange={(e) => setNumber(e.target.value)} required={true} iconType="phone" />
+        <InputForm type="email" placeholder="Correo electronico" value={email} onChange={(e) => setEmail(e.target.value)} required={true} iconType="email"/>
+        <InputForm type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required={true} iconType="password"/>        
+        <InputForm type="password" placeholder="Confirmar contraseña" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required={true} iconType="password"/>        
         
         <ButtonForm type="submit" disabled={isLoading}>
         {isLoading ? (

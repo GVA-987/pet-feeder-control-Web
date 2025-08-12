@@ -2,16 +2,56 @@
 @use 'sass:color';
 
 
-input {
-    width: 100%;
-    padding: 0.75rem;
+.inputContainer {
+    display: flex;
+    align-items: center;
     border: 1px solid #ad9daa;
     border-radius: va.$border-radius;
     background-color: #d8d0d6;
-    &:focus{
+    padding: 0.75rem;
+    margin-bottom: 1.5rem;
+    
+    // Estilo cuando el input dentro del contenedor está enfocado
+    &:focus-within {
         border-color: color.scale(#ad9daa, $lightness: -10%);
         box-shadow: #ad9daa 0 0 10px 2.5px;
-        outline: none;
         transition: border-color 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
     }
+
+    .icon {
+        color: #7e7a7e;
+        margin-right: 0.75rem;
+        cursor: pointer;
+        font-size: 1.5rem;
+
+        // Estilo del ícono cuando está en focus
+        .input:focus-within + & {
+            color: color.scale(#ad9daa, $lightness: -10%);
+        }
+    }
+
+    .input {
+        width: 100%;
+        border: none;
+        outline: none;
+        background-color: transparent;
+        font-size: 1rem;
+        color: #4b444a;
+        font-size: 1.3rem;
+    }
 }
+
+
+// input {
+//     width: 100%;
+//     padding: 0.75rem;
+//     border: 1px solid #ad9daa;
+//     border-radius: va.$border-radius;
+//     background-color: #d8d0d6;
+//     &:focus{
+//         border-color: color.scale(#ad9daa, $lightness: -10%);
+//         box-shadow: #ad9daa 0 0 10px 2.5px;
+//         outline: none;
+//         transition: border-color 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
+//     }
+// }

@@ -4,7 +4,7 @@ import styles from './ButtonForm.module.scss';
 const ButtonForm = ({ children, onClick, type = 'button' }) => {
     return (
         <button
-        className={`${styles.button}`}
+        className={`${styles.btnForm}`}
         type={type}
         onClick={onClick}
         >

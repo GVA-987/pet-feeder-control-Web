@@ -1,14 +1,13 @@
 import React from 'react';
-import HomeControl from '../components/dashboard/HomeControl';
+import HomeControl from '../components/dashboard/home/HomeControl';
 
 
-function LoginPage() {
+function HomePage() {
     return (
         <div>
             <HomeControl />
-            
         </div>
     );
 }
 
-export default LoginPage;
+export default HomePage;

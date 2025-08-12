@@ -8,8 +8,9 @@ import LoginPage from '../../pages/LoginPage';
 import RegisterPage from '../../pages/RegisterPage';
 import PrivateRoute from './PrivateRoute';
 import PublicRoute from './PublicRoute';
-import HomeControl from '../../pages/HomePage';
-import MainLayout from '../MainLayout';
+import HomePage from '../../pages/HomePage';
+import MainLayout from '../layout/MainLayout';
+import DeviceLink from '../dashboard/deviceLink/DeviceLink';
 // import NotFound from '../pages/NotFound'; // Opcional: una página 404
 
 function RoutesWithAnimation() {
@@ -23,15 +24,25 @@ function RoutesWithAnimation() {
         <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
         <Route path="/" element={<PublicRoute><LoginPage /></PublicRoute>} />
 
+        {/* Ruta protegida para enlazar el dispositivo */}
+        <Route 
+            path='/link-device'
+            element={
+                <PrivateRoute>
+                    <DeviceLink />
+                </PrivateRoute>
+            }
+        />
+
         {/* Rutas Protegidas (solo accesibles si el usuario está autenticado) */}
         <Route 
             path="/home" 
             element={
-            <PrivateRoute>
-                <MainLayout>
-                    <HomeControl />
-                </MainLayout>Z
-            </PrivateRoute>
+                <PrivateRoute>
+                    <MainLayout>
+                        <HomePage />
+                    </MainLayout>
+                </PrivateRoute>
             } 
         />
         

@@ -5,6 +5,7 @@ import logo from '../../assets/petlog.png';
 import ButtonForm from '../common/button/ButtonForm';
 import { signInWithEmailAndPassword } from '../../../node_modules/firebase/auth';
 import { auth } from '../../firebase/firebase-config.js';
+import InputForm from '../common/input/InputForm.jsx';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -14,8 +15,6 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setEmail('');
-    setPassword('');
     setIsLoading(true);
     // Redirigir al usuario a la página de inicio o dashboard
 
@@ -24,6 +23,8 @@ export default function Login() {
       const user = useCredential.user;
 
       console.log('Inicio de sesión exitoso', user);
+      setEmail('');
+      setPassword('');
       window.location.href = '/home';
 
     }catch{
@@ -48,19 +49,21 @@ export default function Login() {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <img src={logo} alt="" className={styles.logo} />
       <form onSubmit={handleSubmit}>
-        <input
+        <InputForm
           type="email"
           placeholder="Correo electrónico"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required
+          required = {true}
+          iconType="email"
         />
-        <input
+        <InputForm
           type="password"
           placeholder="Contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required
+          required={true}
+          iconType="password"
         />
         <ButtonForm type="submit" disabled={isLoading}>
         {isLoading ? (

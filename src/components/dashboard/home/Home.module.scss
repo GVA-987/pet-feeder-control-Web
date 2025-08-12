@@ -1,0 +1,46 @@
+@use 'sass:color';
+@use '../../../scss/base/variables' as va;
+@import '../../../../node_modules/normalize.css/normalize.css';
+
+/* src/components/dashboard/HomeControl.module.scss */
+
+.HomeContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    h1 {
+        color: white ;
+    }
+}
+
+.card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.statusSection {
+    h2 {
+        margin-bottom: 10px;
+    }
+}
+
+.controlSection {
+    text-align: center;
+    .dispenseButton {
+        padding: 15px 30px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #fff;
+        background-color: #3498db;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .dispenseButton:hover {
+        background-color: #2980b9;
+    }
+}
