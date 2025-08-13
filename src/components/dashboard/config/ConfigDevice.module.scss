@@ -27,4 +27,30 @@
     padding: 25px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    form{
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        padding: 0 60px 20px 60px;
+        label{
+            font-weight: bold;
+        }
+        input{
+            padding: 9px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        button{
+            padding: 10px;
+            background-color: #3498db;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            &:hover {
+                background-color: #2980b9;
+            }
+        }
+    }
 }

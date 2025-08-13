@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styles from './ScheduleManager.module.scss';
-import { useAuth } from '../../../context/AuthContext';
-import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove } from '../../../../node_modules/firebase/firestore';
-import { db } from '../../../firebase/firebase-config';
+import { useAuth } from '../../../../context/AuthContext';
+import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { db } from '../../../../firebase/firebase-config';
 import { MdDelete } from 'react-icons/md';
 
 
