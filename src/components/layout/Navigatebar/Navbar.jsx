@@ -34,16 +34,16 @@ const Navbar = () => {
         <nav className={styles.navPet}>
             <ul>
                 <li>
-                    <NavLink href="/" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}><IoHomeOutline /> Inicio</NavLink>
+                    <NavLink to="/home" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}><IoHomeOutline /> Inicio</NavLink>
                 </li>
                 <li>
-                    <NavLink href="#" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}><HiOutlineAdjustments /> Configuracion</NavLink>
+                    <NavLink to="/ConfDevice" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}><HiOutlineAdjustments /> Configuracion</NavLink>
                 </li>
                 <li>
-                    <NavLink href="#" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}><GrHistory /> Historial</NavLink>
+                    <NavLink to="/history" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}><GrHistory /> Historial</NavLink>
                 </li>
                 <li>
-                    <NavLink href="#" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}><VscAccount /> Cuenta</NavLink>
+                    <NavLink to="/count" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}><VscAccount /> Cuenta</NavLink>
                 </li>
 
             </ul>

@@ -1,46 +1,138 @@
-@use 'sass:color';
-@use '../../../scss/base/variables' as va;
-@import '../../../../node_modules/normalize.css/normalize.css';
-
-/* src/components/dashboard/HomeControl.module.scss */
-
 .HomeContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
     padding: 20px;
+    background-color: #f0f2f5;
+    min-height: 100vh;
+    font-size: 1.5rem;
+}
+
+.header {
+    margin-bottom: 20px;
     h1 {
-        color: white ;
+        font-size: 2rem;
+        color: #333;
     }
+}
+
+.connected {
+    color: #27ae60;
+}
+
+.disconnected {
+    color: #c0392b;
+}
+
+.contentHome {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
 }
 
 .card {
     background-color: #fff;
-    padding: 20px;
+    padding: 25px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.statusSection {
-    h2 {
-        margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    h2{
+        text-align: center;
     }
 }
 
-.controlSection {
+.card:nth-child(3) {
+    grid-column: 1 / span 2;
+}
+
+.foodControls {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.foodLevelContainer {
+    position: relative;
+    width: 150px;
+    height: 150px;
     text-align: center;
-    .dispenseButton {
-        padding: 15px 30px;
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #fff;
-        background-color: #3498db;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-    .dispenseButton:hover {
-        background-color: #2980b9;
-    }
+}
+
+.circleBar {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg); /* Asegura que el círculo inicie arriba */
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.circleBg {
+    fill: none;
+    stroke: #ecf0f1;
+    stroke-width: 3.8;
+}
+
+.circle {
+    fill: none;
+    stroke: #3498db;
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.3s ease-in-out;
+}
+
+.percentage {
+    font-size: 0.5em;
+    fill: #333;
+    font-weight: bold;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    transform: rotate(90deg);
+}
+
+
+
+.dispenseButton {
+    width: 100%;
+    padding: 15px 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #3498db;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.dispenseButton:hover {
+    background-color: #2980b9;
+}
+
+.deviceStatus {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.wifiIcon {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #3498db;
+    vertical-align: middle;
+}
+
+.scheduleList {
+    margin-top: 20px;
+}
+
+.scheduleItem {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.scheduleItem:last-child {
+    border-bottom: none;
 }

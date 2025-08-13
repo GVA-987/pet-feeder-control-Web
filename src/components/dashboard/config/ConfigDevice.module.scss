@@ -1,0 +1,30 @@
+.container {
+    padding: 20px;
+    background-color: #f0f2f5;
+    min-height: 100vh;
+    font-size: 1.8rem;
+}
+
+.header {
+    margin-bottom: 20px;
+    h1 {
+        font-size: 2rem;
+        color: #333;
+    }
+    p {
+        color: #666;
+    }
+}
+
+.contentGrid {
+    display: grid;
+    grid-template-rows: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

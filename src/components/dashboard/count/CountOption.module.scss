@@ -1,0 +1,40 @@
+.containerCount {
+    display: flex;
+    flex-direction: column;
+    background-color: #f0f2f5;
+    padding: 80px;
+    gap: 20px;
+    font-size: 1.5rem;
+}
+
+.formDevice {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.formDevice label {
+    font-weight: bold;
+    color: #555;
+}
+
+.formDevice input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.formDevice button {
+    padding: 12px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.formDevice button:hover {
+    background-color: #2980b9;
+}
