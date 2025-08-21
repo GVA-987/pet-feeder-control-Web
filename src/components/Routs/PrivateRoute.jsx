@@ -10,13 +10,6 @@ const PrivateRoute = ({ children }) => {
     if (!currentUser) {
       return <Navigate to="/login" replace state={{ from:location }} />;
     }
-
-    //Si hya un usuario con dispositvo enlazado
-    if(!currentUser.deviceId) {
-      if(location.pathname !== '/link-device'){
-        return <Navigate to='/link-device' replace />
-      }
-    }
   // Si hay un usuario, mostramos el componente que se pasó como 'children'
     return children;
 };

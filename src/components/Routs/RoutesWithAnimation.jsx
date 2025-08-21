@@ -9,9 +9,9 @@ import RegisterPage from '../../pages/RegisterPage';
 import PrivateRoute from './PrivateRoute';
 import PublicRoute from './PublicRoute';
 import MainLayout from '../layout/MainLayout';
-import DeviceLink from '../dashboard/deviceLink/DeviceLink';
+import DeviceLink from '../dashboard/config/deviceLink/DeviceLink';
 import HomePage from '../../pages/HomePage';
-import ConfigDevicePage from '../../pages/CondifDevicePage';
+import ConfigDevicePage from '../../pages/ConfigDevicePage';
 import CountOptionPage from '../../pages/CountOptionPage';
 import HistoryDevicePage from '../../pages/HistoryDevicePage';
 // import NotFound from '../pages/NotFound'; // Opcional: una página 404
@@ -26,16 +26,6 @@ function RoutesWithAnimation() {
         <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
         <Route path="/" element={<PublicRoute><LoginPage /></PublicRoute>} />
-
-        {/* Ruta protegida para enlazar el dispositivo */}
-        <Route 
-            path='/link-device'
-            element={
-                <PrivateRoute>
-                    <DeviceLink />
-                </PrivateRoute>
-            }
-        />
 
         {/* Rutas Protegidas (solo accesibles si el usuario está autenticado) */}
         <Route 

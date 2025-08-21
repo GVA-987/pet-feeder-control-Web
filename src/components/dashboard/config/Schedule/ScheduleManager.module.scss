@@ -11,7 +11,6 @@
     padding: 10px 0;
     border-bottom: 1px solid #eee;
     p {
-        color: #666;
         font-size: 1.5rem;
     }
 }
@@ -29,6 +28,17 @@
         padding: 10px;
         border: 1px solid #ddd;
         border-radius: 5px;
+    }
+    .dateForm {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        label {
+            font-size: 1.6rem;
+        }
+        input {
+            flex: 1;
+        }
     }
     button {
         padding: 12px;

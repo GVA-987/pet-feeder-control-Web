@@ -1,29 +1,26 @@
 import Recat, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext';
-import { doc, getDoc, runTransaction } from '../../../../node_modules/firebase/firestore';
-import { db } from '../../../firebase/firebase-config';
+import { useAuth } from '../../../../context/AuthContext';
+import { doc, getDoc, runTransaction } from 'firebase/firestore';
+import { db } from '../../../../firebase/firebase-config';
 import styles from './DeviceLink.module.scss';
-import Modal from '../../common/modal/Modal';
+import Modal from '../../../common/modal/Modal';
+import { useNavigate } from 'react-router-dom';
 
-const DeviceLink = ({ onClose }) => {
 
+
+const DeviceLink = () => {
+    
     const [deviceId, setDeviceId] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const { currentUser } = useAuth();
     const navigate = useNavigate();
-
+    
     const handleLinkDevice = async (e) => {
         e.preventDefault();
         setError('');
         setLoading(true);
 
-        if(!currentUser) {
-            setError('No hay un usuario autenticado');
-            setLoading(false);
-            return;
-        }
         try {
             await runTransaction (db, async (transaction) => {
                 const deviceRef = doc(db, 'devicesPet', deviceId.toUpperCase());
@@ -42,6 +39,7 @@ const DeviceLink = ({ onClose }) => {
             });
             //onClose();
             navigate('/home');
+            setDeviceId('');
         }catch (e) {
             console.log(e.message);
             setError(e.message);

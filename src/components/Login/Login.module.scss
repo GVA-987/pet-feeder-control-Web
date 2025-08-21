@@ -4,16 +4,17 @@
 
 .loginContainer {
   font-size: 1.5rem;
-  background-color: #7c83ad;
+  background-color: va.$background-forms;
   padding: 3rem;
   max-width: 400px;
   margin: 5rem auto;
-  border-radius: va.$border-radius;
-  box-shadow: 0 6px 10px rgba(189, 165, 185, 0.5);
+  border-radius: 80px 0 80px 0;
+  border: 2px solid #57b9c6;
+  box-shadow: 0 0 100px rgba(11, 171, 224, 0.9);
   font-family: va.$fuente_principal;
 
   h2 {
-    color: va.$primary-color;
+    color: va.$title-form;
     margin-bottom: 1.5rem;
     text-align: center;
     text-transform: uppercase;
@@ -22,18 +23,18 @@
   img {
 
     display: block;
-    background-color: #bfa9ba;
+    background-color: #c4d6d9;
     border-radius: 50%;
     padding: 5px;
     margin:  4rem auto 4rem;
     width: 130px; // Adjust as needed
     height: auto; // Maintain aspect ratio
     transition: transform 0.5s ease-in-out;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(225, 218, 218, 0.716);
     &:hover{
       transform: scale(1.08);
       transition: transform 0.5s ease-in-out;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      // box-shadow: 0 9px 13px rgba(225, 218, 218, 0.716) 0.5s;
     }
   }
   button{
@@ -67,11 +68,11 @@
     text-align: center;
     a{
       text-decoration: none;
-      color: va.$primary-color;
+      color: va.$color-btn;
       font-weight: bold;
       &:hover{
         text-decoration: underline;
-        color: #bfa9ba;
+        color: #71dcea;
       }
     }
   }

@@ -1,6 +1,10 @@
+@use '../../../scss/base/variables' as va;
+@use "sass:color";
+@use 'sass:math';
+
 .container {
-    padding: 20px;
-    background-color: #f0f2f5;
+    padding: 50px;
+    background-color: va.$background-color;
     min-height: 100vh;
     font-size: 1.8rem;
 }
@@ -9,10 +13,10 @@
     margin-bottom: 20px;
     h1 {
         font-size: 2rem;
-        color: #333;
+        color: #ffffff;
     }
     p {
-        color: #666;
+        color: #979797;
     }
 }
 
@@ -23,8 +27,9 @@
 }
 
 .card {
-    background-color: #fff;
+    background-color: va.$background-card;
     padding: 25px;
+    color: white;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     form{
@@ -42,14 +47,14 @@
         }
         button{
             padding: 10px;
-            background-color: #3498db;
+            background-color: va.$color-btn_dashboard;
             border: none;
             color: white;
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.3s ease;
             &:hover {
-                background-color: #2980b9;
+                background-color: color.adjust(va.$color-btn_dashboard, $lightness: -10%);
             }
         }
     }

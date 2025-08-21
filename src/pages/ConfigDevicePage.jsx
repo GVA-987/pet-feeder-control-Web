@@ -1,10 +1,10 @@
 import React from 'react';
-import ConfifDevice from '../components/dashboard/config/ConfigDevice';
+import ConfigDevice from '../components/dashboard/config/ConfigDevice';
 
 function ConfigDevicePage () {
     return (
         <div>
-            <ConfifDevice />
+            <ConfigDevice />
         </div>
     );
 }

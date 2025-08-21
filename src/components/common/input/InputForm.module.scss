@@ -7,14 +7,14 @@
     align-items: center;
     border: 1px solid #ad9daa;
     border-radius: va.$border-radius;
-    background-color: #d8d0d6;
+    background-color: #e9f4f6;
     padding: 0.75rem;
     margin-bottom: 1.5rem;
     
     // Estilo cuando el input dentro del contenedor está enfocado
     &:focus-within {
-        border-color: color.scale(#ad9daa, $lightness: -10%);
-        box-shadow: #ad9daa 0 0 10px 2.5px;
+        border-color: color.scale(#dfe9ed, $lightness: -10%);
+        box-shadow: #dfe9ed 0 0 8px 3px;
         transition: border-color 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
     }
 

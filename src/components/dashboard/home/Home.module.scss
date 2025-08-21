@@ -1,15 +1,32 @@
+@use '../../../scss/base/variables' as va;
+@use "sass:color";
+@use 'sass:math';
+
+.noDevice{
+    background-color: va.$background-color;
+    color: #999;
+    min-height: 100vh;
+    font-size: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    svg {
+        font-size: 5rem;
+    }
+}
 .HomeContainer {
-    padding: 20px;
-    background-color: #f0f2f5;
+    padding: 40px;
+    background-color: va.$background-color;
     min-height: 100vh;
     font-size: 1.5rem;
+    color: va.$text;
 }
 
 .header {
     margin-bottom: 20px;
     h1 {
         font-size: 2rem;
-        color: #333;
     }
 }
 
@@ -28,14 +45,15 @@
 }
 
 .card {
-    background-color: #fff;
+    background-color: va.$background-card;
     padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    //box-shadow: 0 0 16px rgba(255, 253, 253, 0.534);
     display: flex;
     flex-direction: column;
     h2{
         text-align: center;
+        text-transform: uppercase;
     }
 }
 
@@ -96,10 +114,9 @@
 .dispenseButton {
     width: 100%;
     padding: 15px 0;
-    font-size: 1.2rem;
-    font-weight: bold;
+    font-size: 1.5rem;
     color: #fff;
-    background-color: #3498db;
+    background-color: va.$color-btn_dashboard;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -107,7 +124,7 @@
 }
 
 .dispenseButton:hover {
-    background-color: #2980b9;
+    background-color: color.adjust(va.$color-btn_dashboard, $lightness: -10%);
 }
 
 .deviceStatus {

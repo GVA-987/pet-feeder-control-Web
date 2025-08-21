@@ -1,8 +1,11 @@
 import React from 'react';
 import styles from './ConfigDevice.module.scss';
 import ScheduleManager from './Schedule/ScheduleManager';
+import DeviceLink from './deviceLink/DeviceLink';
+import { useAuth } from '../../../context/AuthContext';
 
-const CondifDevice = () => {
+
+const ConfigDevice = () => {
     return (
         <div className={styles.container}>
         <header className={styles.header}>
@@ -15,11 +18,7 @@ const CondifDevice = () => {
         {/* Tarjeta para otras configuraciones */}
         <div className={styles.card}>
             <h2>Opciones Generales</h2>
-            <form action="" className={styles.formDeviceEnlace}>
-                <h3>Enlazar Dispositico</h3>
-                <input type="text" placeholder='Ej: ESP-PET-####'/>
-                <button type="submit" >Enlazar</button>
-            </form>
+            <DeviceLink />
             <form action="" className={styles.formDeviceName}>
                 <h3>Nombre del dispositivo</h3>
                 <input type="text" placeholder='Ej: Comedero de Fido'/>
@@ -35,4 +34,4 @@ const CondifDevice = () => {
     );
 };
 
-export default CondifDevice;
+export default ConfigDevice;

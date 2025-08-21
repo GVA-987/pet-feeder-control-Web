@@ -6,12 +6,16 @@ import { db } from '../../../../firebase/firebase-config';
 import { MdDelete } from 'react-icons/md';
 
 
+
+
+
 const ScheduleManager = () => {
-    const allDays = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-    const [newSchedule, setNewSchedule] = useState({ time: '', days: [], portion: '' });
+    const [newSchedule, setNewSchedule] = useState({ startDate: '', endDate: '', time: '', portion: '' });
     const { currentUser } = useAuth();
     const [loading, setLoading] = useState(true);
     const [schedules, setSchedules] = useState([]);
+    const [value, setValue] = React.useState(null);
+    
 
     // Escuchar horarios en tiempo real
   useEffect(() => {
@@ -38,32 +42,38 @@ const ScheduleManager = () => {
     setNewSchedule(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleDayChange = (day) => {
-    setNewSchedule(prev => {
-      // Si el día ya está seleccionado, lo quita. Si no, lo agrega.
-        const newDays = prev.days.includes(day)
-        ? prev.days.filter(d => d !== day)
-        : [...prev.days, day];
-        return { ...prev, days: newDays };
-    });
-    };
+    // const handleDayChange = async (e) => {
+    // e.preventDefault();
+    // if (newSchedule.startDate && newSchedule.endDate && newSchedule.time && newSchedule.portion) {
+    //   try {
+    //     const deviceRef = doc(db, 'devicesPet', currentUser.deviceId);
+    //     await updateDoc(deviceRef, {
+    //       schedule: arrayUnion(newSchedule),
+    //     });
+    //     setNewSchedule({ startDate: '', endDate: '', time: '', portion: '' }); // Limpiar formulario
+    //   } catch (error) {
+    //     console.error('Error al guardar el horario:', error);
+    //     alert('Hubo un error al guardar el horario.');
+    //   }
+    // }
+    // };
 
 
 
     const handleAddSchedule = async (e) => {
     e.preventDefault();
-    if (newSchedule.time && newSchedule.days.length > 0 && newSchedule.portion) {
-        try {
-            const deviceRef = doc(db, 'devicesPet', currentUser.deviceId);
-            await updateDoc(deviceRef, {
-                schedule: arrayUnion(newSchedule)
-            });
-            setNewSchedule({ time: '', days: [], portion: '' }); // Limpiar formulario
-        } catch (error) {
-            console.error('Error al guardar el horario:', error);
-            alert('Hubo un error al guardar el horario.');
-        }
-    }
+      if (newSchedule.startDate && newSchedule.endDate && newSchedule.time && newSchedule.portion) {
+          try {
+              const deviceRef = doc(db, 'devicesPet', currentUser.deviceId);
+              await updateDoc(deviceRef, {
+                  schedule: arrayUnion(newSchedule)
+              });
+              setNewSchedule({ startDate: '', endDate: '', time: '', portion: '' }); // Limpiar formulario
+          } catch (error) {
+              console.error('Error al guardar el horario:', error);
+              alert('Hubo un error al guardar el horario.');
+          }
+      }
     };
     //Eliminar horarios
     const handleDeleteSchedule = async (scheduleToDelete) => {
@@ -94,16 +104,19 @@ const ScheduleManager = () => {
         {schedules.length > 0 ? (
           schedules.map((schedule, index) => (
             <div key={index} className={styles.scheduleItem}>
-              <span><strong>{schedule.time}</strong> - {schedule.portion} porción(es)</span>
-              <p>{schedule.days.join(', ')}</p>
-              <button 
-                onClick={() => handleDeleteSchedule(schedule)} 
+              <span>
+                <strong>{schedule.time}</strong> - {schedule.portion} porción(es)
+              </span>
+              <p>
+                Desde {schedule.startDate} hasta {schedule.endDate}
+              </p>
+              <button
+                onClick={() => handleDeleteSchedule(schedule)}
                 className={styles.deleteButton}
               >
                 <MdDelete />
               </button>
             </div>
-            
           ))
         ) : (
           <p>No hay horarios programados.</p>
@@ -113,6 +126,25 @@ const ScheduleManager = () => {
       {/* Formulario para agregar un nuevo horario */}
       <form onSubmit={handleAddSchedule} className={styles.scheduleForm}>
         <h3>Añadir Nuevo Horario</h3>
+        <div className={styles.dateForm}>
+          <label htmlFor="startDate">Fecha de Inicio</label>
+          <input
+            type="date"
+            name="startDate"
+            value={newSchedule.startDate}
+            onChange={handleInputChange}
+            required
+          />
+          <label htmlFor="endDate">Fecha de Fin</label>
+          <input
+            type="date"
+            name="endDate"
+            value={newSchedule.endDate}
+            onChange={handleInputChange}
+            required
+          />
+          </div>
+          <label htmlFor="">Hora</label>
         <input
           type="time"
           name="time"
@@ -120,18 +152,7 @@ const ScheduleManager = () => {
           onChange={handleInputChange}
           required
         />
-        <div className={styles.daySelection}>
-          {allDays.map(day => (
-            <label key={day} className={styles.dayButton}>
-              <input
-                type="checkbox"
-                checked={newSchedule.days.includes(day)}
-                onChange={() => handleDayChange(day)}
-              />
-              {day.charAt(0)}
-            </label>
-          ))}
-        </div>
+
         <input
           type="number"
           name="portion"
@@ -141,6 +162,7 @@ const ScheduleManager = () => {
           min="1"
           required
         />
+
         <button type="submit">Guardar Horario</button>
       </form>
     </div>

@@ -54,13 +54,37 @@ const GeneralOptions = () => {
         <p>Cargando opciones...</p>
         ) : (
         <form onSubmit={handleUpdateName} className={styles.formDevice}>
-            <label htmlFor="deviceName">Nombre del Dispositivo</label>
+            <label htmlFor="deviceName">Nombre</label>
             <input
             id="deviceName"
             type="text"
             value={deviceName}
             onChange={handleNameChange}
-            placeholder="Ej: Comedero de Fido"
+            placeholder
+            />
+            <label htmlFor="deviceName">Apellido</label>
+            <input
+            id="deviceName"
+            type="text"
+            value={deviceName}
+            onChange={handleNameChange}
+            placeholder
+            />
+            <label htmlFor="deviceName">Email</label>
+            <input
+            id="deviceName"
+            type="text"
+            value={deviceName}
+            onChange={handleNameChange}
+            placeholder
+            />
+            <label htmlFor="deviceName">Contraseña</label>
+            <input
+            id="deviceName"
+            type="text"
+            value={deviceName}
+            onChange={handleNameChange}
+            placeholder
             />
             <button type="submit">Guardar</button>
         </form>

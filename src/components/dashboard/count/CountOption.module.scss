@@ -1,10 +1,18 @@
+@use '../../../scss/base/variables' as va;
+@use "sass:color";
+@use 'sass:math';
+
 .containerCount {
     display: flex;
     flex-direction: column;
-    background-color: #f0f2f5;
-    padding: 80px;
-    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    background-color: va.$background-color;
+    padding: 40px 40px;
+    // gap: 20px;
     font-size: 1.5rem;
+    color: white;
+    width: 100%;
 }
 
 .formDevice {
@@ -12,6 +20,12 @@
     flex-direction: column;
     gap: 15px;
     margin-top: 20px;
+    background-color: va.$background-card;
+    padding: 50px;
+    border-radius: 30px;
+    // max-width: 900px;
+    width: 70%;
+    
 }
 
 .formDevice label {
@@ -27,14 +41,15 @@
 
 .formDevice button {
     padding: 12px;
-    background-color: #3498db;
+    background-color: va.$color-btn_dashboard;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 20px;
+    margin-top: 20px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .formDevice button:hover {
-    background-color: #2980b9;
+    background-color: color.adjust(va.$color-btn_dashboard, $lightness: -10%);
 }

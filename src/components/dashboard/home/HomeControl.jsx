@@ -5,6 +5,7 @@ import {useAuth} from '../../../context/AuthContext'
 import {doc, onSnapshot, updateDoc, serverTimestamp, collection, addDoc} from '../../../../node_modules/firebase/firestore';
 import { db } from '../../../firebase/firebase-config';
 import { PiWifiHighFill, PiWifiSlashFill } from "react-icons/pi";
+import { MdAccessTime, MdInfoOutline } from 'react-icons/md';
 
 function HomeControl() {
 
@@ -57,15 +58,23 @@ function HomeControl() {
     }
   }
 
+  if (!currentUser) {
+    return <div>Cargando...</div>;
+  }
+  if (!currentUser.deviceId) {
+  return (
+    <div className={styles.noDevice}>
+      <MdInfoOutline />
+      <h2>No tienes ningún equipo registrado.</h2>
+      <p>Por favor, enlaza un equipo para ver el panel de control.</p>
+    </div>
+    );
+  }
   if(loading) {
     return <div className={styles.loading}>Cargando Panel de Control...</div>;
   }
   if(!deviceData) {
     return <div className={styles.noData}>No se pudo cargar la informacion del dispositivo</div>
-  }
-
-  if (!currentUser) {
-    return <div>Cargando...</div>;
   }
 
   const isConnected = deviceData.status === 'connected';
@@ -118,10 +127,6 @@ function HomeControl() {
               <p>Señal Wi-Fi: {isConnected ? <PiWifiHighFill className={styles.wifiIcon} /> : <PiWifiSlashFill className={styles.wifiIcon} />}</p>
               <p>Temperatura: <strong>{deviceData.temperature || '--'}°C</strong></p>
             </div>
-            {/* <div className={styles.wifiStatus}>
-              {isConnected ? <PiWifiHighFill className={styles.wifiIcon} /> : <PiWifiSlashFill className={styles.wifiIcon} />}
-              <p>Wi-Fi: {isConnected ? 'Conectado' : 'Desconectado'}</p>
-            </div> */}
           </div>
 
           {/* Nueva Tarjeta 3: Horarios Programados */}
@@ -134,8 +139,11 @@ function HomeControl() {
                             <ul>
                                 {schedule.map((item, index) => (
                                     <li key={index}>
-                                        <strong>{item.time}</strong> - {item.portion} porción(es)
-                                        <p>{item.days.join(', ')}</p>
+                                      <span>
+                                        {item.time} - Desde {item.startDate} - Hasta {item.endDate} - {item.portion} porción(es)
+                                      </span>
+                                        {/* <strong>{item.time}</strong> - {item.portion} porción(es)
+                                        <p>{item.days.join(', ')}</p> */}
                                     </li>
                                 ))}
                             </ul>

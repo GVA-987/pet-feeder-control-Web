@@ -5,7 +5,7 @@
 .btnForm {
     width: 100%;
     padding: 1rem;
-    background-color: va.$primary-color;
+    background-color: va.$color-btn;
     color: white;
     border: none;
     border-radius: va.$border-radius;
@@ -13,6 +13,6 @@
     transition: background-color 0.3s ease;
 
     &:hover {
-        background-color: color.adjust(va.$primary-color, $lightness: -10%);
+        background-color: color.adjust(va.$color-btn, $lightness: -10%);
     }
 }

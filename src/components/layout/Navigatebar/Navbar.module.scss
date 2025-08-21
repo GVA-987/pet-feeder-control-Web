@@ -1,18 +1,23 @@
 @use '../../../../node_modules/normalize.css/normalize.css';
+@use '../../../scss/base/variables' as va;
+@use 'sass:color';
+@use 'sass:math';
 
 
 .sidebar{
-    background-color: #fff;
+    background-color: va.$fond-bar;
     font-size: 2.1rem;
-    color: #000000;
+    color: va.$text;
     width: 350px;
     height: 100vh;
     padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    //box-shadow: 2px 0 0 rgba(255, 255, 255, 0.523);
     display: flex;
     flex-direction: column;
-    justify-content: start;
-    //align-items: center;
+    // justify-content:space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
     .logo{
         display: flex;
         text-align: center;
@@ -30,16 +35,18 @@
         }
     }
     .navPet{
+        
         ul{
             list-style: none;
             padding: 0;
             margin: 0;
+            
             .navLink{
                 display: flex;
                 align-items: center;
                 padding: 25px 30px;
                 text-decoration: none;
-                //color: #cfdae2;
+                color: #cfdae2;
                 border-radius: 30px;
                 margin-bottom: 25px;
                 transition: background-color 0.3s ease, color 0.3s ease;
@@ -55,29 +62,53 @@
         
             }
             .active{
-                background-color: #3b40db;
+                background-color: va.$background-card;
                 color: #fff;
+            }
+            .active:hover {
+                background-color: va.$background-card; /* Mantiene el mismo color de fondo del estado activo */
+                color: #fff; /* Mantiene el mismo color de texto del estado activo */
+                transform: none; /* Anula cualquier transformación */
             }
             
         
         }
         .logoutButton {
+            margin-bottom: auto;
             background: none;
-            font-size: 2.1rem;            
+            font-size: 2.2rem;            
             border: none;
+            border-radius: 30px;
             cursor: pointer;
             color: #e74c3c;
             padding: 10px 20px 10px;
             display: flex;
             align-items: center;
             width: 100%;
-            transition: color 0.3s ease;
-            &:hover {
-                color: #3498db;
-            };
-            svg{
+            transition: background-color 0.3s ease, color 0.3s ease;
+    
+            // Contenedor para el icono
+            svg {
                 margin-right: 15px;
-                font-size: 1.5rem;
+                font-size: 2.7rem;
+            }
+
+            // El texto que va a animarse
+            .buttonText {
+                max-width: 0;
+                overflow: hidden; 
+                white-space: nowrap; 
+                transition: max-width 0.5s ease-out; 
+            }
+            
+            &:hover {
+                background-color: #f7cdcd;
+                color: #ff4d00;
+                border-radius: 30px;
+                
+                .buttonText {
+                    max-width: 200px; 
+                }
             }
         }
     }

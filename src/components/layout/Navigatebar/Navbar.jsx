@@ -47,7 +47,7 @@ const Navbar = () => {
                 </li>
 
             </ul>
-        {currentUser && <button className={styles.logoutButton} onClick={handleLogout}><FaSignOutAlt /> Cerrar sesion</button>}
+        {currentUser && <button className={styles.logoutButton} onClick={handleLogout}><FaSignOutAlt /> <span className={styles.buttonText}>Cerrar sesion</span></button>}
         </nav>
     </aside>
     );
