@@ -16,7 +16,7 @@ export function AuthProvider({ children }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, user => {
+        const unsubscribeAuth = onAuthStateChanged(auth, user => {
         if (user) {
         // Si hay un usuario, buscamos su documento en Firestore
             const userDocRef = doc(db, 'users', user.uid);
@@ -24,7 +24,7 @@ export function AuthProvider({ children }) {
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
                 // Combinamos la información de Auth con los datos de Firestore
-                    const combinedUser ={
+                    const combinedUser = {
                         ...user,
                         ...userData,
                         devicePetId: userData.deviceId || "null",
@@ -35,13 +35,13 @@ export function AuthProvider({ children }) {
                 }
                 setLoading(false);
         });
-        return unsubscribeUserDoc;    
+        return () => unsubscribeUserDoc();   
         } else {
             setCurrentUser(null);
             setLoading(false);
         }
     });
-        return unsubscribe;
+        return () => unsubscribeAuth();
     }, []);
 
     const value = {

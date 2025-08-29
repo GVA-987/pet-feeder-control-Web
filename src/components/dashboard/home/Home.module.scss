@@ -1,3 +1,4 @@
+@use 'react-big-calendar/lib/css/react-big-calendar.css';
 @use '../../../scss/base/variables' as va;
 @use "sass:color";
 @use 'sass:math';
@@ -57,7 +58,7 @@
     }
 }
 
-.card:nth-child(3) {
+.card:nth-child(1) {
     grid-column: 1 / span 2;
 }
 
@@ -72,8 +73,8 @@
 
 .foodLevelContainer {
     position: relative;
-    width: 150px;
-    height: 150px;
+    width: 250px;
+    height: 250px;
     text-align: center;
 }
 
@@ -89,7 +90,7 @@
 .circleBg {
     fill: none;
     stroke: #ecf0f1;
-    stroke-width: 3.8;
+    stroke-width: 2.5;
 }
 
 .circle {
@@ -112,13 +113,13 @@
 
 
 .dispenseButton {
-    width: 100%;
+    width: 50%;
     padding: 15px 0;
     font-size: 1.5rem;
     color: #fff;
     background-color: va.$color-btn_dashboard;
     border: none;
-    border-radius: 8px;
+    border-radius: 25px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
@@ -141,15 +142,171 @@
     vertical-align: middle;
 }
 
-.scheduleList {
-    margin-top: 20px;
+//Historial
+.historyContainer{
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 18px;
+    padding: 15px;
+    .historyItem{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        font-size: 15px;
+        border-bottom: 2px solid #6d6b6b;
+    }
+}
+// Horarios Programados
+
+
+// Opcionalmente, puedes añadir estilos para el calendario si lo necesitas,
+// aunque la biblioteca ya tiene sus propios estilos.
+.calendarContainer {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+
+    :global {
+        border: none !important;
+        outline: none !important;
+    /* Estilo general del calendario */
+    .rbc-calendar {
+        font-family: 'Montserrat', sans-serif;
+        background-color: #adcccc;
+        border-radius: 12px;
+        padding: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        color: #444;
+        font-size: 0.85rem;
+        width: 60% !important;
+        height: 350px !important;
+    }
+
+    /* Toolbar superior */
+    .rbc-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 11px;
+
+        button {
+            background-color: #00796b;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 4px 3px;
+            font-size: 0.7rem;
+            font-weight: 300;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+
+            &:hover {
+                background-color: #00695c;
+            }
+
+            &:active,
+            &.rbc-active {
+                background-color: #004d40;
+            }
+        }
+    }
+
+    /* Cabecera de los días */
+    .rbc-header {
+        background-color: #f5f5f5;
+        padding: 3px;
+        text-align: center;
+        font-weight: 400;
+        color: #444;
+        border-bottom: 2px solid #e0e0e0;
+    }
+
+    /* Día actual */
+    .rbc-today {
+        background-color: rgb(93, 174, 180) !important;
+    }
+
+    /* Cada celda de día */
+    .rbc-date-cell {
+        font-weight: 500;
+        color: #333;
+        padding: 4px;
+        text-align: center;
+    }
+
+    /* Eventos */
+    .rbc-event {
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 50px !important;
+        outline: none !important;
+        box-shadow: none !important;
+    }
+    .rbc-event-content {
+        margin: -2px !important;   /* 👈 aquí controlas el padding bonito */
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-align: center;
+        color: #fff;
+    }
+
+    /* Quitar la sombra azul en selección */
+    .rbc-selected {
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
+
+
+    /* Agenda view */
+    .rbc-agenda-event {
+        border-radius: 6px;
+        padding: 3px;
+        background-color: #ff9800;
+        color: #fff;
+    }
+
+
+
+    .rbc-btn-group:last-child {
+      display: none; /* oculta el grupo de botones de vista */
+    }
+    }
+    
+}
+.legend {
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    min-width: 180px;
+    font-size: 0.85rem;
+
+    h4 {
+        margin-bottom: 2rem;
+        font-size: 15px;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.8rem;
+        font-size: 12px;
+    }
 }
 
-.scheduleItem {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-}
-
-.scheduleItem:last-child {
-    border-bottom: none;
+.colorDot {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
 }
