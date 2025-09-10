@@ -42,6 +42,7 @@ const HistoryPage = () => {
     fetchHistory();
     }, [currentUser]);
 
+    // funcion para formatear la fecha
     const formatTimestamp = (timestamp) => {
     if (!timestamp) return 'N/A';
     const date = timestamp.toDate();
@@ -52,7 +53,6 @@ const HistoryPage = () => {
     <div className={styles.containerHistory}>
         <header className={styles.headerHistory}>
         <h1>Historial de Dispensación</h1>
-        <p>Revisa todas las dispensaciones de tu equipo.</p>
         </header>
 
         {loading ? (

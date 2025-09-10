@@ -10,7 +10,6 @@ const ConfigDevice = () => {
         <div className={styles.container}>
         <header className={styles.header}>
         <h1>Configuración del Dispositivo</h1>
-        <p>Ajusta los horarios de alimentación, el nombre del equipo y más.</p>
         </header>
 
         <div className={styles.contentGrid}>

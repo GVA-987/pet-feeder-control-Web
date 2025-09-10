@@ -8,7 +8,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
+    padding: 10px 50px;
     border-bottom: 1px solid #eee;
     p {
         font-size: 1.5rem;
@@ -19,38 +19,23 @@
     border-bottom: none;
 }
 
-.scheduleForm {
+.scheduleFormContainer {
     margin-top: 20px;
     display: flex;
     flex-direction: column;
     gap: 15px;
-    input {
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
-    .dateForm {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        label {
-            font-size: 1.6rem;
-        }
+    form{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
         input {
-            flex: 1;
+            padding: 10px;
         }
-    }
-    button {
-        padding: 12px;
-        background-color: #3498db;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-    button:hover {
-        background-color: #2980b9;
+        button{
+            grid-column: 1 / -1; /* botón ocupa ambas columnas */
+            justify-self: center; /* opcional: centra el botón */
+            margin-top: 1rem;
+        }
     }
 }
 .daySelection {
@@ -72,7 +57,7 @@
     transition: background-color 0.2s ease, border-color 0.2s ease;
     
     input[type="checkbox"] {
-        display: none; // Oculta el checkbox original
+        display: none;
     }
 
     &:has(input[type="checkbox"]:checked) {

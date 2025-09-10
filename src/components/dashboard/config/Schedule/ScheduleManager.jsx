@@ -4,6 +4,7 @@ import { useAuth } from '../../../../context/AuthContext';
 import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from '../../../../firebase/firebase-config';
 import { MdDelete } from 'react-icons/md';
+import Form from '../../../common/form/Form.jsx';
 
 
 
@@ -14,7 +15,6 @@ const ScheduleManager = () => {
     const { currentUser } = useAuth();
     const [loading, setLoading] = useState(true);
     const [schedules, setSchedules] = useState([]);
-    const [value, setValue] = React.useState(null);
     
 
     // Escuchar horarios en tiempo real
@@ -37,29 +37,23 @@ const ScheduleManager = () => {
     }
   }, [currentUser]);
 
-    const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewSchedule(prev => ({ ...prev, [name]: value }));
+    // Manejar cambios en el formulario
+    const handleInputChange = (eOrName, maybeValue) => {
+
+      if (typeof eOrName === 'string') {
+        const name = eOrName;
+        const value = maybeValue;
+        setNewSchedule(prev => ({ ...prev, [name]: value }));
+        return;
+      }
+
+      const e = eOrName;
+      if (!e || !e.target) return;
+      const { name, value } = e.target;
+      setNewSchedule(prev => ({ ...prev, [name]: value }));
     };
 
-    // const handleDayChange = async (e) => {
-    // e.preventDefault();
-    // if (newSchedule.startDate && newSchedule.endDate && newSchedule.time && newSchedule.portion) {
-    //   try {
-    //     const deviceRef = doc(db, 'devicesPet', currentUser.deviceId);
-    //     await updateDoc(deviceRef, {
-    //       schedule: arrayUnion(newSchedule),
-    //     });
-    //     setNewSchedule({ startDate: '', endDate: '', time: '', portion: '' }); // Limpiar formulario
-    //   } catch (error) {
-    //     console.error('Error al guardar el horario:', error);
-    //     alert('Hubo un error al guardar el horario.');
-    //   }
-    // }
-    // };
-
-
-
+    //Agregar horarios
     const handleAddSchedule = async (e) => {
     e.preventDefault();
       if (newSchedule.startDate && newSchedule.endDate && newSchedule.time && newSchedule.portion) {
@@ -68,7 +62,7 @@ const ScheduleManager = () => {
               await updateDoc(deviceRef, {
                   schedule: arrayUnion(newSchedule)
               });
-              setNewSchedule({ startDate: '', endDate: '', time: '', portion: '' }); // Limpiar formulario
+              setNewSchedule({ startDate: '', endDate: '', time: '', portion: '' });
           } catch (error) {
               console.error('Error al guardar el horario:', error);
               alert('Hubo un error al guardar el horario.');
@@ -91,13 +85,71 @@ const ScheduleManager = () => {
       }
   };
 
+  const scheduleFields = [
+        {
+            label: 'Fecha de Inicio',
+            type: 'date',
+            name: 'startDate',
+            value: newSchedule.startDate,
+            onChange: handleInputChange,
+            required: true,
+        },
+        {
+            label: 'Fecha de Fin',
+            type: 'date',
+            name: 'endDate',
+            value: newSchedule.endDate,
+            onChange: handleInputChange,
+            required: true,
+        },
+        {
+            label: 'Hora',
+            type: 'time',
+            name: 'time',
+            value: newSchedule.time,
+            onChange: handleInputChange,
+            required: true,
+        },
+        {
+            label: 'Porción',
+            type: 'number',
+            name: 'portion',
+            value: newSchedule.portion,
+            onChange: handleInputChange,
+            placeholder: 'Porción en gramos',
+            min: '1',
+            required: true,
+        },
+        {
+            label: 'Medida de la Porción',
+            type: 'number',
+            name: 'portion',
+            value: newSchedule.portion,
+            onChange: handleInputChange,
+            placeholder: 'Medida en gramos',
+            min: '1',
+            required: true,
+        }
+    ];
+
     if (loading) {
       return <div>Cargando horarios...</div>;
   }
 
     return (
     <div>
+      
       <h2>Horarios de Alimentación</h2>
+
+      <div className={styles.scheduleFormContainer}>
+          <h3>Añadir Nuevo Horario</h3>
+          <Form
+              fields={scheduleFields}
+              onSubmit={handleAddSchedule}
+              submitButtonText="Guardar Horario"
+          />
+      </div>
+      
       
       {/* Lista de Horarios */}
       <div className={styles.scheduleList}>
@@ -121,50 +173,7 @@ const ScheduleManager = () => {
         ) : (
           <p>No hay horarios programados.</p>
         )}
-      </div>
-
-      {/* Formulario para agregar un nuevo horario */}
-      <form onSubmit={handleAddSchedule} className={styles.scheduleForm}>
-        <h3>Añadir Nuevo Horario</h3>
-        <div className={styles.dateForm}>
-          <label htmlFor="startDate">Fecha de Inicio</label>
-          <input
-            type="date"
-            name="startDate"
-            value={newSchedule.startDate}
-            onChange={handleInputChange}
-            required
-          />
-          <label htmlFor="endDate">Fecha de Fin</label>
-          <input
-            type="date"
-            name="endDate"
-            value={newSchedule.endDate}
-            onChange={handleInputChange}
-            required
-          />
-          </div>
-          <label htmlFor="">Hora</label>
-        <input
-          type="time"
-          name="time"
-          value={newSchedule.time}
-          onChange={handleInputChange}
-          required
-        />
-
-        <input
-          type="number"
-          name="portion"
-          placeholder="Porción"
-          value={newSchedule.portion}
-          onChange={handleInputChange}
-          min="1"
-          required
-        />
-
-        <button type="submit">Guardar Horario</button>
-      </form>
+      </div>      
     </div>
     );
 };

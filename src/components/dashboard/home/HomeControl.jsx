@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 //import logo from '../../assets/petlog.png';
 import styles from './Home.module.scss';
 import {useAuth} from '../../../context/AuthContext'
-import {doc, onSnapshot, updateDoc, serverTimestamp, collection, addDoc, getDocs, where, query, orderBy} from '../../../../node_modules/firebase/firestore';
+import {doc, getDoc, onSnapshot, updateDoc, serverTimestamp, collection, addDoc, getDocs, where, query, orderBy} from '../../../../node_modules/firebase/firestore';
 import { db } from '../../../firebase/firebase-config';
 import { PiWifiHighFill, PiWifiSlashFill } from "react-icons/pi";
 import { MdAccessTime, MdInfoOutline } from 'react-icons/md';
@@ -20,6 +20,7 @@ function HomeControl() {
   const [deviceData, setDeviceData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [history, setHistory] = useState([]);
+  const [petData, setPetData] = useState({ name: '', breed: '', age: '', weight: '' });
   
   //obtener datos de firebase
   useEffect(() => {
@@ -27,6 +28,15 @@ function HomeControl() {
       const fetchHistory = async () => {
         
         try {
+
+          const userDocRef = doc(db, 'users', currentUser.uid);
+          const userDocSnap = await getDoc(userDocRef);
+          
+          if(userDocSnap.exists()) {
+              const useDataDB = userDocSnap.data();
+              setPetData(useDataDB.pets || { name: '', breed: '', age: '', weight: '' });
+          }
+
           const hist = query(
             collection(db, 'dispense_history'),
             where('deviceId', '==', currentUser.deviceId),
@@ -38,6 +48,7 @@ function HomeControl() {
             id: doc.id,
             ...doc.data(),
           }));
+
           setHistory(historyData);
         } catch (e) {
           console.error("Error al obtener el historial", e);
@@ -45,6 +56,7 @@ function HomeControl() {
           setLoading(false);
         }
       }
+      
     
       const deviceRef = doc(db, 'devicesPet', currentUser.deviceId);
       
@@ -58,6 +70,7 @@ function HomeControl() {
         }
         fetchHistory();
       });
+
 
     return () => {
       if (typeof unsubscribe === 'function') {
@@ -87,7 +100,7 @@ function HomeControl() {
 
       // 1. Envía el comando de dispensar
       await updateDoc(deviceRef, {
-          dispense_manual: true,
+          dispense_manual: "Activado",
           last_dispense_timestamp: serverTimestamp()
       });
 
@@ -196,12 +209,10 @@ function HomeControl() {
           {/* Tarjeta: informacion de la mascot */}
           <div className={styles.card}>
               <h2>Información de la mascota</h2>
-              {/* <p>Nombre: {petInfo.name}</p>
-              <p>Edad: {petInfo.age} años</p>
-              <p>Raza: {petInfo.breed}</p> */}
-              <p>Nombre: Firulais</p>
-              <p>Edad: 3 años</p>
-              <p>Raza: Labrador</p>
+              <p>Nombre: {petData.name}</p>
+              <p>Edad: {petData.age}</p>
+              <p>Raza: {petData.breed}</p>
+              <p>Peso: {petData.weight}</p>
             </div>
 
             {/* Tarjeta: nivel de comida y dosificación manual */}

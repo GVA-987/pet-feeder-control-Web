@@ -6,6 +6,7 @@ import ButtonForm from '../common/button/ButtonForm';
 import { signInWithEmailAndPassword } from '../../../node_modules/firebase/auth';
 import { auth } from '../../firebase/firebase-config.js';
 import InputForm from '../common/input/InputForm.jsx';
+import Form from '../common/form/Form.jsx';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -43,35 +44,35 @@ export default function Login() {
     }
   };
 
+  const fieldsLog = [
+    {
+      type: 'email',
+      placeholder: 'Correo electrónico',
+      value: email,
+      onChange: (e) => setEmail(e.target.value),
+      required: true,
+      iconType: 'email',
+    },
+    {
+      type: 'password',
+      placeholder: 'Contraseña',
+      value: password,
+      onChange: (e) => setPassword(e.target.value),
+      required: true,
+      iconType: 'password',
+    }
+  ]
   return (
     <div className={styles.loginContainer}>
       <h2>Iniciar Sesión</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <img src={logo} alt="" className={styles.logo} />
-      <form onSubmit={handleSubmit}>
-        <InputForm
-          type="email"
-          placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required = {true}
-          iconType="email"
-        />
-        <InputForm
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required={true}
-          iconType="password"
-        />
-        <ButtonForm type="submit" disabled={isLoading}>
-        {isLoading ? (
-          // Si esta carganndo, muestra el estado de carga
-          <div className={styles["circle-loader"]}></div>
-        ): ("Acceder")}
-        </ButtonForm>
-      </form>
+      <Form
+        fields={fieldsLog}
+        onSubmit={handleSubmit}
+        submitButtonText={isLoading ? <div className={styles['circle-loader']}></div> : "Acceder"}
+        isLoading={isLoading}
+      />
       <p className={styles.registerPrompt}>
         ¿No tienes una cuenta? <Link to="/register">Regístrate</Link>
       </p>

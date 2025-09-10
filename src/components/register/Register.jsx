@@ -6,15 +6,14 @@ import { createUserWithEmailAndPassword } from '../../../node_modules/firebase/a
 import { doc, setDoc } from '../../../node_modules/firebase/firestore';
 import { auth, db } from '../../firebase/firebase-config.js';
 import ButtonForm from '../common/button/ButtonForm';
-// import styles from '../common/button/ButtonForm.module.scss';
 import InputForm from '../common/input/InputForm';
-import { div, style } from 'framer-motion/client';
+import Form from '../common/form/Form.jsx';
 
 export default function Register() {
   const [name, setName] = useState('');
   const [lastname, setLastname] = useState('');
   const [number, setNumber] = useState('');
-  const [selectCode, setSelectCode] = useState('+591');
+  // const [selectCode, setSelectCode] = useState('+591');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -29,7 +28,7 @@ export default function Register() {
     e.preventDefault();
     setError('');
     setSuccessMessage('');
-    // Aquí iría la lógica de autenticación
+
     if (password !== confirmPassword) {
       setError('Las contraseñas no coinciden');
       return;
@@ -48,9 +47,6 @@ export default function Register() {
         email: user.email,
       });
 
-      // Cerrar sesión después del registro para forzar al usuario a loguearse
-      // await signOut(auth); // <--- Línea añadida para cerrar sesión
-
       setSuccessMessage('¡Registro exitoso! Ya puedes iniciar sesión.');
       setName('');
       setLastname('');
@@ -58,7 +54,7 @@ export default function Register() {
       setEmail('');
       setPassword('');
       setConfirmPassword('');
-      // Redirigir al usuario a la página de inicio o dashboard
+
       navigate('/home');
       
     }catch (e){
@@ -78,30 +74,69 @@ export default function Register() {
     }
   };
 
+  const fieldsRegister = [
+    {
+      type: 'text',
+      placeholder: 'Nombre',
+      value: name,
+      onChange: (e) => setName(e.target.value),
+      required: true,
+      iconType: 'user',
+    },
+    {
+      type: 'text',
+      placeholder: 'Apellido',
+      value: lastname,
+      onChange: (e) => setLastname(e.target.value),
+      required: true,
+      iconType: 'user',
+    },
+    {
+      type: 'tel',
+      placeholder: 'Telefono',
+      value: number,
+      onChange: (e) => setNumber(e.target.value),
+      required: true,
+      iconType: 'phone',
+    },
+    {
+      type: 'email',
+      placeholder: 'Correo electronico',
+      value: email,
+      onChange: (e) => setEmail(e.target.value),
+      required: true,
+      iconType: 'email',
+    },
+    {
+      type: 'password',
+      placeholder: 'Contraseña',
+      value: password,
+      onChange: (e) => setPassword(e.target.value),
+      required: true,
+      iconType: 'password',
+    },
+    {
+      type: 'password',
+      placeholder: 'Confirmar contraseña',
+      value: confirmPassword,
+      onChange: (e) => setConfirmPassword(e.target.value),
+      required: true,
+      iconType: 'password',
+    }
+  ]
     return (
     <div className={styles.loginContainer}>
       <h2>Registrate</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-      <form onSubmit={handleSubmit}>
-        <InputForm type="text" placeholder="Nombre" value={name} onChange={(e) => setName(e.target.value)} required={true} iconType="user"/>
-        <InputForm type="text" placeholder="Apellido" value={lastname} onChange={(e) => setLastname(e.target.value)} required={true} iconType="user"/>
-        <InputForm type="tel"  placeholder="Telefono" value={number} onChange={(e) => setNumber(e.target.value)} required={true} iconType="phone" />
-        <InputForm type="email" placeholder="Correo electronico" value={email} onChange={(e) => setEmail(e.target.value)} required={true} iconType="email"/>
-        <InputForm type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required={true} iconType="password"/>        
-        <InputForm type="password" placeholder="Confirmar contraseña" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required={true} iconType="password"/>        
-        
-        <ButtonForm type="submit" disabled={isLoading}>
-        {isLoading ? (
-          // Si esta carganndo, muestra el estado de carga
-          <div className={styles["circle-loader"]}></div>
-        ): ("Registrar")}
-        </ButtonForm>
-      </form>
+      <Form
+        fields={fieldsRegister}
+        onSubmit={handleSubmit}
+        submitButtonText={isLoading ? <div className={styles['circle-loader']}></div> : "Registrar"}
+      />
         <p className={styles.registerPrompt}>
             ¿Ya tienes una cuenta? <Link to="/login">Inicia sesión</Link>
         </p>
-      
     </div>
   );
 }

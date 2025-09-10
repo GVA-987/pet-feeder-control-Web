@@ -12,7 +12,7 @@
 .header {
     margin-bottom: 20px;
     h1 {
-        font-size: 2rem;
+        font-size: 4rem;
         color: #ffffff;
     }
     p {
@@ -33,12 +33,15 @@
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     form{
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
         gap: 15px;
         padding: 0 60px 20px 60px;
         label{
             font-weight: bold;
+        }
+        button:nth-child(5){
+            grid-column: 1 / span 2;
         }
         input{
             padding: 9px;

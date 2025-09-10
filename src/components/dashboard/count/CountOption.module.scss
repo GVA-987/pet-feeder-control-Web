@@ -3,53 +3,38 @@
 @use 'sass:math';
 
 .containerCount {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
     background-color: va.$background-color;
     padding: 40px 40px;
-    // gap: 20px;
     font-size: 1.5rem;
     color: white;
     width: 100%;
-}
 
-.formDevice {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-top: 20px;
-    background-color: va.$background-card;
-    padding: 50px;
-    border-radius: 30px;
-    // max-width: 900px;
-    width: 70%;
+    .containerCount, h2:nth-child(1){
+        grid-column: 1 / span 2;
+    }
+
+    .cardForm {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        margin-top: 20px;
+        background-color: va.$background-card;
+        padding: 4rem 8rem;
+        border-radius: 30px;
+        width: 100%;
+        form{
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+    }
+    
     
 }
 
-.formDevice label {
-    font-weight: bold;
-    color: #555;
-}
-
-.formDevice input {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-.formDevice button {
-    padding: 12px;
-    background-color: va.$color-btn_dashboard;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    margin-top: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.formDevice button:hover {
-    background-color: color.adjust(va.$color-btn_dashboard, $lightness: -10%);
-}
