@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth"; // <--- Añadido para la autenticación
 import { getFirestore } from "firebase/firestore"; // <--- Añadido para la base de datos
+import { getDatabase } from "firebase/database";
 
 // Tu configuración de Firebase
 const firebaseConfig = {
@@ -20,6 +21,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Inicializa y exporta los servicios que necesitas
-export const auth = getAuth(app); // <--- Exportamos el servicio de autenticación
-export const db = getFirestore(app); // <--- Exportamos el servicio de base de datos
-export const analytics = getAnalytics(app); // Puedes dejarlo si lo necesitas
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const analytics = getAnalytics(app);
+export const rtdb = getDatabase(app);

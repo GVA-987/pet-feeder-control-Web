@@ -3,26 +3,51 @@ import React, { useState, useEffect } from 'react';
 import styles from './Home.module.scss';
 import {useAuth} from '../../../context/AuthContext'
 import {doc, getDoc, onSnapshot, updateDoc, serverTimestamp, collection, addDoc, getDocs, where, query, orderBy} from '../../../../node_modules/firebase/firestore';
-import { db } from '../../../firebase/firebase-config';
-import { PiWifiHighFill, PiWifiSlashFill } from "react-icons/pi";
+import { getDatabase, ref, onValue, off, update } from "firebase/database";
+import { db, rtdb } from '../../../firebase/firebase-config';
+import { PiWifiHighFill, PiWifiSlashFill, PiThermometerSimple, PiTimer, PiWifiHigh } from "react-icons/pi";
 import { MdAccessTime, MdInfoOutline } from 'react-icons/md';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { div, li } from 'framer-motion/client';
 
 moment.locale('es');
 const localizer = momentLocalizer(moment);
+
+const getWifiQuality = (rssi) => {
+    if (!rssi || rssi === '--') return { quality: 'Desconocido', level: 0, style: styles.unknown, icon: <PiWifiSlashFill /> };
+    const rssiNum = parseInt(rssi);
+    if (rssiNum >= -50) {
+        return { quality: 'Excelente', level: 4, style: styles.excellent, icon: <PiWifiHighFill /> };
+    } else if (rssiNum >= -60) {
+        return { quality: 'Buena', level: 3, style: styles.good, icon: <PiWifiHighFill /> };
+    } else if (rssiNum >= -70) {
+        return { quality: 'Aceptable', level: 2, style: styles.acceptable, icon: <PiWifiHighFill /> };
+    } else {
+        return { quality: 'Débil / Pobre', level: 1, style: styles.poor, icon: <PiWifiSlashFill /> };
+    }
+};
+
+const formatTemperature = (temp) => {
+    if (temp === '--') return '--';
+    return parseFloat(temp).toFixed(1);
+};
+
+
+
+
 
 function HomeControl() {
 
   const { currentUser } = useAuth();
   const [deviceData, setDeviceData] = useState(null);
+  const [rtdbData, setRtdbData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [history, setHistory] = useState([]);
   const [petData, setPetData] = useState({ name: '', breed: '', age: '', weight: '' });
+  const [currentTime, setCurrentTime] = useState(Date.now()); 
   
-  //obtener datos de firebase
+  //obtener datos de firestore
   useEffect(() => {
     if(currentUser && currentUser.deviceId) {
       const fetchHistory = async () => {
@@ -83,10 +108,47 @@ function HomeControl() {
   }
 }, [currentUser]);
 
+// obtener datos de RTDB
+useEffect(() => {
+  if (!currentUser && !currentUser.deviceId) return;
+
+  const dbRT = getDatabase();
+  const deviceStatusRef = ref(dbRT, `${currentUser.deviceId}/status`);
+
+  // DALE UN NOMBRE A LA FUNCIÓN DE CALLBACK
+  const handleRealtimeData = (snapshot) => {
+    if(snapshot.exists()) {
+      setRtdbData(snapshot.val());
+    }else{
+      console.log("No data available in RTDB");
+      setRtdbData(null); 
+    }
+  };
+
+  // USA EL NOMBRE DE LA FUNCIÓN PARA SUSCRIBIRTE
+  onValue(deviceStatusRef, handleRealtimeData);
+
+  return () => {
+    off(deviceStatusRef, handleRealtimeData);
+  };
+}, [currentUser])
+
+ // para forzar la actualización del tiempo
+  useEffect(() => {
+        const intervalId = setInterval(() => {
+            setCurrentTime(Date.now());
+        }, 5000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
   // Obtener historial de dispensado
   const formatTimestamp = (timestamp) => {
-    if (!timestamp) return 'N/A';
-    const date = timestamp.toDate();
+    if (!timestamp || typeof timestamp !== 'number') {
+        return 'N/A';
+    }
+    const dateInMs = timestamp * 1000;
+    const date = new Date(dateInMs);
     return date.toLocaleString();
   };
 
@@ -95,20 +157,10 @@ function HomeControl() {
     if(!currentUser || !currentUser.deviceId) return;
 
     try {
-      const deviceRef = doc(db, 'devicesPet', currentUser.deviceId);
-      const historyRef = collection(db, "dispense_history");
+      const deviceRefRTDB = ref(rtdb, `${currentUser.deviceId}/commands`);
 
-      // 1. Envía el comando de dispensar
-      await updateDoc(deviceRef, {
-          dispense_manual: "Activado",
-          last_dispense_timestamp: serverTimestamp()
-      });
-
-      await addDoc(historyRef, {
-        deviceId: currentUser.deviceId,
-        type: "manual",
-        portion: 1, // Por ahora, asumimos una porción por defecto
-        timestamp: serverTimestamp()
+      await update(deviceRefRTDB, {
+        dispense_manual: "activado",
       });
 
       alert('Alimento dispensado correctamente');
@@ -140,10 +192,22 @@ function HomeControl() {
     return <div className={styles.noData}>No se pudo cargar la informacion del dispositivo</div>
   }
 
-  // Obtener información del dispositivo
-  const isConnected = deviceData.status === 'connected';
-  const foodLevel = deviceData.food_level || 0;
-  const schedule = deviceData.schedule || [];
+    const lastSeenSeconds = rtdbData?.lastSeen || 0;
+    const lastSeenMs = lastSeenSeconds * 1000;
+    const CONNECTION_THRESHOLD_MS = 16000;
+    const isRecentlySeen = (currentTime - lastSeenMs) < CONNECTION_THRESHOLD_MS;
+    const isDataAvailable = rtdbData !== null; 
+    const finalConnectionStatus = isRecentlySeen && isDataAvailable;  
+    const foodLevel = deviceData.food_level || 0;
+
+    const rssi = rtdbData?.rssi || "--";
+    const chipTemp = rtdbData?.temperature || "--";
+    const uptime = rtdbData?.uptime || "--";
+    const schedule = deviceData.schedule || [];
+
+    const wifiStatus = getWifiQuality(rssi);
+    const formattedTemp = formatTemperature(chipTemp);
+
 
   // Componente para los eventos del calendario
   const EventComponent = ({ event }) => {
@@ -203,6 +267,12 @@ function HomeControl() {
             : currentUser.email} 👋🐾
           </h1>
         </header>
+
+        {!finalConnectionStatus && (
+                <div className={styles.connectionAlert}>
+                    ⚠️ **¡Equipo Desconectado!** El equipo no ha reportado datos en más de 12 segundos. Funciones manuales desactivadas.
+                </div>
+            )}
         
         <div className={styles.contentHome}>
 
@@ -244,13 +314,30 @@ function HomeControl() {
           
           {/* Tarjeta: Estado del equipo */} 
           <div className={styles.card}>
-            <h2>Estado del Dispositivo</h2>
-            <div className={styles.deviceStatus}>
-              <p>Estado de conexión: <strong className={isConnected ? styles.connected : styles.disconnected}>{isConnected ? 'En línea' : 'Desconectado'}</strong></p>
-              <p>Señal Wi-Fi: {isConnected ? <PiWifiHighFill className={styles.wifiIcon} /> : <PiWifiSlashFill className={styles.wifiIcon} />}</p>
-              <p>Temperatura: <strong>{deviceData.temperature || '--'}°C</strong></p>
-            </div>
-          </div>
+                    <h2>Estado del Dispositivo</h2>
+                    <div className={styles.deviceStatus}>
+                        <p>
+                            Estado de conexión: 
+                            <strong className={finalConnectionStatus ? styles.connected : styles.disconnected}>
+                                {finalConnectionStatus ? '✅ En línea' : '❌ Desconectado'}
+                            </strong>
+                        </p>
+                        <p>
+                            <PiWifiHigh /> Señal Wi-Fi: 
+                            <strong className={wifiStatus.style}>
+                                {wifiStatus.quality} ({rssi} dBm)
+                            </strong>
+                        </p>
+                        <p>
+                            <PiThermometerSimple /> Temperatura del equipo: 
+                            <strong> {formattedTemp}°C</strong>
+                        </p>
+                        <p>
+                            <PiTimer /> Tiempo Activo : 
+                            <strong> {uptime || '--'}</strong>
+                        </p>
+                    </div>
+                </div>
 
           
             {/* Tarjeta: Historial Resumen*/}

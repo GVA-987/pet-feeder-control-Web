@@ -1,7 +1,8 @@
 import Recat, { useState } from 'react';
 import { useAuth } from '../../../../context/AuthContext';
+import { getDatabase, ref, set } from "firebase/database";
 import { doc, getDoc, runTransaction } from 'firebase/firestore';
-import { db } from '../../../../firebase/firebase-config';
+import { db, rtdb } from '../../../../firebase/firebase-config';
 import styles from './DeviceLink.module.scss';
 import Modal from '../../../common/modal/Modal';
 import { useNavigate } from 'react-router-dom';
@@ -37,6 +38,20 @@ const DeviceLink = () => {
                 transaction.update(deviceRef, {linked_user_id: currentUser.uid})
                 transaction.update(userRef, {deviceId: deviceId.toUpperCase()});
             });
+
+            const deviceRefRT = ref(rtdb, `${deviceId.toUpperCase()}`);
+
+            await set(deviceRefRT, {
+                ownerUid: currentUser.uid,
+                status: {
+                online: false,
+                lastSeen: Date.now()
+                },
+                commands: {
+                last_command: null
+                }
+            });
+            
             //onClose();
             navigate('/home');
             setDeviceId('');
