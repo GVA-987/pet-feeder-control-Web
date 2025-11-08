@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from './Navigatebar/Navbar'; // Asumiendo esta ruta
+import Navbar from './Navigatebar/Navbar';
 import styles from './MainLayout.module.scss';
 
 const MainLayout = ({ children }) => {

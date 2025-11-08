@@ -5,6 +5,7 @@ import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove } from 'firebase/fi
 import { db } from '../../../../firebase/firebase-config';
 import { MdDelete } from 'react-icons/md';
 import Form from '../../../common/form/Form.jsx';
+import moment from 'moment';
 
 
 
@@ -85,6 +86,17 @@ const ScheduleManager = () => {
       }
   };
 
+  const formatVigenciaRange = (startDate, endDate) => {
+    const start = moment(startDate, "YYYY-MM-DD");
+    const end = moment(endDate, "YYYY-MM-DD");
+
+    if (start.format('MMM YYYY') === end.format('MMM YYYY')) {
+        return `${start.format('D')} - ${end.format('D [de] MMM')}`;
+    }
+    
+    return `${start.format('D [de] MMM')} - ${end.format('D [de] MMM')}`; 
+  };
+
   const scheduleFields = [
         {
             label: 'Fecha de Inicio',
@@ -93,14 +105,8 @@ const ScheduleManager = () => {
             value: newSchedule.startDate,
             onChange: handleInputChange,
             required: true,
-        },
-        {
-            label: 'Fecha de Fin',
-            type: 'date',
-            name: 'endDate',
-            value: newSchedule.endDate,
-            onChange: handleInputChange,
-            required: true,
+            containerClassName: styles.contenerInput,
+            unstyled: true,
         },
         {
             label: 'Hora',
@@ -109,71 +115,90 @@ const ScheduleManager = () => {
             value: newSchedule.time,
             onChange: handleInputChange,
             required: true,
+            unstyled: true,
+        },
+        {
+            label: 'Fecha de Fin',
+            type: 'date',
+            name: 'endDate',
+            value: newSchedule.endDate,
+            onChange: handleInputChange,
+            required: true,
+            unstyled: true,
         },
         {
             label: 'Porción',
-            type: 'number',
+            type: 'numeric',
             name: 'portion',
             value: newSchedule.portion,
             onChange: handleInputChange,
             placeholder: 'Porción en gramos',
-            min: '1',
             required: true,
-        },
-        {
-            label: 'Medida de la Porción',
-            type: 'number',
-            name: 'portion',
-            value: newSchedule.portion,
-            onChange: handleInputChange,
-            placeholder: 'Medida en gramos',
-            min: '1',
-            required: true,
+            unstyled: true,
         }
     ];
 
     if (loading) {
-      return <div>Cargando horarios...</div>;
-  }
+        return <div>Cargando horarios...</div>;
+    }
 
     return (
-    <div>
-      
-      <h2>Horarios de Alimentación</h2>
+        <div>
+            <h2>Horarios de Alimentación</h2>
 
-      <div className={styles.scheduleFormContainer}>
-          <h3>Añadir Nuevo Horario</h3>
-          <Form
-              fields={scheduleFields}
-              onSubmit={handleAddSchedule}
-              submitButtonText="Guardar Horario"
-          />
-      </div>
-      
-      
+        <div className={styles.scheduleFormContainer}>
+            <h3>Añadir Nuevo Horario</h3>
+            <Form
+                fields={scheduleFields}
+                onSubmit={handleAddSchedule}
+                submitButtonText="Guardar Horario"
+            />
+        </div>
+
       {/* Lista de Horarios */}
-      <div className={styles.scheduleList}>
-        {schedules.length > 0 ? (
-          schedules.map((schedule, index) => (
-            <div key={index} className={styles.scheduleItem}>
-              <span>
-                <strong>{schedule.time}</strong> - {schedule.portion} porción(es)
-              </span>
-              <p>
-                Desde {schedule.startDate} hasta {schedule.endDate}
-              </p>
-              <button
-                onClick={() => handleDeleteSchedule(schedule)}
-                className={styles.deleteButton}
-              >
-                <MdDelete />
-              </button>
-            </div>
-          ))
-        ) : (
-          <p>No hay horarios programados.</p>
-        )}
-      </div>      
+        <div className={styles.scheduleTableContainer}>
+            {schedules.length > 0 ? (
+        <table className={styles.scheduleTable}>
+            <thead>
+                <tr>
+                    <th className={styles.timeCell}>Hora</th> 
+                    <th className={styles.portionCell}>Porción</th>
+                    <th className={styles.dateCell}>Vigencia</th>
+                    <th className={styles.actionCell}>Acción</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {schedules.map((schedule, index) => (
+                    <tr key={index} className={styles.scheduleRow}>
+                        <td className={styles.timeCell}>
+                            <strong>{schedule.time}</strong>
+                        </td>
+                        <td className={styles.portionCell}>
+                            {schedule.portion}
+                        </td>
+                        <td className={styles.dateCell}>
+                            {formatVigenciaRange(schedule.startDate, schedule.endDate)}
+                        </td>
+                        <td className={styles.actionCell}>
+                            <button
+                                onClick={() => handleDeleteSchedule(schedule)}
+                                className={styles.deleteButton}
+                                title="Eliminar Horario"
+                            >
+                                <MdDelete />
+                            </button>
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    ) : (
+        <p className={styles.noScheduleMessage}>
+            No hay horarios programados.
+        </p>
+    )}
+</div>      
     </div>
     );
 };

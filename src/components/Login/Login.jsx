@@ -17,7 +17,6 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    // Redirigir al usuario a la página de inicio o dashboard
 
     try {
       const useCredential = await signInWithEmailAndPassword(auth, email, password);

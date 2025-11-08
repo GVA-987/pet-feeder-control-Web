@@ -6,11 +6,9 @@ const PrivateRoute = ({ children }) => {
     const { currentUser } = useAuth();
     const location = useLocation();
 
-  // Si no hay un usuario autenticado, redirigimos a la página de login
     if (!currentUser) {
       return <Navigate to="/login" replace state={{ from:location }} />;
     }
-  // Si hay un usuario, mostramos el componente que se pasó como 'children'
     return children;
 };
 

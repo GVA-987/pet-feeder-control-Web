@@ -1,0 +1,24 @@
+.circleBar {
+    // transform: rotate(-90deg);
+    transform-origin: center;
+}
+
+.circleBg {
+    fill: none;
+    stroke: #444; 
+    stroke-width: 3; /* Ajusta el grosor */
+}
+
+.circle {
+    fill: none;
+    stroke: var(--color-primary, #7b38cd);
+    stroke-width: 3; 
+    transition: stroke-dasharray 0.5s linear;
+}
+
+.percentage {
+    text-anchor: middle;
+    fill: #ffffff; 
+    font-size: 6px;
+    font-weight: bold;
+}

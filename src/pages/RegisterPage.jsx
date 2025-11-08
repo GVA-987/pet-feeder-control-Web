@@ -2,7 +2,6 @@ import Register from '../components/register/Register';
 import React from 'react';
 import { motion } from 'framer-motion';
 
-// 1. Define las propiedades de la animación
 const pageVariants = {
     initial: { opacity: 1, rotateY: 90 },
     in: { opacity: 1, rotateY: 0 },

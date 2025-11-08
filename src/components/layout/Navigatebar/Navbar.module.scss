@@ -46,13 +46,13 @@
                 align-items: center;
                 padding: 33px 35px;
                 text-decoration: none;
-                color: #cfdae2;
+                color: va.$text-color;
                 border-radius: 30px;
                 margin-bottom: 25px;
                 transition: background-color 0.3s ease, color 0.3s ease;
                 &:hover{
-                    background-color: #cfdae2;
-                    color: #2c3e50;
+                    background-color: va.$color-hover;
+                    color: #f5f6f7;
                     transform: scale(1.05);
                 }
                 svg{
@@ -62,13 +62,15 @@
         
             }
             .active{
-                background-color: va.$background-card;
-                color: #fff;
+                background-color: va.$color-active;
+                color: va.$text-color;
+                cursor: default;
             }
             .active:hover {
-                background-color: va.$background-card; /* Mantiene el mismo color de fondo del estado activo */
-                color: #fff; /* Mantiene el mismo color de texto del estado activo */
-                transform: none; /* Anula cualquier transformación */
+                // background-color: color.adjust(va.$color-btn, $lightness: -10%);
+                background-color: va.$color-active; 
+                color: va.$text-color; 
+                transform: none; 
             }
             
         
@@ -90,13 +92,11 @@
             width: 100%;
             transition: background-color 0.3s ease, color 0.3s ease;
     
-            // Contenedor para el icono
             svg {
                 margin-right: 15px;
                 font-size: 2.7rem;
             }
 
-            // El texto que va a animarse
             .buttonText {
                 max-width: 0;
                 overflow: hidden; 

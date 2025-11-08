@@ -1,40 +1,48 @@
-.scheduleList {
-    margin-top: 20px;
-    border-top: 1px solid #eee;
-    padding-top: 10px;
-}
 
-.scheduleItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 50px;
-    border-bottom: 1px solid #eee;
-    p {
-        font-size: 1.5rem;
-    }
-}
-
-.scheduleItem:last-child {
-    border-bottom: none;
-}
+@use '../../../../scss/base/variables' as va;
+@use "sass:color";
+@use 'sass:math';
 
 .scheduleFormContainer {
     margin-top: 20px;
     display: flex;
     flex-direction: column;
     gap: 15px;
+    padding: 15px;
+    justify-content: center;
     form{
         display: grid;
         grid-template-columns: 1fr 1fr;
+        text-align: center;
         gap: 15px;
-        input {
-            padding: 10px;
+        align-items: center;
+        .contenerInput{
+            icon{
+                color: white;
+            }
+        }
+        input{
+            background-color: va.$fond-bar;
+            outline: none;
+            text-align: center;
+            // border-style: none;
+            border: none;
+            border-radius: 0;
+            border-bottom: 4px solid va.$border-color-card;
+            width: 60%;
+            padding: 15px;
+            font-size: 2rem;
+            color: white;
+            margin: 15px;
+            transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            &:focus-within {
+                border-bottom: 4px solid va.$color-btn;
+                transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out
+
+            }
         }
         button{
-            grid-column: 1 / -1; /* botón ocupa ambas columnas */
-            justify-self: center; /* opcional: centra el botón */
-            margin-top: 1rem;
+            width: 50%;
         }
     }
 }
@@ -66,15 +74,100 @@
         color: white;
     }
 }
+
+.scheduleTableContainer {
+    width: 100%;
+    // max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    overflow-x: auto;
+    display: flex;
+    justify-content: center;
+}
+
+.scheduleTable {
+    width: 85%;
+    border-collapse: collapse;
+    
+    table-layout: fixed;
+    border-radius: 12px; 
+    overflow: hidden;
+
+    th, td {
+        border-bottom: 1px solid #5e4975; 
+        text-align: center;
+        padding: 17px;
+    }
+
+
+    thead th {
+        background-color: #2a2a2a; 
+        color: #f0f0f0;
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        font-weight: 600;
+        border-bottom: 2px solid var(--color-primary, #6d10b9);
+    }
+
+    tbody td {
+        font-size: 1.4rem;
+        font-weight:lighter;
+    }
+    .timeCell {
+        width: 10%;
+    }
+
+    .portionCell {
+        text-align: center;
+        width: 10%;
+    }
+    
+    .dateCell {
+        width: 40%;
+    }
+
+    .actionCell {
+        text-align: center;
+        width: 15%;
+    }
+
+    .scheduleRow:hover {
+        background-color: #1e1e1e; 
+    }
+
+
+    .portionCell {
+        text-align: center;
+        width: 10%;
+    }
+    
+    .timeCell {
+        width: 15%;
+    }
+
+    .actionCell {
+        text-align: center;
+        width: 10%;
+    }
+}
+
 .deleteButton {
     background: none;
     border: none;
+    color: #f44336;
     cursor: pointer;
-    color: #e74c3c;
-    font-size: 2.7rem;
-    transition: color 0.2s ease;
+    font-size: 3rem;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    
+    &:hover {
+        opacity: 1;
+        transform: scale(1.1);
+    }
 }
 
-.deleteButton:hover {
-    color: #c0392b;
+.noScheduleMessage {
+    text-align: center;
+    padding: 20px;
+    color: #b5b5b5;
 }

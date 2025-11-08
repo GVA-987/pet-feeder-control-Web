@@ -14,7 +14,6 @@ const ConfigDevice = () => {
 
         <div className={styles.contentGrid}>
 
-        {/* Tarjeta para otras configuraciones */}
         <div className={styles.card}>
             <h2>Opciones Generales</h2>
             <DeviceLink />

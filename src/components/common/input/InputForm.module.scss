@@ -6,21 +6,19 @@
     display: flex;
     align-items: center;
     outline: none;
-    border: 1px solid #c4cdce;
     border-radius: va.$border-radius;
-    background-color: transparent;
-    padding: 0.75rem;
-    margin-bottom: 1.5rem;  
-    // Estilo cuando el input dentro del contenedor está enfocado
+    background-color: #211B27;
+    padding: 1.3rem;
+    margin-bottom: 2rem;  
     &:focus-within {
+        border: 1px solid va.$color-btn;
         border-radius: va.$border-radius;
         // border-color: color.scale(#dfe9ed, $lightness: -10%);
-        border: 1px solid #e9eff0;
         transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out
     }
     input{
         &::placeholder {
-            color: #afb8bd;
+            color: #868a8d;
         }
     }
     .icon {

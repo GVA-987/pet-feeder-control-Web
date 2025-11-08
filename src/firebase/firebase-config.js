@@ -1,11 +1,9 @@
-// Importa las funciones que necesitas del SDKs
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth } from "firebase/auth"; // <--- Añadido para la autenticación
-import { getFirestore } from "firebase/firestore"; // <--- Añadido para la base de datos
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 import { getDatabase } from "firebase/database";
 
-// Tu configuración de Firebase
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
     authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -17,10 +15,8 @@ const firebaseConfig = {
     measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-// Inicializa Firebase
 const app = initializeApp(firebaseConfig);
 
-// Inicializa y exporta los servicios que necesitas
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const analytics = getAnalytics(app);

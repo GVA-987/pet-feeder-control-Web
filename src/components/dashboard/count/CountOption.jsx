@@ -1,7 +1,7 @@
 // src/components/configuration/GeneralOptions.jsx
 
 import React, { useState, useEffect } from 'react';
-import { getDoc, doc, updateDoc, arrayUnion, arrayRemove } from '../../../../node_modules/firebase/firestore';
+import { getDoc, doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from '../../../firebase/firebase-config';
 import { useAuth } from '../..//../context/AuthContext';
 import { EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';

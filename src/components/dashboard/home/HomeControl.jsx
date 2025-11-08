@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 //import logo from '../../assets/petlog.png';
 import styles from './Home.module.scss';
 import {useAuth} from '../../../context/AuthContext'
-import {doc, getDoc, onSnapshot, updateDoc, serverTimestamp, collection, addDoc, getDocs, where, query, orderBy} from '../../../../node_modules/firebase/firestore';
+import {doc, getDoc, onSnapshot, updateDoc, serverTimestamp, collection, addDoc, getDocs, where, query, orderBy} from 'firebase/firestore';
 import { getDatabase, ref, onValue, off, update } from "firebase/database";
 import { db, rtdb } from '../../../firebase/firebase-config';
 import { PiWifiHighFill, PiWifiSlashFill, PiThermometerSimple, PiTimer, PiWifiHigh } from "react-icons/pi";
 import { MdAccessTime, MdInfoOutline } from 'react-icons/md';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
+import CircularProgressBar from '../../common/CircularProgressBar/CircularProgressBar';
+import InputPortion from '../../common/input/InputForm';
+import FormFood from '../../common/form/Form';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 moment.locale('es');
@@ -24,7 +27,7 @@ const getWifiQuality = (rssi) => {
     } else if (rssiNum >= -70) {
         return { quality: 'Aceptable', level: 2, style: styles.acceptable, icon: <PiWifiHighFill /> };
     } else {
-        return { quality: 'Débil / Pobre', level: 1, style: styles.poor, icon: <PiWifiSlashFill /> };
+        return { quality: 'Débil', level: 1, style: styles.poor, icon: <PiWifiSlashFill /> };
     }
 };
 
@@ -32,6 +35,7 @@ const formatTemperature = (temp) => {
     if (temp === '--') return '--';
     return parseFloat(temp).toFixed(1);
 };
+
 
 
 
@@ -45,18 +49,19 @@ function HomeControl() {
   const [loading, setLoading] = useState(true);
   const [history, setHistory] = useState([]);
   const [petData, setPetData] = useState({ name: '', breed: '', age: '', weight: '' });
-  const [currentTime, setCurrentTime] = useState(Date.now()); 
-  
+  const [currentTime, setCurrentTime] = useState(Date.now());
+  const [foodPortion, setFoodPortion] = useState('');
+
   //obtener datos de firestore
   useEffect(() => {
     if(currentUser && currentUser.deviceId) {
       const fetchHistory = async () => {
-        
+
         try {
 
           const userDocRef = doc(db, 'users', currentUser.uid);
           const userDocSnap = await getDoc(userDocRef);
-          
+
           if(userDocSnap.exists()) {
               const useDataDB = userDocSnap.data();
               setPetData(useDataDB.pets || { name: '', breed: '', age: '', weight: '' });
@@ -67,7 +72,7 @@ function HomeControl() {
             where('deviceId', '==', currentUser.deviceId),
             orderBy('timestamp', 'desc')
           );
-          
+
           const querySnapshot = await getDocs(hist);
           const historyData = querySnapshot.docs.map(doc => ({
             id: doc.id,
@@ -81,10 +86,10 @@ function HomeControl() {
           setLoading(false);
         }
       }
-      
-    
+
+
       const deviceRef = doc(db, 'devicesPet', currentUser.deviceId);
-      
+
       const unsubscribe = onSnapshot(deviceRef, (docSnap) => {
         if(docSnap.exists()){
           setDeviceData(docSnap.data());
@@ -121,7 +126,7 @@ useEffect(() => {
       setRtdbData(snapshot.val());
     }else{
       console.log("No data available in RTDB");
-      setRtdbData(null); 
+      setRtdbData(null);
     }
   };
 
@@ -153,7 +158,8 @@ useEffect(() => {
   };
 
   // Función para dispensar alimento
-  const handleDispenseNow = async () => {
+  const handleDispenseNow = async (e) => {
+    e.preventDefault();
     if(!currentUser || !currentUser.deviceId) return;
 
     try {
@@ -161,9 +167,11 @@ useEffect(() => {
 
       await update(deviceRefRTDB, {
         dispense_manual: "activado",
+        food_portion: String(foodPortion),
       });
 
-      alert('Alimento dispensado correctamente');
+      console.log('Dispensando alimento manualmente...');
+      setFoodPortion('');
     }catch(error) {
       console.log('Error al dispensar el alimento: ', error);
       alert('Hubo un problema al dispensar el alimento. Intente de nuevo.');
@@ -192,14 +200,15 @@ useEffect(() => {
     return <div className={styles.noData}>No se pudo cargar la informacion del dispositivo</div>
   }
 
-    const lastSeenSeconds = rtdbData?.lastSeen || 0;
-    const lastSeenMs = lastSeenSeconds * 1000;
-    const CONNECTION_THRESHOLD_MS = 16000;
-    const isRecentlySeen = (currentTime - lastSeenMs) < CONNECTION_THRESHOLD_MS;
-    const isDataAvailable = rtdbData !== null; 
-    const finalConnectionStatus = isRecentlySeen && isDataAvailable;  
-    const foodLevel = deviceData.food_level || 0;
-
+    const lastSeenSeconds = rtdbData?.lastSeen || 0; // en segundos
+    const lastSeenMs = lastSeenSeconds * 1000; // convertir a milisegundos
+    const CONNECTION_THRESHOLD_MS = 16000; // 16 segundos
+    const isRecentlySeen = (currentTime - lastSeenMs) < CONNECTION_THRESHOLD_MS; // true si se vio recientemente
+    const isDataAvailable = rtdbData !== null; // true si hay datos disponibles
+    const finalConnectionStatus = isRecentlySeen && isDataAvailable;  // estado final de conexión
+    // const foodLevel = 50;
+    
+    const foodLevel = rtdbData?.foodLevel || 0;
     const rssi = rtdbData?.rssi || "--";
     const chipTemp = rtdbData?.temperature || "--";
     const uptime = rtdbData?.uptime || "--";
@@ -256,7 +265,21 @@ useEffect(() => {
       color: colors[index % colors.length]
     };
   });
-  
+
+  // input porcion comida
+  const fieldFood = [
+    {
+      type: 'numeric',
+      placeholder: 'Porción de comida',
+      value: foodPortion,
+      onChange: (e) => setFoodPortion(e.target.value),
+      required: true,
+      inputClassName: styles.inputPortion,
+      containerClassName: styles.contenerInputPortion,
+      unstyled: true,
+    }
+  ]
+
 
   return (
     <div className={styles.HomeContainer}>
@@ -268,80 +291,78 @@ useEffect(() => {
           </h1>
         </header>
 
-        {!finalConnectionStatus && (
+        {/* {!finalConnectionStatus && (
                 <div className={styles.connectionAlert}>
-                    ⚠️ **¡Equipo Desconectado!** El equipo no ha reportado datos en más de 12 segundos. Funciones manuales desactivadas.
+                    **¡Equipo Desconectado!** El equipo no ha reportado datos en más de 12 segundos. Funciones manuales desactivadas.
                 </div>
-            )}
-        
+            )} */}
+
         <div className={styles.contentHome}>
 
-          {/* Tarjeta: informacion de la mascot */}
-          <div className={styles.card}>
-              <h2>Información de la mascota</h2>
-              <p>Nombre: {petData.name}</p>
-              <p>Edad: {petData.age}</p>
-              <p>Raza: {petData.breed}</p>
-              <p>Peso: {petData.weight}</p>
-            </div>
-
-            {/* Tarjeta: nivel de comida y dosificación manual */}
-          <div className={styles.card}>
+          {/* Tarjeta: nivel de comida y dosificación manual */}
+          <div className={`${styles.card} ${styles['card-food-control']}`}>
             <h2>Nivel de Comida y Control</h2>
             <div className={styles.foodControls}>
-              <div className={styles.foodLevelContainer}>
-                  <svg className={styles.circleBar} viewBox="0 0 36 36">
-                      <path
-                        className={styles.circleBg}
-                          d="M18 2.0845
-                            a 15.9155 15.9155 0 0 1 0 31.831
-                            a 15.9155 15.9155 0 0 1 0 -31.831"
-                      />
-                      <path
-                          className={styles.circle}
-                          strokeDasharray={`${foodLevel}, 100`}
-                          d="M18 2.0845
-                            a 15.9155 15.9155 0 0 1 0 31.831
-                            a 15.9155 15.9155 0 0 1 0 -31.831"
-                      />
-                      <text x="18" y="20.35" className={styles.percentage}>{foodLevel}%</text>
-                          </svg>
-                          {/* <h3>Nivel de Comida</h3> */}
+              <CircularProgressBar percentage={foodLevel} size={380} />
+              <FormFood
+                fields={fieldFood}
+                onSubmit={handleDispenseNow}
+                submitButtonText= "Dosificar"
+                // isLoading={loading}
+              />
+              {/* <div className={styles.inputPortion}>
+                <InputPortion 
+                  // label="Porciones a dispensar:"
+                  placeholder='Porcion a dispensar'
+                  value={foodPortion}
+                  onChange={(e) => setFoodPortion(e.target.value)}
+                  required
+                />
               </div>
-              <button onClick={handleDispenseNow} className={styles.dispenseButton}>Alimentar Manual</button>
+                <button onClick={handleDispenseNow} className={styles.dispenseButton}>Alimentar Manual</button> */}
             </div>
           </div>
-          
-          {/* Tarjeta: Estado del equipo */} 
-          <div className={styles.card}>
+
+          {/* Tarjeta: informacion de la mascot */}
+          <div className={`${styles.card} ${styles['card-pet-info']}`}>
+              <h2>Mascota</h2>
+              <p><label>Nombre:</label> {petData.name}</p>
+              <p><label>Edad:</label> {petData.age}</p>
+              <p><label>Raza:</label> {petData.breed}</p>
+              <p><label>Peso:</label> {petData.weight}</p>
+            </div>
+
+          {/* Tarjeta: Estado del equipo */}
+          <div className={`${styles.card} ${styles['card-device-status']}`}>
                     <h2>Estado del Dispositivo</h2>
                     <div className={styles.deviceStatus}>
                         <p>
-                            Estado de conexión: 
+                            Estado de conexión:
                             <strong className={finalConnectionStatus ? styles.connected : styles.disconnected}>
-                                {finalConnectionStatus ? '✅ En línea' : '❌ Desconectado'}
+                                {finalConnectionStatus ? ' Conectado' : ' Desconectado'}
                             </strong>
                         </p>
                         <p>
-                            <PiWifiHigh /> Señal Wi-Fi: 
+                            <label>
+                              <PiWifiHigh /> Señal Wi-Fi:
+                            </label>
                             <strong className={wifiStatus.style}>
                                 {wifiStatus.quality} ({rssi} dBm)
                             </strong>
                         </p>
                         <p>
-                            <PiThermometerSimple /> Temperatura del equipo: 
+                            <label><PiThermometerSimple /> Temperatura: </label>
                             <strong> {formattedTemp}°C</strong>
                         </p>
                         <p>
-                            <PiTimer /> Tiempo Activo : 
+                            <label><PiTimer /> Tiempo Activo : </label>
                             <strong> {uptime || '--'}</strong>
                         </p>
                     </div>
                 </div>
 
-          
             {/* Tarjeta: Historial Resumen*/}
-            <div className={styles.card}>
+            <div className={`${styles.card} ${styles['card-activity']}`}>
               <h2>Actividad Reciente</h2>
               <div className={styles.historyContainer}>
                 {history.length > 0 ? (
@@ -364,7 +385,7 @@ useEffect(() => {
             </div>
 
             {/* Tarjeta: Horarios Programados */}
-            <div className={styles.card}>
+            <div className={`${styles.card} ${styles['card-schedule']}`}>
                   <h2>Horarios Programados</h2>
                   <div className={styles.calendarContainer}>
                     {schedule.length > 0 ? (
@@ -400,7 +421,7 @@ useEffect(() => {
                       </ul>
                     </div>
                 </div>
-                
+
             </div>
         </div>
     </div>

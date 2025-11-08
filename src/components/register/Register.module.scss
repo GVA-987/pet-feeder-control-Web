@@ -2,17 +2,22 @@
 @use '../../scss/base/variables' as va;
 
 .loginContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   font-size: 1.5rem;
+  color: va.$title-form;
   background-color: va.$background-forms;
-  padding: 3rem;
-  max-width: 400px;
+  padding: 5rem;
+  max-width: 500px;
+  height: 80vh;
   margin: 5rem auto;
-  border-radius: 0 80px 0 80px;
-  box-shadow: 0 0 100px rgba(11, 171, 224, 0.9);
+  border-radius: 25px;
+  // box-shadow: 0 0 10px rgba(83, 85, 242, 0.7);
   font-family: va.$fuente_principal;
 
   h2 {
-    color: va.$title-form;
+    // color: va.$title-form;
     margin-bottom: 2rem;
     text-align: center;
   }
@@ -26,7 +31,7 @@
       height: 16px;
       animation: circle-loader-circ 1.2s linear infinite;
       margin: 0 auto;
-      cursor: not-allowed; // Cambia el cursor a un círculo con una línea diagonal
+      cursor: not-allowed;
       
     }
 
@@ -40,9 +45,9 @@
     }
   }
   .button:disabled {
-  background-color: #cccccc; // Color gris para indicar que está inactivo
-  cursor: not-allowed; // Cambia el cursor a un círculo con una línea diagonal
-  opacity: 0.7; // Reduce la opacidad
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
   .registerPrompt{
     text-align: center;
@@ -52,7 +57,7 @@
       font-weight: bold;
       &:hover{
         text-decoration: underline;
-        color: #71dcea;
+        color: #621ed6;
       }
     }
   }

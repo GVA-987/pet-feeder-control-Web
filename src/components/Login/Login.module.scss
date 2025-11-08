@@ -1,20 +1,27 @@
 @use 'sass:color';
+@use 'sass:math';
 @use '../../scss/base/variables' as va;
 @import '../../../node_modules/normalize.css/normalize.css';
 
 .loginContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   font-size: 1.5rem;
+  color: va.$title-form;
   background-color: va.$background-forms;
-  padding: 3rem;
-  max-width: 400px;
+  max-width: 500px;
+  height: 80vh;
+  padding: 5rem;
   margin: 5rem auto;
-  border-radius: 80px 0 80px 0;
-  border: 2px solid #57b9c6;
-  box-shadow: 0 0 100px rgba(11, 171, 224, 0.9);
+  border-radius: 25px;
+  // border: 2px solid #21038f;
+  // box-shadow: 0 0 10px rgba(83, 85, 242, 0.7);
   font-family: va.$fuente_principal;
+  border: 1.7px solid va.$border-color;
 
   h2 {
-    color: va.$title-form;
+    // color: va.$title-form;
     margin-bottom: 1.5rem;
     text-align: center;
     text-transform: uppercase;
@@ -27,8 +34,8 @@
     border-radius: 50%;
     padding: 5px;
     margin:  4rem auto 4rem;
-    width: 130px; // Adjust as needed
-    height: auto; // Maintain aspect ratio
+    width: 130px; 
+    height: auto; 
     transition: transform 0.5s ease-in-out;
     box-shadow: 0 4px 8px rgba(225, 218, 218, 0.716);
     &:hover{
@@ -46,7 +53,7 @@
       height: 16px;
       animation: circle-loader-circ 1.2s linear infinite;
       margin: 0 auto;
-      cursor: not-allowed; // Cambia el cursor a un círculo con una línea diagonal
+      cursor: not-allowed;
       
     }
 
@@ -60,9 +67,9 @@
     }
   }
   .button:disabled {
-  background-color: #cccccc; // Color gris para indicar que está inactivo
-  cursor: not-allowed; // Cambia el cursor a un círculo con una línea diagonal
-  opacity: 0.7; // Reduce la opacidad
+  background-color: #cccccc; 
+  cursor: not-allowed;
+  opacity: 0.7;
 }
   .registerPrompt{
     text-align: center;
@@ -72,7 +79,7 @@
       font-weight: bold;
       &:hover{
         text-decoration: underline;
-        color: #71dcea;
+        color: #621ed6;
       }
     }
   }

@@ -1,7 +1,7 @@
 import React from 'react';
-import { signOut } from 'firebase/auth'; // Importamos la función signOut
-import { auth } from '../../../firebase/firebase-config'; // Tu objeto de autenticación
-import { useAuth } from '../../../context/AuthContext'; // Para saber si hay un usuario
+import { signOut } from 'firebase/auth';
+import { auth } from '../../../firebase/firebase-config';
+import { useAuth } from '../../../context/AuthContext';
 import { FaSignOutAlt } from 'react-icons/fa';
 import { IoHomeOutline } from "react-icons/io5";
 import { HiOutlineAdjustments } from "react-icons/hi";

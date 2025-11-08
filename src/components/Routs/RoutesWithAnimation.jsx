@@ -22,7 +22,6 @@ function RoutesWithAnimation() {
     return (
     <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
-        {/* Rutas Públicas (no protegidas) */}
         <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
         <Route path="/" element={<PublicRoute><LoginPage /></PublicRoute>} />
@@ -71,9 +70,6 @@ function RoutesWithAnimation() {
                 </PrivateRoute>
             } 
         />
-        
-        {/* Ruta para capturar cualquier URL no definida */}
-        {/* <Route path="*" element={<NotFound />} /> */}
         </Routes>
     </AnimatePresence>
     );

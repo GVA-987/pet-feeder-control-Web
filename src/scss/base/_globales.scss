@@ -1,9 +1,9 @@
 @use 'variables' as va;
 
 html{
-    font-size: 62.5%; // 1rem = 10px
+    font-size: 62.5%; 
     box-sizing: border-box;
-    scrollbar-width: 8rem; // Firefox
+    scrollbar-width: 8rem;
     height: 100%;
 }
 
