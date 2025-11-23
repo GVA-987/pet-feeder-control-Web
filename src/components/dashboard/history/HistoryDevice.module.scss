@@ -92,7 +92,20 @@
         display: flex;
         justify-content: center;
         max-height: 50rem;
-            overflow-y: auto;
+        overflow-y: auto;
+        &::-webkit-scrollbar{
+            width: 8px;
+            height: 8px;
+        }
+        &::-webkit-scrollbar-track {
+            background: #2c2f33;
+            border-radius: 10px;
+        }
+        &::-webkit-scrollbar-thumb {
+            background-color: #55585c;
+            border-radius: 10px;
+            border: 2px solid #2c2f33;
+        }
         .historyTable {
             width: 100%;
             border-collapse: collapse;

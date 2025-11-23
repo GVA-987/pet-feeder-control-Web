@@ -17,19 +17,13 @@
     }
 }
 .HomeContainer {
-    padding: 40px;
+    padding: 0 40px 40px 40px;
     background-color: va.$background-color;
     min-height: 100vh;
     font-size: 1.5rem;
     color: va.$text;
 }
 
-.header {
-    margin-bottom: 20px;
-    h1 {
-        font-size: 2rem;
-    }
-}
 .connected {
     color: #27ae60;
 }
@@ -235,10 +229,23 @@
 
 //Historial
 .historyContainer{
-    max-height: 300px;
+    max-height: 330px;
     overflow-y: auto;
     margin-top: 18px;
     padding: 15px;
+    &::-webkit-scrollbar{
+        width: 8px;
+        height: 8px;
+    }
+    &::-webkit-scrollbar-track {
+        background: #2c2f33;
+        border-radius: 10px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: #55585c;
+        border-radius: 10px;
+        border: 2px solid #2c2f33;
+    }
     .historyItem{
         display: flex;
         justify-content: space-between;

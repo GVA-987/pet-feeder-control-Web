@@ -283,19 +283,6 @@ useEffect(() => {
 
   return (
     <div className={styles.HomeContainer}>
-        <header>
-          <h1>
-            Bienvenido {(currentUser.nombre && currentUser.apellido)
-            ? `${currentUser.nombre} ${currentUser.apellido}`
-            : currentUser.email} 👋🐾
-          </h1>
-        </header>
-
-        {/* {!finalConnectionStatus && (
-                <div className={styles.connectionAlert}>
-                    **¡Equipo Desconectado!** El equipo no ha reportado datos en más de 12 segundos. Funciones manuales desactivadas.
-                </div>
-            )} */}
 
         <div className={styles.contentHome}>
 

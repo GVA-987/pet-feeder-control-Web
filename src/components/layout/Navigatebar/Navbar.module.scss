@@ -39,7 +39,7 @@
         ul{
             list-style: none;
             padding: 0;
-            margin: 0;
+            margin-bottom: 100px;
             
             .navLink{
                 display: flex;
@@ -77,43 +77,4 @@
         }
         
     }
-    .btnOut{
-        .logoutButton {
-            margin-bottom: auto;
-            background: none;
-            font-size: 2.2rem;            
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            color: #e74c3c;
-            padding: 10px 20px 10px;
-            display: flex;
-            align-items: center;
-            width: 100%;
-            transition: background-color 0.3s ease, color 0.3s ease;
-    
-            svg {
-                margin-right: 15px;
-                font-size: 2.7rem;
-            }
-
-            .buttonText {
-                max-width: 0;
-                overflow: hidden; 
-                white-space: nowrap; 
-                transition: max-width 0.5s ease-out; 
-            }
-            
-            &:hover {
-                background-color: #f7cdcd;
-                color: #ff4d00;
-                border-radius: 30px;
-                
-                .buttonText {
-                    max-width: 200px; 
-                }
-            }
-        }
-    }
-    
 }

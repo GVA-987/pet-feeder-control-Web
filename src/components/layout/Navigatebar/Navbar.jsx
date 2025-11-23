@@ -1,19 +1,14 @@
 import React from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../../firebase/firebase-config';
-import { useAuth } from '../../../context/AuthContext';
-import { FaSignOutAlt } from 'react-icons/fa';
 import { IoHomeOutline } from "react-icons/io5";
 import { HiOutlineAdjustments } from "react-icons/hi";
-import { GrHistory } from "react-icons/gr";
-import { VscAccount } from "react-icons/vsc";
+import { GrHistory, GrConfigure } from "react-icons/gr";
 import { NavLink, useNavigate } from 'react-router-dom';
 import petLogo from '../../../assets/petlog.png';
 import styles from './Navbar.module.scss';
 
 const Navbar = () => {
-
-    const { currentUser } = useAuth();
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -37,20 +32,17 @@ const Navbar = () => {
                     <NavLink to="/home" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}><IoHomeOutline /> Inicio</NavLink>
                 </li>
                 <li>
-                    <NavLink to="/ConfDevice" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}><HiOutlineAdjustments /> Configuracion</NavLink>
+                    <NavLink to="/ConfDevice" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}><HiOutlineAdjustments /> Programación</NavLink>
                 </li>
                 <li>
                     <NavLink to="/history" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}><GrHistory /> Historial</NavLink>
                 </li>
                 <li>
-                    <NavLink to="/count" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}><VscAccount /> Cuenta</NavLink>
+                    <NavLink to="/count" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}><GrConfigure /> Ajustes</NavLink>
                 </li>
 
             </ul>
         </nav>
-        <div className={styles.btnOut}>
-            {currentUser && <button className={styles.logoutButton} onClick={handleLogout}><FaSignOutAlt /> <span className={styles.buttonText}>Cerrar sesion</span></button>}
-        </div>
     </aside>
     );
 };

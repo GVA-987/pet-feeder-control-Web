@@ -1,0 +1,19 @@
+@use '../../../scss/base/variables' as va;
+
+.contectHeader{
+    text-align: center;
+    padding: 15px;
+    background-color: va.$fond-bar;
+    position: fixed;
+    width: 82%;
+    border-bottom: 5px solid #8e37df;
+    .appHeader{
+        font-size: 1.2rem;
+        color: white;
+        text-align: center;
+        display: flex;
+        justify-content: space-between;
+        margin: 0 0 0 10px;
+        align-items: center;
+}
+}

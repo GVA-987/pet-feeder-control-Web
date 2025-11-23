@@ -1,5 +1,3 @@
-// src/components/RoutesWithAnimation.jsx
-
 import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
@@ -14,6 +12,7 @@ import HomePage from '../../pages/HomePage';
 import ConfigDevicePage from '../../pages/ConfigDevicePage';
 import CountOptionPage from '../../pages/CountOptionPage';
 import HistoryDevicePage from '../../pages/HistoryDevicePage';
+import configUser from '../confGen/userProfile/configUser';
 // import NotFound from '../pages/NotFound'; // Opcional: una página 404
 
 function RoutesWithAnimation() {

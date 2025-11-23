@@ -1,0 +1,107 @@
+@use 'sass:color';
+@use 'sass:math';
+
+.dropdownMenu {
+    position: absolute;
+    top: calc(100% + 10px); 
+    right: 0;
+    z-index: 100;
+    background-color: #2e2e2e; 
+    border-radius: 8px;
+    min-width: 200px;
+    padding: 10px 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+    button {
+        display: block;
+        width: 100%;
+        text-align: left;
+        outline: none;
+        padding: 8px 15px;
+        background: none;
+        border: none;
+        color: #ffffff;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #3f3f3f; 
+        }
+    }
+}
+.avatarPill {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    gap: 8px; 
+    padding: 8px;
+    cursor: pointer;
+    width: 180px;
+    background-color: transparent;
+    border: none; 
+    background-color: #383838; 
+    border: 2px solid #555; 
+    
+    border-radius: 50px; 
+    transition: background-color 0.2s, border-color 0.2s;
+
+    &:hover {
+        background-color: #4a4a4a;
+        border-color: #9c27b0; 
+    }
+}
+.avatarImg{
+    width: 50px;
+    height: 50px;
+    padding: 10px;
+    background-color: #9c27b0;
+    border-radius: 50px;
+}
+
+.divider {
+    height: 1px;
+    background-color: #4a4a4a;
+    margin: 5px 0;
+}
+
+.logoutButton {
+    color: #ff5252 !important;
+}
+
+.dropdownIcon {
+    transition: transform 0.2s;
+    font-size: 10px;
+    color: #ccc;
+    margin-left: 5px;
+}
+
+.dropdownMenu {
+    position: absolute;
+    top: calc(100% + 10px); 
+    right: 0;
+    z-index: 100;
+    background-color: #2e2e2e;
+    border-radius: 8px;
+    min-width: 200px;
+    padding: 10px 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+.modalActions{
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: end;
+    padding: 8px;
+    button{
+        outline: none;
+        border-style: none;
+        border-radius: 5px;
+        font-size: 15px;
+        padding: 8px;
+        cursor: pointer;
+    }
+    .primaryButton{
+        background-color: #ff4747;
+        color: #555;
+    }
+}
