@@ -10,7 +10,65 @@
     gap: 15px;
     padding: 15px;
     justify-content: center;
+    align-items: center;
+    h3 {
+        color: white;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    .daysSelectorContainer {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+
+        p {
+            color: va.$border-color-card;
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        .daysGrid {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+    }
+
+    // Botones de los días individuales
+    .dayButton {
+        width: 65px;
+        height: 65px;
+        border-radius: 50%;
+        border: 2px solid va.$border-color-card;
+        background-color: transparent;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 30px;
+
+        &:hover {
+            border-color: va.$color-btn;
+            transform: translateY(-2px);
+        }
+
+        // Clase que se aplica desde el JS cuando está seleccionado
+        &.dayActive {
+            background-color: va.$color-btn;
+            border-color: va.$color-btn;
+            box-shadow: 0 0 15px rgba(va.$color-btn, 0.4);
+            color: white;
+        }
+    }
     form{
+        width: 100%;
         display: grid;
         grid-template-columns: 1fr 1fr;
         text-align: center;
@@ -42,7 +100,10 @@
             }
         }
         button{
-            width: 50%;
+            grid-column: span 2; // Que el botón de guardar ocupe todo el ancho
+            width: fit-content;
+            margin: 20px auto;
+            justify-self: center;
         }
     }
 }
@@ -72,6 +133,19 @@
         background-color: #3498db;
         border-color: #3498db;
         color: white;
+    }
+}
+.cancelBtn{
+    padding: 1rem;
+    background-color: va.$color-btn;
+    color: white;
+    border: none;
+    border-radius: va.$border-radius;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: color.adjust(va.$color-btn, $lightness: -10%);
     }
 }
 

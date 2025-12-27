@@ -45,14 +45,25 @@ const HistoryPage = () => {
 
     // Funcion para formatear timestamps
     const formatTimestamp = (timestamp) => {
-        if (!timestamp || typeof timestamp !== 'number') {
+        if (!timestamp) return 'N/A';
+
+        let date;
+        if (timestamp.toDate && typeof timestamp.toDate === 'function') {
+            date = timestamp.toDate();
+        } 
+        else if (timestamp instanceof Date) {
+            date = timestamp;
+        }
+
+        else if (typeof timestamp === 'number') {
+            const dateInMs = timestamp < 10000000000 ? timestamp * 1000 : timestamp;
+            date = new Date(dateInMs);
+        } 
+        else {
             return 'N/A';
         }
 
-        const dateInMs = timestamp * 1000; // Convertir a milisegundos
-        const date = new Date(dateInMs);
-        
-        // formatear fecha en español y hora 24h 
+    // Formatear fecha en español y hora 24h
         return date.toLocaleString('es-ES', {
             year: 'numeric',
             month: 'short',
@@ -75,20 +86,26 @@ const HistoryPage = () => {
 
     // Datos para el gráfico de barras
     const dailyDataMap = hist.reduce((acc, item) => {
+        if (!item.timestamp) return acc;
 
-        const dateKey = new Date(item.timestamp * 1000).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+        // Convertir a objeto Date de forma segura
+        const dateObj = item.timestamp?.toDate ? item.timestamp.toDate() : new Date(item.timestamp * 1000);
         
-        acc[dateKey] = (acc[dateKey] || 0) + (parseInt(item.portion) || 0);
+        // Creamos una clave basada en la fecha pura (YYYY-MM-DD) para agrupar
+        const dateISO = dateObj.toISOString().split('T')[0]; 
+
+        acc[dateISO] = (acc[dateISO] || 0) + (parseInt(item.portion) || 0);
         return acc;
     }, {});
 
     // Convertimos el mapa a un array
     const barData = Object.keys(dailyDataMap).map(key => ({
         date: key,
-        portions: dailyDataMap[key]
-    })).sort((a, b) => new Date(a.date) - new Date(b.date));
+        portions: dailyDataMap[key],
+        rawDate: new Date(key)
+    })).sort((a, b) => a.rawDate - b.rawDate);
     
-    const recentBarData = barData.slice(-7); 
+    const recentBarData = barData.slice(-30); // Últimos 24 horas (asumiendo datos horarios)
     const kpis = { 
         totalDispensed: hist.length, 
         totalPortions: hist.reduce((sum, item) => sum + (parseInt(item.portion) || 0), 0)

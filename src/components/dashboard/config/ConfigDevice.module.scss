@@ -12,7 +12,7 @@
 .contentGrid {
     display: grid;
     grid-template-rows: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    gap: 25px;
 }
 
 .card {
@@ -21,34 +21,13 @@
     color: white;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    form{
-        display: grid;
-        grid-template-columns: repeat(1, 1fr);
-        gap: 15px;
-        padding: 0 60px 20px 60px;
-        label{
-            font-weight: bold;
-        }
-        button:nth-child(5){
-            grid-column: 1 / span 2;
-        }
-        input{
-            padding: 9px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-        button{
-            padding: 10px;
-            background-color: va.$color-btn_dashboard;
-            border: none;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            &:hover {
-                background-color: color.adjust(va.$color-btn_dashboard, $lightness: -10%);
-            }
-        }
+    display: flex;
+    flex-direction: column;
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 2rem;
     }
     .scheduleTableContainer {
     width: 100%;
@@ -60,69 +39,71 @@
     justify-content: center;
 }
 
+.daysList {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.dayBadge {
+    background-color: rgba(va.$color-btn_dashboard, 0.15);
+    color: va.$color-btn_dashboard;
+    border: 1px solid va.$color-btn_dashboard;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
 .scheduleTable {
-    width: 85%;
+    width: 100%;
     border-collapse: collapse;
     
-    table-layout: fixed;
-    border-radius: 12px; 
-    overflow: hidden;
-
     th, td {
         border-bottom: 1px solid #5e4975; 
         text-align: center;
-        padding: 17px;
+        padding: 15px;
     }
-
 
     thead th {
         background-color: #2a2a2a; 
         color: #f0f0f0;
-        font-size: 1.5rem;
+        font-size: 1.3rem;
         text-transform: uppercase;
-        font-weight: 600;
-        border-bottom: 2px solid var(--color-primary, #6d10b9);
     }
 
-    tbody td {
-        font-size: 1.4rem;
-        font-weight:lighter;
-    }
-    .timeCell {
-        width: 10%;
-    }
-
-    .portionCell {
-        text-align: center;
-        width: 10%;
-    }
-    
-    .dateCell {
-        width: 40%;
-    }
-
+    // Ajuste de anchos de columnas
+    .timeCell { width: 20%; }
+    .daysCell { width: 40%; }
+    .portionCell { width: 20%; }
     .actionCell {
-        text-align: center;
-        width: 15%;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+
+    button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.8rem; // Ajusta según necesites
+        display: flex;
+        align-items: center;
     }
+
+    .editButton {
+        color: #4caf50; // Verde para editar
+        &:hover { transform: scale(1.1); }
+    }
+
+    .deleteButton {
+        color: #f44336; // Rojo para eliminar
+        &:hover { transform: scale(1.1); }
+    }
+}
 
     .scheduleRow:hover {
-        background-color: #1e1e1e; 
-    }
-
-
-    .portionCell {
-        text-align: center;
-        width: 10%;
-    }
-    
-    .timeCell {
-        width: 15%;
-    }
-
-    .actionCell {
-        text-align: center;
-        width: 10%;
+        background-color: rgba(255, 255, 255, 0.05); 
     }
 }
 
@@ -131,13 +112,13 @@
     border: none;
     color: #f44336;
     cursor: pointer;
-    font-size: 3rem;
-    opacity: 0.8;
-    transition: opacity 0.2s;
+    font-size: 2.5rem;
+    display: flex;
+    margin: 0 auto;
+    transition: transform 0.2s;
     
     &:hover {
-        opacity: 1;
-        transform: scale(1.1);
+        transform: scale(1.2);
     }
 }
 }

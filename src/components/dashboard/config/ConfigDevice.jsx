@@ -5,7 +5,7 @@ import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove } from 'firebase/fi
 import DeviceLink from './deviceLink/DeviceLink';
 import { useAuth } from '../../../context/AuthContext';
 import { db } from '../../../firebase/firebase-config';
-import { MdDelete } from 'react-icons/md';
+import { MdDelete, MdEdit } from 'react-icons/md';
 import moment from 'moment';
 
 
@@ -14,6 +14,8 @@ const ConfigDevice = () => {
     const { currentUser } = useAuth();
     const [loading, setLoading] = useState(true);
     const [schedules, setSchedules] = useState([]);
+    const [editingSchedule, setEditingSchedule] = useState(null);
+    const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
     // Escuchar horarios en tiempo real
     useEffect(() => {
@@ -23,12 +25,14 @@ const ConfigDevice = () => {
             const unsubscribe = onSnapshot(deviceRef, (docSnap) => {
                 if (docSnap.exists()) {
                     const deviceData = docSnap.data();
-                    setSchedules(deviceData.schedule || []);
-                    setLoading(false);
+                    const sortedSchedules = (deviceData.schedule || []).sort((a, b) => a.time.localeCompare(b.time));
+                    setSchedules(sortedSchedules);
+                    
                 } else {
                     console.log("No se encontró Datos de tu Dispositivo.");
                     setLoading(false);
                 }
+                setLoading(false);
             });
 
             return () => unsubscribe();
@@ -36,33 +40,24 @@ const ConfigDevice = () => {
     }, [currentUser]);
 
     const handleDeleteSchedule = async (scheduleToDelete) => {
-        if (!currentUser || !currentUser.deviceId) return;  
+        // if (!window.confirm("¿Estás seguro de eliminar este horario?")) return;
         try {
             const deviceRef = doc(db, 'devicesPet', currentUser.deviceId);
             await updateDoc(deviceRef, {
                 schedule: arrayRemove(scheduleToDelete)
             });
-            console.log("Horario eliminado con éxito.");
         } catch (error) {
-            console.error('Error al eliminar el horario:', error);
-            alert('Hubo un error al eliminar el horario.');
+            console.error('Error al eliminar:', error);
         }
     };
 
-    const formatVigenciaRange = (startDate, endDate) => {
-        const start = moment(startDate, "YYYY-MM-DD");
-        const end = moment(endDate, "YYYY-MM-DD");
-
-        if (start.format('MMM YYYY') === end.format('MMM YYYY')) {
-            return `${start.format('D')} - ${end.format('D [de] MMM')}`;
-        }
-
-        return `${start.format('D [de] MMM')} - ${end.format('D [de] MMM')}`; 
+    const handleEditClick = (schedule) => {
+        setEditingSchedule(schedule);
+        // Opcional: Hacer scroll hacia el formulario para que el usuario sepa que cargó
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    if (loading) {
-        return <div>Cargando horarios...</div>;
-    }
+    if (loading) return <div className={styles.loader}>Cargando configuración...</div>;
 
     return (
         <div className={styles.container}>
@@ -70,55 +65,66 @@ const ConfigDevice = () => {
         <div className={styles.contentGrid}>
         {/* Tarjeta de Horarios Programados */}
         <div className={styles.card}>
-            <ScheduleManager />
+            <ScheduleManager 
+                editData = {editingSchedule}
+                onClearEdit = {() => setEditingSchedule(null)}
+            />
         </div>
         <div className={styles.card}>
-            <h2>Horarios Programados</h2>
-            {/* Lista de Horarios */}
+                    <h2 className={styles.title}>Horarios Programados</h2>
                     <div className={styles.scheduleTableContainer}>
                         {schedules.length > 0 ? (
-                    <table className={styles.scheduleTable}>
-                        <thead>
-                            <tr>
-                                <th className={styles.timeCell}>Hora</th> 
-                                <th className={styles.portionCell}>Porción</th>
-                                <th className={styles.dateCell}>Vigencia</th>
-                                <th className={styles.actionCell}>Acción</th>
-                            </tr>
-                        </thead>
-            
-                        <tbody>
-                            {schedules.map((schedule, index) => (
-                                <tr key={index} className={styles.scheduleRow}>
-                                    <td className={styles.timeCell}>
-                                        <strong>{schedule.time}</strong>
-                                    </td>
-                                    <td className={styles.portionCell}>
-                                        {schedule.portion}
-                                    </td>
-                                    <td className={styles.dateCell}>
-                                        {formatVigenciaRange(schedule.startDate, schedule.endDate)}
-                                    </td>
-                                    <td className={styles.actionCell}>
-                                        <button
-                                            onClick={() => handleDeleteSchedule(schedule)}
-                                            className={styles.deleteButton}
-                                            title="Eliminar Horario"
-                                        >
-                                            <MdDelete />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                ) : (
-                    <p className={styles.noScheduleMessage}>
-                        No hay horarios programados.
-                    </p>
-                )}
+                            <table className={styles.scheduleTable}>
+                                <thead>
+                                    <tr>
+                                        <th>Hora</th>
+                                        <th>Días</th>
+                                        <th>Porción</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {schedules.map((schedule, index) => (
+                                        <tr key={index} className={styles.scheduleRow}>
+                                            <td className={styles.timeCell}>
+                                                <strong>{schedule.time}</strong>
+                                            </td>
+                                            <td className={styles.daysCell}>
+                                                <div className={styles.daysList}>
+                                                    {schedule.days?.map(d => (
+                                                        <span key={d} className={styles.dayBadge}>
+                                                            {dayNames[d]}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </td>
+                                            <td className={styles.portionCell}>
+                                                {schedule.portion}
+                                            </td>
+                                            <td className={styles.actionCell}>
+                                                <button 
+                                                    onClick={() => handleEditClick(schedule)}
+                                                    className={styles.editButton}
+                                                    title="Editar"
+                                                >
+                                                    <MdEdit /> {/* Importa MdEdit de react-icons/md */}
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteSchedule(schedule)}
+                                                    className={styles.deleteButton}
+                                                >
+                                                    <MdDelete />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <p className={styles.noScheduleMessage}>No hay rutinas activas.</p>
+                        )}
+                    </div>
                 </div>
-        </div>
         </div>
     </div>
     );

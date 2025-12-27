@@ -31,15 +31,20 @@ const getWifiQuality = (rssi) => {
     }
 };
 
+const getOnline = (online) => {
+  if (online === "conectado") {
+    return { style: styles.connected};
+  }
+  else if (online === "desconectado") {
+    return { style: styles.disconnected};
+  }
+  return { style: styles.unknown};
+}
+
 const formatTemperature = (temp) => {
     if (temp === '--') return '--';
     return parseFloat(temp).toFixed(1);
 };
-
-
-
-
-
 
 function HomeControl() {
 
@@ -149,13 +154,34 @@ useEffect(() => {
 
   // Obtener historial de dispensado
   const formatTimestamp = (timestamp) => {
-    if (!timestamp || typeof timestamp !== 'number') {
-        return 'N/A';
-    }
-    const dateInMs = timestamp * 1000;
-    const date = new Date(dateInMs);
-    return date.toLocaleString();
-  };
+        if (!timestamp) return 'N/A';
+
+        let date;
+        if (timestamp.toDate && typeof timestamp.toDate === 'function') {
+            date = timestamp.toDate();
+        } 
+        else if (timestamp instanceof Date) {
+            date = timestamp;
+        }
+
+        else if (typeof timestamp === 'number') {
+            const dateInMs = timestamp < 10000000000 ? timestamp * 1000 : timestamp;
+            date = new Date(dateInMs);
+        } 
+        else {
+            return 'N/A';
+        }
+
+    // Formatear fecha en español y hora 24h
+        return date.toLocaleString('es-ES', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        });
+    };
 
   // Función para dispensar alimento
   const handleDispenseNow = async (e) => {
@@ -213,7 +239,9 @@ useEffect(() => {
     const chipTemp = rtdbData?.temperature || "--";
     const uptime = rtdbData?.uptime || "--";
     const schedule = deviceData.schedule || [];
+    const online = rtdbData?.online;
 
+    const onlineStatus = getOnline(online);
     const wifiStatus = getWifiQuality(rssi);
     const formattedTemp = formatTemperature(chipTemp);
 
@@ -325,8 +353,8 @@ useEffect(() => {
                     <div className={styles.deviceStatus}>
                         <p>
                             Estado de conexión:
-                            <strong className={finalConnectionStatus ? styles.connected : styles.disconnected}>
-                                {finalConnectionStatus ? ' Conectado' : ' Desconectado'}
+                            <strong className={onlineStatus.style || ''}>
+                                {online || 'Cargando...'}
                             </strong>
                         </p>
                         <p>
