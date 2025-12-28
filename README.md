@@ -1,12 +1,30 @@
-# React + Vite
+# 🐾 PetFeeder Web System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema de control y monitoreo web para el dosificador automático de mascotas. Esta interfaz permite la gestión remota, visualización de historial y envío de comandos en tiempo real.
 
-Currently, two official plugins are available:
+## 🚀 Tecnologías Utilizadas
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 18** + **Vite**: Para una interfaz rápida y reactiva.
+- **SASS**: Preprocesador de CSS para estilos modulares y mantenibles.
+- **Firebase**:
+  - **Realtime Database/Firestore**: Para la sincronización de comandos y lectura de estados.
+  - **Authentication**: Gestión de acceso de usuarios.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🏗️ Arquitectura del Proyecto
+
+Este repositorio es solo el **Frontend**, pero forma parte de un ecosistema IoT integrado:
+
+1.  **Frontend (Este repo):** Interfaz de usuario donde se activan dispensaciones y se consulta el historial. Se comunica directamente con Firebase.
+2.  **[Backend Node.js](https://github.com/GVA-987/pet-feeder-backend.git):** Actúa como puente (bridge) entre Firebase y el protocolo MQTT.
+3.  **[Firmware ESP32](https://github.com/GVA-987/device-pet-feederESP32.git):** Suscrito a HiveMQ para recibir órdenes y ejecutar la acción física del motor.
+
+---
+
+## ✨ Funcionalidades
+
+- **Panel de Control:** Activación manual del motor para alimentar a la mascota de acuerdo a una porcion programada.
+- **Programacion de horarios:** Se programan horarios para alimentar a la mascota de forma automatico de acuerdo a una porcion programada.
+- **Lectura de Historial:** Visualización de registros de alimentación guardados en Firebase.
+- **Estado del Dispositivo:** Indicadores de conexión y sensores en tiempo real.
