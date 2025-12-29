@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import styles from './ConfigDevice.module.scss';
 import ScheduleManager from './Schedule/ScheduleManager';
 import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
-import DeviceLink from './deviceLink/DeviceLink';
 import { useAuth } from '../../../context/AuthContext';
 import { db } from '../../../firebase/firebase-config';
 import { MdDelete, MdEdit } from 'react-icons/md';
@@ -61,7 +60,7 @@ const ConfigDevice = () => {
 
     return (
         <div className={styles.container}>
-
+            <h3>Programacion de Horarios</h3>
         <div className={styles.contentGrid}>
         {/* Tarjeta de Horarios Programados */}
         <div className={styles.card}>

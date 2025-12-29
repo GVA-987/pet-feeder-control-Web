@@ -1,0 +1,88 @@
+@use '../../../scss/base/variables' as va;
+@use "sass:color";
+@use 'sass:math';
+
+$bg-dark: #121212;
+$card-bg: #1e1e1e;
+$primary-purple: #8a4fff;
+$accent-blue: #3498db;
+$danger-red: #e74c3c;
+$text-main: #ffffff;
+$text-dim: #b3b3b3;
+
+// .containerCount {
+//     padding: 0px 50px 0px 50px;
+//     background-color: va.$background-color;
+//     min-height: 100vh;
+//     font-size: 1.8rem;
+//     color: white;
+// }
+// .card {
+//     background-color: va.$background-card;
+//     padding: 50px;
+//     border-radius: 20px;
+//     margin-top: 30px;
+// }
+
+// .containerDeviceList {
+//     display: flex;
+//     justify-content: space-around;
+//     align-items: center;
+//     margin-bottom: 20px;
+// }
+
+.containerConfig {
+    padding: 0px 50px 0px 50px;
+    background-color: va.$background-color;
+    min-height: 100vh;
+    font-size: 1.8rem;
+    color: white;
+    margin-bottom: 30px;
+
+    h3 {
+        margin-bottom: 2rem;
+        font-size: 2.2rem;
+        text-align: center;
+    }
+}
+
+.contentGrid{
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 3rem;
+    margin: 0 auto;
+}
+
+.card {
+    background: va.$background-card;
+    border-radius: 12px;
+    padding: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 5px;
+
+    h3 {
+        color:  #8a4fff;
+        text-align: left;
+        margin-bottom: 3.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 0.5rem;
+    }
+
+    p {
+        color:#767676;
+        font-size: 1.2rem;
+        margin: 2rem 0 2rem 0;
+        padding: 5px;
+        
+    }
+    .deviceInfo {
+        font-size: 2rem;
+        margin: 1rem 0 2rem 0;
+        padding: 1rem 3.5rem 1rem 3.5rem;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+    }
+}

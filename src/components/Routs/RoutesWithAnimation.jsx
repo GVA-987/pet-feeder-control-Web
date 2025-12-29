@@ -7,7 +7,6 @@ import RegisterPage from '../../pages/RegisterPage';
 import PrivateRoute from './PrivateRoute';
 import PublicRoute from './PublicRoute';
 import MainLayout from '../layout/MainLayout';
-import DeviceLink from '../dashboard/config/deviceLink/DeviceLink';
 import HomePage from '../../pages/HomePage';
 import ConfigDevicePage from '../../pages/ConfigDevicePage';
 import CountOptionPage from '../../pages/CountOptionPage';

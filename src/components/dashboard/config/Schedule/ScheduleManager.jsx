@@ -96,20 +96,12 @@ const ScheduleManager = ({ editData, onClearEdit }) => {
             };
 
             if (editData) {
-                // Lógica de Edición: 
-                // 1. Obtenemos el documento actual
-                // 2. Filtramos el array para quitar el viejo y poner el nuevo
-                // (Esto es más seguro que arrayRemove si cambiaste algún campo)
                 const docSnap = await getDoc(deviceRef);
                 if (docSnap.exists()) {
                 const currentSchedules = docSnap.data().schedule || [];
                 
-                // Buscamos por ID y reemplazamos solo ese
                 const updatedSchedules = currentSchedules.map(item => {
-                     // Si el item no tiene ID, lo ignoramos para no pisar datos por error
                     if (!item.id || !editData.id) return item; 
-
-                     // Solo si los IDs coinciden, devolvemos el objeto editado
                     return item.id === editData.id ? scheduleObject : item;
                 });
                 
@@ -118,7 +110,6 @@ const ScheduleManager = ({ editData, onClearEdit }) => {
                 
             }
             } else {
-                // Lógica de Creación normal
                 
                 await updateDoc(deviceRef, { schedule: arrayUnion(scheduleObject) });
             }
@@ -132,11 +123,8 @@ const ScheduleManager = ({ editData, onClearEdit }) => {
     };
 
     const handleCancel = () => {
-    // 1. Limpiamos los inputs
     setNewSchedule({ time: '', portion: '' });
-    // 2. Desmarcamos los días
     setSelectedDays([]);
-    // 3. Le avisamos al padre que ya no estamos editando para que quite el objeto editData
     onClearEdit(); 
 };
     

@@ -66,7 +66,7 @@ const DeviceLink = () => {
     return (
         <div className={styles.conatiner}>
             <form className={styles.formDevice} onSubmit={handleLinkDevice}>
-                <h2>Enlazar Dosificadora</h2>
+                <h2>Enlazar Equipo</h2>
                 <p>Introduce el ID unico de su equipo</p>
                 {error && <p className={styles.error}>{error}</p>}
                 <input type="text" value={deviceId} onChange={(e) => setDeviceId(e.target.value)}
