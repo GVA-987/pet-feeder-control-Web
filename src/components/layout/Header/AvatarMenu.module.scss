@@ -1,12 +1,14 @@
 @use 'sass:color';
 @use 'sass:math';
+@use '../../../../node_modules/normalize.css/normalize.css';
+@use '../../../scss/base/variables' as va;
 
 .dropdownMenu {
     position: absolute;
     top: calc(100% + 10px); 
     right: 0;
     z-index: 100;
-    background-color: #2e2e2e; 
+    // background-color: #2e2e2e; 
     border-radius: 8px;
     min-width: 200px;
     padding: 10px 0;
@@ -20,7 +22,7 @@
         padding: 8px 15px;
         background: none;
         border: none;
-        color: #ffffff;
+        color: va.$color-text;
         cursor: pointer;
 
         &:hover {
@@ -39,28 +41,29 @@
     width: 180px;
     background-color: transparent;
     border: none; 
-    background-color: #383838; 
-    border: 2px solid #555; 
+    background-color: color.scale(va.$tertiary-color, $lightness: -20%); 
+    border: 2px solid va.$tertiary-color; 
+    color: va.$color-text;
     
     border-radius: 50px; 
     transition: background-color 0.2s, border-color 0.2s;
 
     &:hover {
-        background-color: #4a4a4a;
-        border-color: #9c27b0; 
+        background-color: color.scale(va.$tertiary-color, $lightness: -9%);
+        border-color: color.scale(va.$primary-color, $lightness: 10%); 
     }
 }
 .avatarImg{
     width: 50px;
     height: 50px;
     padding: 10px;
-    background-color: #9c27b0;
+    background-color: color.scale(va.$primary-color, $lightness: -30%);
     border-radius: 50px;
 }
 
 .divider {
     height: 1px;
-    background-color: #4a4a4a;
+    background-color: va.$tertiary-color;
     margin: 5px 0;
 }
 
@@ -71,7 +74,7 @@
 .dropdownIcon {
     transition: transform 0.2s;
     font-size: 10px;
-    color: #ccc;
+    color: color.scale(va.$tertiary-color, $lightness: 25%);
     margin-left: 5px;
 }
 
@@ -80,11 +83,11 @@
     top: calc(100% + 10px); 
     right: 0;
     z-index: 100;
-    background-color: #2e2e2e;
+    background-color: color.scale(va.$secondary-color, $lightness: 15%);
     border-radius: 8px;
     min-width: 200px;
     padding: 10px 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    // box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 .modalActions{
     display: flex;
@@ -102,6 +105,6 @@
     }
     .primaryButton{
         background-color: #ff4747;
-        color: #555;
+        color: va.$tertiary-color;
     }
 }

@@ -1,3 +1,6 @@
+@use '../../../scss/base/variables' as va;
+@use 'sass:color';
+@use 'sass:math';
 
 .modalOverlay {
     position: fixed; 
@@ -16,11 +19,11 @@
 }
 
 .modalContent {
-    background-color: #2d1f3c; 
+    background-color: color.scale(va.$primary-color, $lightness: -68%); 
     border-radius: 10px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-    padding: 50px;
-    color: #ffffff;
+    padding: 35px;
+    color: va.$color-text;
     max-height: 90vh;
     overflow-y: auto;
     font-size: 1.4rem;
@@ -51,7 +54,7 @@
 .closeButton {
     background: none;
     border: none;
-    color: #ffffff;
+    color: va.$color-text;
     font-size: 2em;
     cursor: pointer;
     line-height: 1;

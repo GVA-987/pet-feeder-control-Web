@@ -7,22 +7,22 @@
     align-items: center;
     outline: none;
     border-radius: va.$border-radius;
-    background-color: #211B27;
+    background-color: color.scale(va.$secondary-color, $lightness: 15%);
     padding: 1.3rem;
     margin-bottom: 2rem;  
     &:focus-within {
-        border: 1px solid va.$color-btn;
-        border-radius: va.$border-radius;
+        border: 1px solid va.$primary-color;
+        border-radius: 15px;
         // border-color: color.scale(#dfe9ed, $lightness: -10%);
         transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out
     }
     input{
         &::placeholder {
-            color: #868a8d;
+            color: color.adjust(va.$secondary-color, $lightness: 50%);
         }
     }
     .icon {
-        color: #c8d1d6;
+        color: color.adjust(va.$secondary-color, $lightness: 80%);
         margin-right: 0.75rem;
         font-size: 1.5rem;
     }
@@ -33,7 +33,7 @@
         outline: none;
         background-color: transparent;
         font-size: 1rem;
-        color: #f8f8f8;
+        color: va.$color-text;
         font-size: 1.3rem;
     }
 }

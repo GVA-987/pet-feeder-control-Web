@@ -5,9 +5,9 @@
 
 
 .sidebar{
-    background-color: va.$fond-bar;
+    background-color: color.mix(va.$primary-color, va.$secondary-color, 7%);
     font-size: 2.3rem;
-    color: va.$text;
+    color: va.$color-text;
     width: 300px;
     height: 100vh;
     padding: 20px;
@@ -35,7 +35,6 @@
         }
     }
     .navPet{
-        
         ul{
             list-style: none;
             padding: 0;
@@ -46,12 +45,12 @@
                 align-items: center;
                 padding: 33px 35px;
                 text-decoration: none;
-                color: va.$text-color;
+                color: va.$color-text;
                 border-radius: 30px;
                 margin-bottom: 25px;
                 transition: background-color 0.3s ease, color 0.3s ease;
                 &:hover{
-                    background-color: va.$color-hover;
+                    background-color: color.scale(va.$tertiary-color, $lightness: -40%);
                     color: #f5f6f7;
                     transform: scale(1.05);
                 }
@@ -62,14 +61,14 @@
         
             }
             .active{
-                background-color: va.$color-active;
-                color: va.$text-color;
+                background-color: color.scale(va.$primary-color, $lightness: -30%);
+                color: va.$color-text;
                 cursor: default;
             }
             .active:hover {
                 // background-color: color.adjust(va.$color-btn, $lightness: -10%);
-                background-color: va.$color-active; 
-                color: va.$text-color; 
+                background-color: color.scale(va.$primary-color, $lightness: -30%);
+                color: va.$color-text; 
                 transform: none; 
             }
             

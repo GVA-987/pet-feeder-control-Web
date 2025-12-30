@@ -1,15 +1,17 @@
 @use '../../../scss/base/variables' as va;
+@use 'sass:color';
+@use 'sass:math';
 
 .contectHeader{
     text-align: center;
     padding: 15px;
-    background-color: va.$fond-bar;
+    background-color: color.mix(va.$primary-color, va.$secondary-color, 7%);
     position: fixed;
     width: 82%;
-    border-bottom: 5px solid #8e37df;
+    border-bottom: 5px solid va.$primary-color;
     .appHeader{
         font-size: 1.2rem;
-        color: white;
+        color: va.$color-text;
         text-align: center;
         display: flex;
         justify-content: space-between;

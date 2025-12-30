@@ -8,8 +8,8 @@
   flex-direction: column;
   justify-content: space-between;
   font-size: 1.5rem;
-  color: va.$title-form;
-  background-color: va.$background-forms;
+  color: va.$color-text;
+  background-color: color.scale(va.$secondary-color, $lightness: 7%);
   max-width: 500px;
   height: 80vh;
   padding: 5rem;
@@ -18,7 +18,7 @@
   // border: 2px solid #21038f;
   // box-shadow: 0 0 10px rgba(83, 85, 242, 0.7);
   font-family: va.$fuente_principal;
-  border: 1.7px solid va.$border-color;
+  border: 1.7px solid color.scale(va.$primary-color, $lightness: 15%);
 
   h2 {
     // color: va.$title-form;
@@ -30,14 +30,14 @@
   img {
 
     display: block;
-    background-color: #c4d6d9;
+    background-color: color.scale(va.$primary-color, $lightness: 75%);
     border-radius: 50%;
     padding: 5px;
     margin:  4rem auto 4rem;
     width: 130px; 
     height: auto; 
     transition: transform 0.5s ease-in-out;
-    box-shadow: 0 4px 8px rgba(225, 218, 218, 0.716);
+    box-shadow: 0 6px 10px va.$tertiary-color;
     &:hover{
       transform: scale(1.08);
       transition: transform 0.5s ease-in-out;
@@ -46,7 +46,7 @@
   }
   button{
     .circle-loader{
-      border: 2px solid rgba(255, 255, 255, 0.3);
+      border: 2px solid color.scale(va.$tertiary-color, $lightness: 30%);
       border-left-color: #fff;
       border-radius: 50%;
       width: 16px;
@@ -67,19 +67,19 @@
     }
   }
   .button:disabled {
-  background-color: #cccccc; 
-  cursor: not-allowed;
-  opacity: 0.7;
-}
+    background-color: va.$tertiary-color; 
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
   .registerPrompt{
     text-align: center;
     a{
       text-decoration: none;
-      color: va.$color-btn;
+      color: va.$primary-color;
       font-weight: bold;
       &:hover{
         text-decoration: underline;
-        color: #621ed6;
+        color: color.adjust(va.$primary-color, $lightness: 15%);
       }
     }
   }

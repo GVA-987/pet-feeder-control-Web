@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 //import logo from '../../assets/petlog.png';
 import styles from './Home.module.scss';
 import {useAuth} from '../../../context/AuthContext'
-import {doc, getDoc, onSnapshot, updateDoc, serverTimestamp, collection, addDoc, getDocs, where, query, orderBy} from 'firebase/firestore';
+import {doc, getDoc, onSnapshot, updateDoc, serverTimestamp, collection, addDoc, getDocs, where, query, orderBy, Timestamp} from 'firebase/firestore';
 import { getDatabase, ref, onValue, off, update } from "firebase/database";
 import { db, rtdb } from '../../../firebase/firebase-config';
 import { PiWifiHighFill, PiWifiSlashFill, PiThermometerSimple, PiTimer, PiWifiHigh } from "react-icons/pi";
@@ -72,9 +72,14 @@ function HomeControl() {
               setPetData(useDataDB.pets || { name: '', breed: '', age: '', weight: '' });
           }
 
+          const inicioHoy = new Date();
+          inicioHoy.setHours(0, 0, 0, 0);
+          const inicioHoyTimestamp = Timestamp.fromDate(inicioHoy);
+
           const hist = query(
             collection(db, 'dispense_history'),
             where('deviceId', '==', currentUser.deviceId),
+            where('timestamp', '>=', inicioHoyTimestamp),
             orderBy('timestamp', 'desc')
           );
 
@@ -174,9 +179,9 @@ useEffect(() => {
 
     // Formatear fecha en español y hora 24h
         return date.toLocaleString('es-ES', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
+            // year: 'numeric',
+            // month: 'short',
+            // day: 'numeric',
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
@@ -384,12 +389,9 @@ useEffect(() => {
                   <div>
                     {history.map((item) => (
                       <div key={item.id} className={styles.historyItem}>
-                        <p>
-                          {formatTimestamp(item.timestamp)}: <strong>{item.type === 'manual' ? 'Dispensado Manual' : 'Dispensado Programada'}</strong>
-                        </p>
-                        <p>
-                          {item.portion} porcion(es)
-                        </p>
+                        <p> {formatTimestamp(item.timestamp)} </p>
+                        <strong>{item.type === 'manual' ? 'Dispensado Manual' : 'Dispensado Programada'}</strong>
+                        <p> {item.portion} porcion(es) </p>
                       </div>
                     ))}
                   </div>

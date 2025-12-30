@@ -4,8 +4,8 @@
 @use 'sass:math';
 
 .noDevice{
-    background-color: va.$background-color;
-    color: #999;
+    background-color: color.scale(va.$secondary-color, $lightness: 4%);
+    color: color.scale(va.$tertiary-color, $lightness: 15%);
     min-height: 100vh;
     font-size: 3rem;
     display: flex;
@@ -18,10 +18,13 @@
 }
 .HomeContainer {
     padding: 0 40px 40px 40px;
-    background-color: va.$background-color;
+    background-color: color.scale(va.$secondary-color, $lightness: 4%);
     min-height: 100vh;
     font-size: 1.5rem;
-    color: va.$text;
+    color: va.$color-text;
+    h2{
+        color: color.scale(va.$primary-color, $lightness: 25%);
+    }
 }
 
 .connected {
@@ -98,11 +101,10 @@
     background-color: va.$background-card;
     padding: 25px;
     border-radius: 10px;
-    //box-shadow: 0 0 16px rgba(255, 253, 253, 0.534);
     display: flex;
     flex-direction: column;
     text-align: center;
-    // border: 1px solid va.$border-color-card;
+    border: 1.5px solid color.scale(va.$primary-color, $lightness: -65%);
     h2{
         text-align: center;
         text-transform: uppercase;
@@ -128,13 +130,13 @@
             align-items: center;
             background-color: va.$background-card;
             border-style: none;
-            border-bottom: 4px solid va.$border-color-card;
-            color: white;
+            border-bottom: 2px solid va.$tertiary-color;
+            color: va.$color-text;
             font-size: 1.7rem;
             margin-bottom: 20px;
             transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
             &:focus-within {
-                border-bottom: 4px solid va.$color-btn;
+                border-bottom: 2px solid va.$primary-color;
                 transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out
 
             }
@@ -210,7 +212,7 @@
 // }
 
 .dispenseButton:hover {
-    background-color: color.adjust(va.$color-btn_dashboard, $lightness: -10%);
+    background-color: color.adjust(va.$primary-color, $lightness: -10%);
 }
 
 .deviceStatus {
@@ -223,7 +225,6 @@
 .wifiIcon {
     text-align: center;
     font-size: 2.5rem;
-    color: #3498db;
     vertical-align: middle;
 }
 
@@ -253,6 +254,10 @@
         padding: 8px 0;
         font-size: 15px;
         border-bottom: 2px solid #6d6b6b;
+        strong{
+            color: color.scale(va.$primary-color, $lightness: 50%);
+            text-transform: uppercase;
+        }
     }
 }
 // Horarios Programados
