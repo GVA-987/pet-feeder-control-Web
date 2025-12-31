@@ -1,3 +1,7 @@
+@use '../../../scss/base/variables' as va;
+@use 'sass:color';
+@use 'sass:math';
+
 .circleBar {
     // transform: rotate(-90deg);
     transform-origin: center;
@@ -5,13 +9,13 @@
 
 .circleBg {
     fill: none;
-    stroke: #444; 
+    stroke: color.mix(va.$primary-color, va.$secondary-color, 33%); 
     stroke-width: 3; /* Ajusta el grosor */
 }
 
 .circle {
     fill: none;
-    stroke: var(--color-primary, #7b38cd);
+    stroke: color.adjust(va.$primary-color, $lightness: 5%);
     stroke-width: 3; 
     transition: stroke-dasharray 0.5s linear;
 }

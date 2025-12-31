@@ -1,5 +1,6 @@
 
 @use '../../../../scss/base/variables' as va;
+@use '../../../../scss/base/mixins' as m;
 @use "sass:color";
 @use 'sass:math';
 
@@ -12,9 +13,9 @@
     justify-content: center;
     align-items: center;
     h3 {
-        color: white;
+        color: va.$color-text;
         text-align: center;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
     }
     .daysSelectorContainer {
         width: 100%;
@@ -24,7 +25,7 @@
         gap: 20px;
 
         p {
-            color: va.$border-color-card;
+            // color: white;
             font-size: 1.2rem;
             margin: 0;
         }
@@ -38,14 +39,13 @@
         }
     }
 
-    // Botones de los días individuales
     .dayButton {
         width: 65px;
         height: 65px;
         border-radius: 50%;
-        border: 2px solid va.$border-color-card;
+        border: 2px solid va.$tertiary-color;
         background-color: transparent;
-        color: white;
+        color: va.$color-text;
         font-weight: bold;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -55,16 +55,14 @@
         margin-bottom: 30px;
 
         &:hover {
-            border-color: va.$color-btn;
+            border-color: va.$primary-color;
             transform: translateY(-2px);
         }
-
-        // Clase que se aplica desde el JS cuando está seleccionado
         &.dayActive {
-            background-color: va.$color-btn;
-            border-color: va.$color-btn;
-            box-shadow: 0 0 15px rgba(va.$color-btn, 0.4);
-            color: white;
+            background-color: va.$primary-color;
+            border-color: va.$primary-color;
+            box-shadow: 0 0 15px rgba(va.$primary-color, 0.4);
+            color: va.$color-text;
         }
     }
     form{
@@ -80,21 +78,21 @@
             }
         }
         input{
-            background-color: va.$fond-bar;
+            background-color: va.$background-card;
             outline: none;
             text-align: center;
-            // border-style: none;
+
             border: none;
-            border-radius: 0;
-            border-bottom: 4px solid va.$border-color-card;
-            width: 60%;
+            border-radius: 15px;
+            border: 2px solid va.$tertiary-color;
+            width: 70%;
             padding: 15px;
-            font-size: 2rem;
-            color: white;
+            font-size: 1rem;
+            color: va.$color-text;
             margin: 15px;
             transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
             &:focus-within {
-                border-bottom: 4px solid va.$color-btn;
+                border: 2px solid va.$primary-color;
                 transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out
 
             }
@@ -105,6 +103,12 @@
             margin: 20px auto;
             justify-self: center;
         }
+        @include m.telefono{
+            input{
+                width: 80%;
+                font-size: 2rem;
+            }
+        }
     }
 }
 .daySelection {
@@ -113,39 +117,17 @@
     gap: 5px;
 }
 
-.dayButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 1px solid #ddd;
-    cursor: pointer;
-    background-color: #fff;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
-    
-    input[type="checkbox"] {
-        display: none;
-    }
-
-    &:has(input[type="checkbox"]:checked) {
-        background-color: #3498db;
-        border-color: #3498db;
-        color: white;
-    }
-}
 .cancelBtn{
     padding: 1rem;
-    background-color: va.$color-btn;
+    background-color: va.$primary-color;
     color: white;
     border: none;
-    border-radius: va.$border-radius;
+    border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 
     &:hover {
-        background-color: color.adjust(va.$color-btn, $lightness: -10%);
+        background-color: color.adjust(va.$primary-color, $lightness: -10%);
     }
 }
 
@@ -160,7 +142,7 @@
 }
 
 .scheduleTable {
-    width: 85%;
+    width:85%;
     border-collapse: collapse;
     
     table-layout: fixed;
@@ -168,16 +150,16 @@
     overflow: hidden;
 
     th, td {
-        border-bottom: 1px solid #5e4975; 
+        border-bottom: 1px solid va.$tertiary-color; 
         text-align: center;
         padding: 17px;
     }
 
 
     thead th {
-        background-color: #2a2a2a; 
-        color: #f0f0f0;
-        font-size: 1.5rem;
+        background-color: va.$tertiary-color; 
+        color: va.$color-text;
+        font-size: 1.8rem;
         text-transform: uppercase;
         font-weight: 600;
         border-bottom: 2px solid var(--color-primary, #6d10b9);

@@ -3,17 +3,15 @@
 import React from 'react';
 import styles from './CircularProgressBar.module.scss';
 
-const CircularProgressBar = ({ percentage, size = 36, strokeWidth = 3.37 }) => {
+const CircularProgressBar = ({ percentage, size, strokeWidth = 3.37, className }) => {
     
     // Para una barra simple, 100 es la circunferencia total en esta escala de viewBox="0 0 36 36".
     const normalizedRadius = 16; 
 
     return (
         <svg 
-            className={styles.circleBar} 
+            className={`${styles.circleBar} ${className || ''}`}
             viewBox="0 0 36 36"
-            width={size}
-            height={size}
         >
             {/* Fondo */}
             <path

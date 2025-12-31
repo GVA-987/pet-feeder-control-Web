@@ -1,5 +1,6 @@
 @use 'sass:color';
 @use '../../scss/base/variables' as va;
+@use '../../scss//base//mixins' as m;
 
 .loginContainer {
   display: flex;
@@ -9,6 +10,7 @@
   color: va.$color-text;
   background-color: color.scale(va.$secondary-color, $lightness: 7%);
   padding: 5rem;
+  width: 80%;
   max-width: 500px;
   height: 80vh;
   margin: 5rem auto;
@@ -60,6 +62,9 @@
         text-decoration: underline;
         color: color.adjust(va.$primary-color, $lightness: 15%);
       }
+    }
+    @include m.telefono {
+      font-size: 16px;
     }
   }
 }

@@ -60,7 +60,6 @@ const ConfigDevice = () => {
 
     return (
         <div className={styles.container}>
-            <h3>Programacion de Horarios</h3>
         <div className={styles.contentGrid}>
         {/* Tarjeta de Horarios Programados */}
         <div className={styles.card}>

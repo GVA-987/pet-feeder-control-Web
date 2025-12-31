@@ -6,6 +6,7 @@ import { db, rtdb } from '../../../../firebase/firebase-config';
 import styles from './DeviceLink.module.scss';
 import Modal from '../../../common/modal/Modal';
 import { useNavigate } from 'react-router-dom';
+import Form from '../../../common/form/Form';
 
 
 
@@ -63,19 +64,29 @@ const DeviceLink = () => {
         }
     }
 
+    const linkDeviceFields = [
+        {
+            type: 'text',
+            placeholder: 'Ej: ESP-PET-####',
+            value: deviceId,
+            onChange: (e) => setDeviceId(e.target.value),
+            required: true,
+        }
+    ];
+
     return (
         <div className={styles.conatiner}>
-            <form className={styles.formDevice} onSubmit={handleLinkDevice}>
                 <h2>Enlazar Equipo</h2>
                 <p>Introduce el ID unico de su equipo</p>
                 {error && <p className={styles.error}>{error}</p>}
-                <input type="text" value={deviceId} onChange={(e) => setDeviceId(e.target.value)}
-                placeholder="Ej: ESP-PET-####" required/>
-
-                <button type="submit" disabled={loading}>
-                    {loading ? 'Enlazando...': 'Enlazar'}
-                </button>
-            </form>
+                <Form 
+                fields={linkDeviceFields}
+                onSubmit={handleLinkDevice}
+                submitButtonText={loading ? 'Enlazando...' : 'Enlazar'}
+                // Puedes pasar una prop adicional si tu componente Form maneja el estado "disabled"
+                disabled={loading}
+                
+            />
         </div>
     )
 

@@ -3,32 +3,23 @@
 @use 'sass:math';
 
 .containerHistory {
-    padding: 20px 50px; 
-    background-color: va.$background-color;
-    color: white;
+    padding: 0px 50px 50px 50px; 
+    background-color: color.scale(va.$secondary-color, $lightness: 4%);
+    color: va.$color-text;
     min-height: 100vh;
     p{
         font-size: 2.2rem;
     }
 }
 
-.headerHistory {
-    display: flex;
-    justify-content: space-between; 
-    align-items: center;
-    margin-bottom: 30px;
 
-    h1 {
-        font-size: 2.7rem; 
-        margin: 0;
-    }
-}
 
 .reportButton {
-    background-color: va.$color-primary; 
-    color: va.$text-color; 
+    background-color: va.$primary-color; 
+    color: va.$color-text; 
     border: none;
     padding: 10px 20px;
+    margin-bottom: 20px;
     border-radius: 8px;
     cursor: pointer;
     font-size: 1.5rem;
@@ -37,7 +28,7 @@
     
     &:hover:not(:disabled) {
         // background-color: color.darken(va.$color-primary, 10%);
-        background-color: color.adjust(va.$color-primary, $lightness: -10%);
+        background-color: color.adjust(va.$primary-color, $lightness: -10%);
     }
     &:disabled {
         opacity: 0.5;
@@ -57,11 +48,11 @@
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    border-left: 5px solid va.$color-primary;
+    border-left: 5px solid va.$primary-color;
     
     h3 {
         font-size: 1.2rem;
-        color: #b0b0b0; 
+        color: color.scale(va.$tertiary-color, $lightness: 40%);
         margin: 0 0 5px 0;
         font-weight: 500;
         text-transform: uppercase;
@@ -70,7 +61,7 @@
     .kpiValue {
         font-size: 2.4rem;
         font-weight: bold;
-        color: #ffffff; 
+        color: va.$color-text;
         margin: 0;
         line-height: 1.2;
     }
@@ -98,32 +89,32 @@
             height: 8px;
         }
         &::-webkit-scrollbar-track {
-            background: #2c2f33;
+            background: color.scale(va.$secondary-color, $lightness: 10%);
             border-radius: 10px;
         }
         &::-webkit-scrollbar-thumb {
-            background-color: #55585c;
+            background-color: va.$tertiary-color;
             border-radius: 10px;
-            border: 2px solid #2c2f33;
+            border: 2px solid va.$tertiary-color;
         }
         .historyTable {
             width: 100%;
             border-collapse: collapse;
             table-layout: fixed;
-            color: #e0d7d7;
+            color: color.adjust(va.$color-text, $lightness: -30%);
             font-size: 1rem;
             
 
             th, td {
                 padding: 20px;
                 text-align: left;
-                border-bottom: 1px solid #2a2a2a; 
+                border-bottom: 1px solid color.scale(va.$tertiary-color, $lightness: -20%);
                 font-size: 1.4rem;
             }
 
             thead th {
-                background-color: #1e1e1e;
-                color: #ffffff;
+                background-color: color.scale(va.$secondary-color, $lightness: 20%);;
+                color: va.$color-text;
                 font-weight: 600;
                 text-transform: uppercase;
                 font-size: 1.3rem;
@@ -132,7 +123,7 @@
             .historyRow {
                 transition: background-color 0.2s;
                 &:hover {
-                    background-color: #2a2a2a;
+                    background-color: color.scale(va.$secondary-color, $lightness: 5%);
                 }
                 &:last-child td {
                     border-bottom: none;
@@ -145,8 +136,8 @@
             }
 
             .timeIcon {
-                font-size: 1.7rem;
-                color: va.$color-primary;
+                font-size: 2.5rem;
+                color: va.$primary-color;
                 margin-right: 8px;
                 vertical-align: middle;
             }
@@ -172,7 +163,12 @@
     }
 }
 
-
+.chartCard {
+    h3{
+        font-size: 1.8rem;
+        text-transform: uppercase;
+    }
+}
 
 .noData {
     display: flex;
@@ -183,7 +179,7 @@
     background-color: va.$background-card;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    color: #999;
+    color: va.$tertiary-color;
     
     svg {
         font-size: 3rem;

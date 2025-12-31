@@ -151,8 +151,7 @@ const handleGenerateReport = () => {
 
     return (
         <div className={styles.containerHistory}>
-            <header className={styles.headerHistory}>
-                <h1>Historial de Dispensación</h1>
+            
                 <button 
                     className={styles.reportButton} 
                     onClick={handleGenerateReport}
@@ -160,7 +159,6 @@ const handleGenerateReport = () => {
                 >
                     Generar Reporte 📄
                 </button>
-            </header>
 
             {loading ? (
                 <p>Cargando historial...</p>
@@ -224,7 +222,7 @@ const handleGenerateReport = () => {
 
                     <div className={styles.chartCard}>
                         <h3>Desglose de Dispensación (Eventos)</h3>
-                        <ResponsiveContainer width="100%" height={250}>
+                        <ResponsiveContainer width="100%" height={300}>
                             <PieChart>
                                 <Pie
                                     data={pieData}
@@ -232,7 +230,7 @@ const handleGenerateReport = () => {
                                     nameKey="name"
                                     cx="50%"
                                     cy="50%"
-                                    outerRadius={80}
+                                    outerRadius={100}
                                     labelLine={false}
                                     fill="#8884d8"
                                 >
@@ -258,7 +256,7 @@ const handleGenerateReport = () => {
                     </div>
                                 
                     <div className={styles.chartCard} style={{ gridColumn: 'span 2' }}>
-                        <h3>Porciones Dispensadas (Últimos 7 Días)</h3>
+                        <h3>Porciones Dispensadas</h3>
                         <ResponsiveContainer width="100%" height={250}>
                             <BarChart data={recentBarData} margin={{ top: 15, right: 20, left: -20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#333" />
@@ -269,7 +267,7 @@ const handleGenerateReport = () => {
                                     labelStyle={{ color: '#fff' }}
                                 />
                                 <Legend />
-                                <Bar dataKey="portions" name="Porciones" fill="#10b981" radius={[10, 10, 0, 0]} />
+                                <Bar dataKey="portions" name="Porciones" fill="#10b985" radius={[10, 10, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>

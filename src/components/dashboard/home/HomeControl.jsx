@@ -323,23 +323,13 @@ useEffect(() => {
           <div className={`${styles.card} ${styles['card-food-control']}`}>
             <h2>Nivel de Comida y Control</h2>
             <div className={styles.foodControls}>
-              <CircularProgressBar percentage={foodLevel} size={380} />
+              <CircularProgressBar percentage={foodLevel} className={styles.myProgress} />
               <FormFood
                 fields={fieldFood}
                 onSubmit={handleDispenseNow}
                 submitButtonText= "Dosificar"
                 // isLoading={loading}
               />
-              {/* <div className={styles.inputPortion}>
-                <InputPortion 
-                  // label="Porciones a dispensar:"
-                  placeholder='Porcion a dispensar'
-                  value={foodPortion}
-                  onChange={(e) => setFoodPortion(e.target.value)}
-                  required
-                />
-              </div>
-                <button onClick={handleDispenseNow} className={styles.dispenseButton}>Alimentar Manual</button> */}
             </div>
           </div>
 

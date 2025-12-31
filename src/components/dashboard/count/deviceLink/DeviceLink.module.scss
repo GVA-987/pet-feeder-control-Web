@@ -1,49 +1,17 @@
-.formContainer {
-    text-align: center;
-}
+@use '../../../../scss//base//variables' as va;
+@use "sass:color";
+@use 'sass:math';
 
-.formDevice {
-    margin: 0 auto;
-}
-
-.formDevice h2 {
-    margin-bottom: 10px;
-}
-
-.formDevice p {
-    margin-bottom: 20px;
-    color: #666;
-}
-
-.formDevice input {
-    width: 100%;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-.formDevice button {
-    width: 100%;
-    padding: 12px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1.8rem;
-    transition: background-color 0.3s ease;
-}
-
-.formDevice button:hover {
-    background-color: #2980b9;
-}
-
-.formDevice .error {
+.container {
+    .error {
     color: #e74c3c;
     margin-bottom: 15px;
 }
 
-.formDevice .success {
+.success {
     color: #2ecc71;
     margin-bottom: 15px;
 }
+}
+
+

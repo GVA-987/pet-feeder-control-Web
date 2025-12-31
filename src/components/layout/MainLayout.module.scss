@@ -1,16 +1,30 @@
-/* src/components/layout/MainLayout.module.scss */
+@use '../../scss/base/variables' as va;
+@use '../../scss//base//mixins' as m;
+@use 'sass:color';
+@use 'sass:math';
 
 .mainLayout {
     display: flex;
-    height: 100%;
+    flex-direction: column;
+    height: 100vh;
     width: 100%;
     .contentArea {
         flex-grow: 1; 
-        overflow-y: auto;
-        margin-left: 300px;
+        margin-left: 0px;
         padding: 0;
         main{
-            margin-top: 180px;
+            margin-top: 100px;
+            padding: 2rem;
         }
+    }
+
+    @include m.tablet {
+        flex-direction: row;
+        .contentArea {
+        margin-left: 300px; 
+        main {
+            margin-top: 120px; 
+        }
+    }
     }
 }
