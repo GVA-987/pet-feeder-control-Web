@@ -68,7 +68,6 @@ const [status, setStatus] = useState(null);
 
     return (
     <div className={styles.containerConfig}>
-            <h3 className={styles.mainTitle}>Configuracion del Equipo</h3>
         <div className={styles.contentGrid}>
 
             {/* Tarjeta de Dispositivos */}

@@ -1,4 +1,5 @@
 @use '../../../scss/base/variables' as va;
+@use '../../../scss/base/mixins' as m;
 @use 'sass:color';
 @use 'sass:math';
 
@@ -22,11 +23,17 @@
     background-color: color.scale(va.$primary-color, $lightness: -68%); 
     border-radius: 10px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-    padding: 35px;
+    padding: 25px;
     color: va.$color-text;
     max-height: 90vh;
+    width: 80%;
     overflow-y: auto;
-    font-size: 1.4rem;
+    font-size: 1.1rem;
+    @include m.telefono{
+        padding: 35px;
+        font-size: 1.5rem;
+        width: 50%;
+    }
 }
 
 .medium {
@@ -47,7 +54,10 @@
     
     h2 {
         margin: 0;
-        font-size: 1.5em;
+        font-size: 1.2em;
+        @include m.telefono{
+            font-size: 1.6rem;
+        }
     }
 }
 

@@ -76,7 +76,7 @@ const DeviceLink = () => {
 
     return (
         <div className={styles.conatiner}>
-                <h2>Enlazar Equipo</h2>
+                <h4>Enlazar Equipo</h4>
                 <p>Introduce el ID unico de su equipo</p>
                 {error && <p className={styles.error}>{error}</p>}
                 <Form 

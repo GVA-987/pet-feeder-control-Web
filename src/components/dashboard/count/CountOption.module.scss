@@ -1,38 +1,44 @@
 @use '../../../scss/base/variables' as va;
+@use '../../../scss/base/mixins' as m;
 @use "sass:color";
 @use 'sass:math';
 
 .containerConfig {
-    padding: 0px 50px 0px 50px;
+    padding: 10px;
     background-color: color.scale(va.$secondary-color, $lightness: 4%);
-    min-height: 100vh;
-    font-size: 1.8rem;
     color: va.$color-text;
-    margin-bottom: 30px;
-
-    h3 {
-        margin-bottom: 2rem;
-        font-size: 2.3rem;
-        text-align: center;
-        text-transform: uppercase;
+    margin-bottom: 60px;
+    @include m.tablet{
+        padding: 30px 50px 0px 50px;
+        min-height: 100vh;
     }
 }
 
 .contentGrid{
     display: grid;
-    grid-template-columns: 1fr 1fr; 
+    grid-template-columns: 1fr; 
     gap: 3rem;
     margin: 0 auto;
+    @include m.telefono{
+        gap: 3rem;
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 .card {
     background: va.$background-card;
     border-radius: 12px;
-    padding: 40px;
+    padding: 30px;
     border: 1px solid color.scale(va.$primary-color, $lightness: -65%);
     transition: transform 0.2s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin: 5px;
+    margin: 0;
+    font-size: 1.5rem;
+    form{
+        input{
+            height: 18px !important;
+        }
+    }
 
     h3 {
         color:  va.$primary-color;
@@ -40,21 +46,43 @@
         margin-bottom: 3.5rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         padding-bottom: 0.5rem;
+        font-size: 2.2rem;
     }
 
     p {
         color: color.scale(va.$tertiary-color, $lightness: 15%);
-        font-size: 1.2rem;
+        font-size: 1.5rem;
         margin: 2rem 0 2rem 0;
         padding: 5px;
+        label, strong{
+            font-size: 1.36rem;
+        }
         
     }
     .deviceInfo {
         font-size: 2rem;
         margin: 1rem 0 2rem 0;
-        padding: 1rem 3.5rem 1rem 3.5rem;
         color: va.$color-text;
         display: flex;
         justify-content: space-between;
+    }
+    @include m.tablet{
+        padding: 40px;
+        margin: 5px;
+        font-size: 2rem;
+        h3{
+            font-size: 2.7rem;
+        }
+        h4{
+            font-size: 2rem;
+        }
+        p{
+            label, strong{
+                font-size: 1.9rem;
+            }
+        }
+        .deviceInfo{
+            justify-content: space-between;
+        }
     }
 }

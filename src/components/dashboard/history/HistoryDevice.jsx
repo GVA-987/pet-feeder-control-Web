@@ -167,7 +167,7 @@ const handleGenerateReport = () => {
                     {/* Sección de KPIs */}
                     <div className={styles.kpiContainer}>
                         <div className={styles.kpiCard}>
-                            <h3>Total Dispensado (Eventos)</h3>
+                            <h3>Total Dispensado</h3>
                             <p className={styles.kpiValue}>{kpis.totalDispensed}</p>
                         </div>
                         <div className={styles.kpiCard}>
@@ -221,7 +221,7 @@ const handleGenerateReport = () => {
                 <div className={styles.chartContainer}>
 
                     <div className={styles.chartCard}>
-                        <h3>Desglose de Dispensación (Eventos)</h3>
+                        <h3>Desglose de Dispensación</h3>
                         <ResponsiveContainer width="100%" height={300}>
                             <PieChart>
                                 <Pie

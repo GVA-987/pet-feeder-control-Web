@@ -8,30 +8,34 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   color: va.$color-text;
   background-color: color.scale(va.$secondary-color, $lightness: 7%);
   width: 80%;
   max-width: 500px;
-  height: 80vh;
-  padding: 5rem;
+  height: 65vh;
+  padding: 4rem;
   margin: 5rem auto;
   border-radius: 25px;
   // border: 2px solid #21038f;
   // box-shadow: 0 0 10px rgba(83, 85, 242, 0.7);
   font-family: va.$fuente_principal;
   border: 1.7px solid color.scale(va.$primary-color, $lightness: 15%);
-
-  @include m.tablet {
-    margin: 5rem auto;
-    padding: 4rem;
-    font-size: 1.4rem;
+  form{
+    input{
+      font-size: 1.2rem !important;
+    }
   }
 
   @include m.telefono {
     padding: 5rem;     // Recuperamos tu diseño original aquí
-    height: 70vh;      // Recuperamos la altura fija solo en pantallas grandes
+    height: 80vh;      // Recuperamos la altura fija solo en pantallas grandes
     font-size: 1.5rem;
+    form{
+      input{
+        font-size: 1.4rem !important;
+      }
+    }
   }
 
   h2 {
@@ -48,7 +52,7 @@
     border-radius: 50%;
     padding: 5px;
     margin:  4rem auto 4rem;
-    width: 150px; 
+    width: 100px; 
     height: auto; 
     transition: transform 0.5s ease-in-out;
     box-shadow: 0 6px 10px va.$tertiary-color;
@@ -58,7 +62,7 @@
       // box-shadow: 0 9px 13px rgba(225, 218, 218, 0.716) 0.5s;
     }
     @include m.telefono {
-      width: 100px;
+      width: 150px;
     }
   }
   button{

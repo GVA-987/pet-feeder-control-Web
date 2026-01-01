@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   color: va.$color-text;
   background-color: color.scale(va.$secondary-color, $lightness: 7%);
   padding: 5rem;
@@ -24,6 +24,11 @@
     margin-bottom: 2rem;
     text-align: center;
   }
+  form{
+      input{
+        font-size: 1.2rem !important;
+      }
+  }
   
   button{
     .circle-loader{
@@ -33,7 +38,6 @@
       width: 16px;
       height: 16px;
       animation: circle-loader-circ 1.2s linear infinite;
-      margin: 0 auto;
       cursor: not-allowed;
       
     }
@@ -54,6 +58,7 @@
 }
   .registerPrompt{
     text-align: center;
+    margin-top: 0;
     a{
       text-decoration: none;
       color: va.$primary-color;
@@ -63,8 +68,16 @@
         color: color.adjust(va.$primary-color, $lightness: 15%);
       }
     }
-    @include m.telefono {
-      font-size: 16px;
+  }
+  @include m.telefono {
+    font-size: 1.5rem;
+    form{
+      input{
+        font-size: 1.4rem !important;
+      }
+    }
+    .registerPrompt{
+      margin-top: 0;
     }
   }
 }

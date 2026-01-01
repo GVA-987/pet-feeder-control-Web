@@ -9,7 +9,7 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
-    padding: 15px;
+    padding: 5px;
     justify-content: center;
     align-items: center;
     h3 {
@@ -40,8 +40,8 @@
     }
 
     .dayButton {
-        width: 65px;
-        height: 65px;
+        width: 45px;
+        height: 45px;
         border-radius: 50%;
         border: 2px solid va.$tertiary-color;
         background-color: transparent;
@@ -52,7 +52,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 30px;
+        margin-bottom: 15px;
+        font-size: 2rem;
 
         &:hover {
             border-color: va.$primary-color;
@@ -64,14 +65,18 @@
             box-shadow: 0 0 15px rgba(va.$primary-color, 0.4);
             color: va.$color-text;
         }
+        @include m.telefono{
+            width: 65px;
+        height: 65px;
+            font-size: 2rem;
+        }
     }
     form{
         width: 100%;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
         text-align: center;
         gap: 15px;
         align-items: center;
+        margin-top: 20px;
         .contenerInput{
             icon{
                 color: white;
@@ -81,15 +86,14 @@
             background-color: va.$background-card;
             outline: none;
             text-align: center;
-
             border: none;
             border-radius: 15px;
             border: 2px solid va.$tertiary-color;
             width: 70%;
             padding: 15px;
-            font-size: 1rem;
+            font-size: 1.5rem;
             color: va.$color-text;
-            margin: 15px;
+            margin: 15px 15px 40px 15px;
             transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
             &:focus-within {
                 border: 2px solid va.$primary-color;
@@ -100,14 +104,21 @@
         button{
             grid-column: span 2; // Que el botón de guardar ocupe todo el ancho
             width: fit-content;
-            margin: 20px auto;
+            margin: 0 20px 20px 20px;
             justify-self: center;
         }
         @include m.telefono{
+            display: grid;
+            grid-template-columns: 1fr 1fr ;
             input{
                 width: 80%;
                 font-size: 2rem;
             }
+            button{
+                font-size: 2rem;
+                padding: 15px;
+            }
+            
         }
     }
 }
@@ -128,6 +139,10 @@
 
     &:hover {
         background-color: color.adjust(va.$primary-color, $lightness: -10%);
+    }
+    @include m.telefono{
+        padding: 15px;
+        font-size: 2rem;
     }
 }
 
