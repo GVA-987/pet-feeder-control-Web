@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-//import logo from '../../assets/petlog.png';
 import styles from './Home.module.scss';
 import {useAuth} from '../../../context/AuthContext'
 import {doc, getDoc, onSnapshot, updateDoc, serverTimestamp, collection, addDoc, getDocs, where, query, orderBy, Timestamp} from 'firebase/firestore';
@@ -7,15 +6,12 @@ import { getDatabase, ref, onValue, off, update } from "firebase/database";
 import { db, rtdb } from '../../../firebase/firebase-config';
 import { PiWifiHighFill, PiWifiSlashFill, PiThermometerSimple, PiTimer, PiWifiHigh } from "react-icons/pi";
 import { MdAccessTime, MdInfoOutline } from 'react-icons/md';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import CircularProgressBar from '../../common/CircularProgressBar/CircularProgressBar';
-import InputPortion from '../../common/input/InputForm';
 import FormFood from '../../common/form/Form';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 moment.locale('es');
-const localizer = momentLocalizer(moment);
 
 const getWifiQuality = (rssi) => {
     if (!rssi || rssi === '--') return { quality: 'Desconocido', level: 0, style: styles.unknown, icon: <PiWifiSlashFill /> };
@@ -29,6 +25,25 @@ const getWifiQuality = (rssi) => {
     } else {
         return { quality: 'Débil', level: 1, style: styles.poor, icon: <PiWifiSlashFill /> };
     }
+};
+
+const getNextDosage = (schedules) => {
+    if (!schedules || schedules.length === 0) return null;
+
+    const ahora = moment();
+    const diaHoy = ahora.day(); // 0 = Domingo, 1 = Lunes...
+    const horariosDeHoy = schedules.filter(s => s.days && s.days.includes(diaHoy));
+
+    if (horariosDeHoy.length === 0) return null;
+
+    const proximos = horariosDeHoy
+        .map(s => ({
+            ...s,
+            fechaMoment: moment(s.time, "HH:mm")
+        }))
+        .filter(s => s.fechaMoment.isAfter(ahora))
+        .sort((a, b) => a.fechaMoment.diff(b.fechaMoment));
+    return proximos.length > 0 ? proximos[0] : null;
 };
 
 const getOnline = (online) => {
@@ -56,7 +71,8 @@ function HomeControl() {
   const [petData, setPetData] = useState({ name: '', breed: '', age: '', weight: '' });
   const [currentTime, setCurrentTime] = useState(Date.now());
   const [foodPortion, setFoodPortion] = useState('');
-
+  const DIAS_SEMANA = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+  
   //obtener datos de firestore
   useEffect(() => {
     if(currentUser && currentUser.deviceId) {
@@ -231,6 +247,22 @@ useEffect(() => {
     return <div className={styles.noData}>No se pudo cargar la informacion del dispositivo</div>
   }
 
+  // Calcular el porcentaje de comida de la tolba
+    const calculateFoodPercentage = (rawValue) => {
+      if (rawValue === null || rawValue === undefined || rawValue === '--') return 0;
+      
+      const DISTANCIA_LLENO = 200.0; // Mayor valor mas comida
+      const DISTANCIA_VACIO = 65.0; // Menor valor menos comida
+
+      if (rawValue <= DISTANCIA_VACIO) return 0;
+      
+      if (rawValue >= DISTANCIA_LLENO) return 100;
+
+      const percentage = ((rawValue - DISTANCIA_VACIO) / (DISTANCIA_LLENO - DISTANCIA_VACIO)) * 100;
+      
+      return Math.round(percentage);
+    };
+
     const lastSeenSeconds = rtdbData?.lastSeen || 0; // en segundos
     const lastSeenMs = lastSeenSeconds * 1000; // convertir a milisegundos
     const CONNECTION_THRESHOLD_MS = 16000; // 16 segundos
@@ -239,7 +271,8 @@ useEffect(() => {
     const finalConnectionStatus = isRecentlySeen && isDataAvailable;  // estado final de conexión
     // const foodLevel = 50;
     
-    const foodLevel = rtdbData?.foodLevel || 0;
+    const rawFoodLevel = rtdbData?.foodLevel || 0;
+    const foodLevel = calculateFoodPercentage(rawFoodLevel);
     const rssi = rtdbData?.rssi || "--";
     const chipTemp = rtdbData?.temperature || "--";
     const uptime = rtdbData?.uptime || "--";
@@ -249,56 +282,14 @@ useEffect(() => {
     const onlineStatus = getOnline(online);
     const wifiStatus = getWifiQuality(rssi);
     const formattedTemp = formatTemperature(chipTemp);
+    const ahora = moment(currentTime);
+    const diaHoy = ahora.day();
+    const proximaComida = getNextDosage(schedule);
+    const eventosHoy = schedule
+        .filter(item => item.days && item.days.includes(diaHoy))
+        .sort((a, b) => moment(a.time, "HH:mm").diff(moment(b.time, "HH:mm")));
 
-
-  // Componente para los eventos del calendario
-  const EventComponent = ({ event }) => {
-  return (
-    <div
-      style={{
-          backgroundColor: event.color,
-          color: "#fff",
-          borderRadius: "6px",
-          padding: "2px 4px",
-          textAlign: "center",
-          fontSize: "0.75rem",
-          fontWeight: "500",
-        }}
-      >
-        {event.title}
-      </div>
-    );
-
-  };
-
-  // Colores para el evento del calendario
-  const colors = [
-    "#84caf8", "#7dc488", "#d18e7d", "#9C27B0", "#F44336",
-    "#00BCD4", "#8BC34A", "#FF5722", "#3F51B5", "#CDDC39",
-    "#E91E63", "#795548"
-  ];
-
-  // Transformar los horarios al formato de eventos del calendario
-  const calendarEvents = schedule.map((item, index) => {
-
-    const start = moment(item.startDate + ' ' + item.time, "YYYY-MM-DD HH:mm").toDate();
-    const end = moment(item.endDate + ' ' + item.time, "YYYY-MM-DD HH:mm").toDate();
-
-    // Asegurarse de que las fechas de inicio y fin sean válidas
-    if (!start || !end) {
-      console.error("Fechas inválidas:", item);
-      return null;
-    }
-    // Retorna el evento del calendario, asegurándose de que tenga un ID único
-    return {
-      id: index,
-      title: `${item.portion} porción(es)`,
-      start: start,
-      end: end,
-      color: colors[index % colors.length]
-    };
-  });
-
+  
   // input porcion comida
   const fieldFood = [
     {
@@ -312,7 +303,6 @@ useEffect(() => {
       unstyled: true,
     }
   ]
-
 
   return (
     <div className={styles.HomeContainer}>
@@ -392,42 +382,38 @@ useEffect(() => {
             </div>
 
             {/* Tarjeta: Horarios Programados */}
-            <div className={`${styles.card} ${styles['card-schedule']}`}>
-                  <h2>Horarios Programados</h2>
-                  <div className={styles.calendarContainer}>
-                    {schedule.length > 0 ? (
-                      <Calendar
-                        localizer={localizer}
-                        events={calendarEvents}
-                        startAccessor="start"
-                        endAccessor="end"
-                        components={{
-                          event: EventComponent
-                        }}
-                        defaultView="month"
-                        toolbar={true}
-                        popup={true}
-                        messages={{
-                          next: "Sig.",
-                          previous: "Ant.",
-                          today: "Hoy",
-                          month: "Mes",
-                        }}
-                      />
+            <div className={`${styles.card} ${styles['card-schedule-today']}`}>
+                {/* <h2>Agenda de Hoy ({DIAS_SEMANA[diaHoy]})</h2> */}
+                <h2>Agenda de Hoy</h2>
+                    
+                    {proximaComida ? (
+                        <div className={styles.nextEvent}>
+                            <MdAccessTime className={styles.iconTime} />
+                            <div>
+                                <p>Siguiente dosis a las:</p>
+                                <h3>{proximaComida.time} hrs</h3>
+                                <span>{proximaComida.portion} porción(es)</span>
+                            </div>
+                        </div>
                     ) : (
-                      <p className={styles.noSchedule}>No hay horarios programados.</p>
+                        <p className={styles.allDone}>Comidas completadas por hoy.</p>
                     )}
-                    <div className={styles.legend}>
-                      <ul>
-                        {calendarEvents.map((ev) => (
-                          <li key={ev.id}>
-                            <span className={styles.colorDot} style={{background: ev.color}}></span>
-                            {moment(ev.start).format('HH:mm')} - {ev.title}
-                          </li>
-                        ))}
-                      </ul>
+
+                    <div className={styles.todayList}>
+                        {eventosHoy.map((item, index) => {
+                            const haPasado = moment(item.time, "HH:mm").isBefore(ahora);
+                            return (
+                                <div key={index} className={`${styles.todayItem} ${haPasado ? styles.passed : ''}`}>
+                                    <span className={styles.timeBadge}>{item.time}</span>
+                                    <div className={styles.itemInfo}>
+                                        <strong>{item.portion} porción(es)</strong>
+                                        <small>{haPasado ? 'Entregado' : 'Pendiente'}</small>
+                                    </div>
+                                    {haPasado && <span className={styles.check}>✔</span>}
+                                </div>
+                            );
+                        })}
                     </div>
-                </div>
 
             </div>
         </div>
