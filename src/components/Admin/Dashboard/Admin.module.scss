@@ -1,0 +1,44 @@
+.adminContainer {
+    .header {
+        margin-bottom: 2rem;
+        h1 { font-size: 2.5rem; color: #333; }
+        p { color: #666; }
+    }
+
+    .statsGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .statCard {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .statTitle {
+            display: block;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            color: #888;
+        }
+
+        .statValue {
+            display: block;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .statIcon {
+            font-size: 2.5rem;
+            opacity: 0.3;
+        }
+    }
+}

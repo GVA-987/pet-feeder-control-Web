@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { onAuthStateChanged, getAuth, setPersistence, signInWithEmailAndPassword, browserSessionPersistence, signOut } from '../../node_modules/firebase/auth';
+import { onAuthStateChanged, getAuth, setPersistence, signInWithEmailAndPassword, browserSessionPersistence, signOut } from 'firebase/auth';
 import { doc, getDoc, onSnapshot, collection } from 'firebase/firestore';
 import { auth, db } from '../firebase/firebase-config';
 
@@ -34,18 +34,19 @@ export function AuthProvider({ children }) {
             const unsubscribeUserDoc = onSnapshot(userDocRef, (userDoc) => {
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
-                    const combinedUser = {
-                        ...user,
+                    setCurrentUser({
+                        uid: user.uid,
+                        email: user.email,
                         ...userData,
+                        role: userData.role || 'user',
                         devicePetId: userData.deviceId || "null",
-                    };
-                    setCurrentUser(combinedUser);
+                    });
                 } else {
                     setCurrentUser(user);
                 }
                 setLoading(false);
-        });
-        return () => unsubscribeUserDoc();   
+            });
+            return () => unsubscribeUserDoc();   
         } else {
             setCurrentUser(null);
             setLoading(false);
@@ -58,6 +59,7 @@ export function AuthProvider({ children }) {
         currentUser,
         login,
         logout,
+        isAdmin: currentUser?.role === 'admin'
     }
 
     return (

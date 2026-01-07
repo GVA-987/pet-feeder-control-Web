@@ -21,10 +21,19 @@
     @include m.tablet {
         flex-direction: row;
         .contentArea {
-        margin-left: 300px; 
-        main {
-            margin-top: 120px; 
+            margin-left: 300px; 
+            main {
+                margin-top: 120px; 
+            }
         }
     }
-    }
+    // &.adminTheme {
+    //     background-color: #f5f5f7; 
+        
+    //     .contentArea {
+    //         main {
+    //             background-color: transparent; 
+    //         }
+    //     }
+    // }
 }

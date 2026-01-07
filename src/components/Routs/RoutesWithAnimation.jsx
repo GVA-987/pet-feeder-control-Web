@@ -12,7 +12,10 @@ import ConfigDevicePage from '../../pages/ConfigDevicePage';
 import CountOptionPage from '../../pages/CountOptionPage';
 import HistoryDevicePage from '../../pages/HistoryDevicePage';
 import configUser from '../confGen/userProfile/configUser';
-// import NotFound from '../pages/NotFound'; // Opcional: una página 404
+import AdminPage from '../../pages/AdminPage';
+import AdminUsersPage from '../../pages/AdminUsersPage';
+// import AdminDevicesPage from '../../pages/AdminDevicesPage';
+// import NotFound from '../pages/NotFound'; // Opcional:  404
 
 function RoutesWithAnimation() {
     const location = useLocation();
@@ -24,7 +27,39 @@ function RoutesWithAnimation() {
         <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
         <Route path="/" element={<PublicRoute><LoginPage /></PublicRoute>} />
 
-        {/* Rutas Protegidas (solo accesibles si el usuario está autenticado) */}
+        <Route 
+            path="/admin" 
+            element={
+                <PrivateRoute allowedRoles={['admin']}>
+                    <MainLayout>
+                        <AdminPage />
+                    </MainLayout>
+                </PrivateRoute>
+            } 
+        />
+
+        <Route 
+            path="/admin/users" 
+            element={
+                <PrivateRoute allowedRoles={['admin']}>
+                    <MainLayout>
+                        <AdminUsersPage />
+                    </MainLayout>
+                </PrivateRoute>
+            } 
+        />
+
+        {/* <Route 
+            path="/admin/devices" 
+            element={
+                <PrivateRoute allowedRoles={['admin']}>
+                    <MainLayout>
+                        <AdminDevicesPage />
+                    </MainLayout>
+                </PrivateRoute>
+            } 
+        /> */}
+
         <Route 
             path="/home" 
             element={

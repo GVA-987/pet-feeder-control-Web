@@ -1,11 +1,10 @@
 import styles from './Login.module.scss';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/petlog.png';
-import ButtonForm from '../common/button/ButtonForm';
+import {doc, getDoc} from 'firebase/firestore';
 import { signInWithEmailAndPassword } from '../../../node_modules/firebase/auth';
-import { auth } from '../../firebase/firebase-config.js';
-import InputForm from '../common/input/InputForm.jsx';
+import { auth, db } from '../../firebase/firebase-config.js';
 import Form from '../common/form/Form.jsx';
 
 export default function Login() {
@@ -13,27 +12,41 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError();
 
     try {
       const useCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = useCredential.user;
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+
+      if (userDoc.exists()){
+        const role = userDoc.data().role;
+        if(role === 'admin'){
+          navigate('/admin');
+        } else {
+          navigate('/home')
+        }
+      } else {
+        navigate('/home')
+      }
 
       console.log('Inicio de sesión exitoso', user);
       setEmail('');
       setPassword('');
       window.location.href = '/home';
 
-    }catch{
-      console.log('Error al iniciar sesion', e.code);
-      if(e.code === 'auth/invalid-credential'){
+    }catch (err) {
+      console.log('Error al iniciar sesion', err.code);
+      if(err.code === 'auth/invalid-credential'){
         setError('Credenciales invalidas. Verifica tu correo y contraseña');
-      }else if(e.code === 'auth/user-disabled'){
+      }else if(err.code === 'auth/user-disabled'){
         setError('Tu cuenta ha sido deshabilitada. Contacta al administrador');
-      }else if(e.code === 'auth/too-many-requests'){
+      }else if(err.code === 'auth/too-many-requests'){
         setError('Demasiados intentos fallidos. Intenta de nuevo mas tarde');
       }else{
         setError('Ocuttio un error inesperado. Intenta de nuevo mas tarde');
