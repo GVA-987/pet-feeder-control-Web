@@ -318,6 +318,7 @@ useEffect(() => {
                 fields={fieldFood}
                 onSubmit={handleDispenseNow}
                 submitButtonText= "Dosificar"
+                buttonPosition = "top"
                 // isLoading={loading}
               />
             </div>
@@ -337,14 +338,13 @@ useEffect(() => {
                     <h2>Estado del Dispositivo</h2>
                     <div className={styles.deviceStatus}>
                         <p>
-                            Estado de conexión:
                             <strong className={onlineStatus.style || ''}>
                                 {online || 'Cargando...'}
                             </strong>
                         </p>
                         <p>
                             <label>
-                              <PiWifiHigh /> Señal Wi-Fi:
+                              <PiWifiHigh /> Wi-Fi:
                             </label>
                             <strong className={wifiStatus.style}>
                                 {wifiStatus.quality} ({rssi} dBm)

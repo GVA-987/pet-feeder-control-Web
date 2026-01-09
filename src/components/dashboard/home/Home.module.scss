@@ -5,10 +5,10 @@
 @use 'sass:math';
 
 .noDevice{
-    background-color: color.scale(va.$secondary-color, $lightness: 4%);
+    background-color: transparent;
     color: color.scale(va.$tertiary-color, $lightness: 15%);
     min-height: 100vh;
-    font-size: 3rem;
+    font-size: 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -19,7 +19,8 @@
 }
 .HomeContainer {
     padding: 0 20px 80px 20px;
-    background-color: color.scale(va.$secondary-color, $lightness: 4%);
+    // background-color: color.scale(va.$secondary-color, $lightness: 17%);
+    background-color: transparent;
     // min-height: 100vh;
     font-size: 0.9rem;
     color: va.$color-text;
@@ -45,7 +46,6 @@
 .contentHome {
     display: grid;
     grid-template-columns: 1fr; 
-    grid-template-rows: auto auto auto;
     gap: 25px;
     grid-template-areas: 
         "pet-info"
@@ -55,11 +55,11 @@
         "schedule";
 
     @include m.telefono{
-        grid-template-columns: 1.5fr 1fr; 
-        grid-template-areas: 
-        "food-control pet-info"
-        "food-control device-status"
-        "activity schedule";
+        grid-template-columns: 1fr 1fr 1.2fr; 
+    grid-template-areas: 
+        "food-control food-control pet-info" 
+        "food-control food-control device-status" 
+        "activity   activity    schedule";
     }
 
     .card-food-control {
@@ -71,8 +71,10 @@
         p {
             display: flex;
             justify-content: space-between;
+            border-bottom: 2px solid #2c2a2a;
             label {
                 font-weight: bold;
+                margin-bottom: 8px;
             }
             padding: 0 2.5rem 0 2.5rem;
             @include m.tablet{
@@ -89,30 +91,37 @@
             justify-content: space-between;
             padding: 0 1rem 0 1rem;
             font-weight: bold;
+            border-bottom: 2px solid #2c2a2a;
             
             label {
                 font-weight: bold;
                 text-transform: uppercase;
+                margin-bottom: 8px;
                 svg {
-                    font-size: 16px;
+                    font-size: 18px;
+                    color: va.$primary-color;
                 }
             }
             strong {
                 text-transform: none;
                 font-weight: normal;
+                text-transform: uppercase;
+                margin-bottom: 8px;
             }
             @include m.tablet{
                 padding: 0 3rem 0 3rem;
             }
         }
     }
-    
-    .card-schedule {
-        grid-area: schedule;
-    }
-    
     .card-activity {
         grid-area: activity;
+    }
+    .card-schedule-today {
+        grid-area: schedule;
+        width: 100%;
+    }
+    .card-schedule {
+        grid-area: schedule;
     }
     
     .card-food-control {
@@ -128,7 +137,7 @@
         display: flex;
         flex-direction: column;
         text-align: center;
-        border: 1.5px solid color.scale(va.$primary-color, $lightness: -65%);
+        height: 100%;
         h2{
             text-align: center;
             text-transform: uppercase;
@@ -144,20 +153,20 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 20px;
-    margin-top: 20px;
+    margin-bottom: 150px;
 
     .myProgress {
         width: 210px; 
         height: 210px;
         transition: all 0.3s ease;
         @include m.tablet {
-            width: 380px; 
-            height: 380px;
+            width: 420px; 
+            height: 420px;
         }
     }
 
     form{
+        position:absolute;
         width: 100%;
         .inputPortion {
             outline: none;
@@ -169,7 +178,6 @@
             border-style: none;
             border-bottom: 2px solid va.$tertiary-color;
             color: va.$color-text;
-            margin-bottom: 20px;
             transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
             &:focus-within {
                 border-bottom: 2px solid va.$primary-color;
@@ -178,10 +186,14 @@
             }
         }
         button{
-            width: 50% !important;
+            width: 160px !important;
+            height: 160px !important;
             padding: 13px !important;
             font-size: 1rem !important;
+            margin-top: 48rem;
+            margin-left: 10px;
             text-transform: uppercase !important;
+            border-radius: 50% !important;
             background-color: va.$color-btn_Food !important;
             &:hover{
                 background-color: color.scale(va.$color-btn_Food, $lightness: -15%) !important;
@@ -215,7 +227,7 @@
     max-height: 330px;
     overflow-y: auto;
     margin-top: 18px;
-    padding: 15px;
+    padding: 40px;
     &::-webkit-scrollbar{
         width: 8px;
         height: 8px;

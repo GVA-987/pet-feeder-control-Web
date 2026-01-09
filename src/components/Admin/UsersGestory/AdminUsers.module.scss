@@ -1,5 +1,7 @@
 .container {
-    padding: 1rem;
+    margin-top: -100px;
+    padding: 0 3rem 0 5rem;
+    font-size: 1.5rem;
     .header { margin-bottom: 2rem; }
 }
 
@@ -8,12 +10,14 @@
     border-radius: 12px;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    padding: 15px;
 }
 
 .userTable {
     width: 100%;
     border-collapse: collapse;
     text-align: left;
+    font-size: 1.5rem;
 
     th {
         background-color: #f8f9fa;
@@ -38,6 +42,14 @@
     font-size: 0.85rem;
     font-weight: bold;
     text-transform: uppercase;
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+        filter: brightness(0.9);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
 }
 
 .admin { background: #e3f2fd; color: #1976d2; }

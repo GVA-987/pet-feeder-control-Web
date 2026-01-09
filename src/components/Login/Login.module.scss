@@ -10,7 +10,7 @@
   justify-content: space-between;
   font-size: 1.2rem;
   color: va.$color-text;
-  background-color: color.scale(va.$secondary-color, $lightness: 7%);
+  background-color: color.scale(va.$secondary-color, $lightness: 5%);
   width: 80%;
   max-width: 500px;
   height: 65vh;
@@ -18,9 +18,8 @@
   margin: 5rem auto;
   border-radius: 25px;
   // border: 2px solid #21038f;
-  // box-shadow: 0 0 10px rgba(83, 85, 242, 0.7);
+  box-shadow: 0 0 30px rgba(116, 164, 190, 0.3);
   font-family: va.$fuente_principal;
-  border: 1.7px solid color.scale(va.$primary-color, $lightness: 15%);
   form{
     input{
       font-size: 1.2rem !important;

@@ -14,7 +14,7 @@ import HistoryDevicePage from '../../pages/HistoryDevicePage';
 import configUser from '../confGen/userProfile/configUser';
 import AdminPage from '../../pages/AdminPage';
 import AdminUsersPage from '../../pages/AdminUsersPage';
-// import AdminDevicesPage from '../../pages/AdminDevicesPage';
+import AdminDevicesPage from '../../pages/AdminDevicesPage';
 // import NotFound from '../pages/NotFound'; // Opcional:  404
 
 function RoutesWithAnimation() {
@@ -49,7 +49,7 @@ function RoutesWithAnimation() {
             } 
         />
 
-        {/* <Route 
+        <Route 
             path="/admin/devices" 
             element={
                 <PrivateRoute allowedRoles={['admin']}>
@@ -58,7 +58,7 @@ function RoutesWithAnimation() {
                     </MainLayout>
                 </PrivateRoute>
             } 
-        /> */}
+        />
 
         <Route 
             path="/home" 

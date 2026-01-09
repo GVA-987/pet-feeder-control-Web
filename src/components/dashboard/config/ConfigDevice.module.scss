@@ -5,7 +5,7 @@
 
 .container {
     margin-bottom: 35px;
-    background-color: color.scale(va.$secondary-color, $lightness: 4%);
+    background-color: transparent;
     min-height: 100vh;
     font-size: 1.8rem;
     margin-top: 0;
@@ -37,7 +37,6 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    border: 1.5px solid color.scale(va.$primary-color, $lightness: -65%);
     width: 100%;
     font-size: 1.3rem;
     .scheduleTableContainer {

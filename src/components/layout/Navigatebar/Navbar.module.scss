@@ -20,6 +20,7 @@
     flex-direction: row;
     justify-content:space-around;
     align-items: center;
+    border-radius: 20px;
     .logo{
         display: none;
     }
@@ -42,7 +43,7 @@
                 font-size: 1.1rem;
                 text-align: center;
                 color: va.$color-text;
-                border-radius: 10px;
+                border-radius: 40px;
                 margin-bottom: 0;
                 transition: .2s ease-in-out 0s;
                 &:hover{
@@ -77,11 +78,12 @@
         left: 0;
         bottom: auto;
         width: 300px;
-        height: 100vh;
+        height: 83%;
         flex-direction: column;
         justify-content: space-around;
         padding: 20px;
         position: fixed;
+        margin: 120px 0 0 15px;
 
         .logo {
             display: flex;
@@ -120,6 +122,9 @@
     &.adminSidebar {
         background-color: #1c1c1e;
         border-right: 1px solid #3a3a3c;
+        margin-top: 15px;
+        height: 95%;
+        width: 20%;
 
         .logoText {
             color: va.$color-text;

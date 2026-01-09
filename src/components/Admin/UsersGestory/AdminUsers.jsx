@@ -1,12 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
-import { db } from '../../../firebase/firebase-config';
+import { db, rtdb } from '../../../firebase/firebase-config';
+import { ref, set } from 'firebase/database';
 import styles from './AdminUsers.module.scss';
 import { RiUserSettingsLine, RiDeleteBin6Line } from "react-icons/ri";
 
 const AdminUsersPage = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const handleToggleRole = async (userId, userEmail, currentRole) => {
+    const newRole = currentRole === 'admin' ? 'user' : 'admin';
+    
+    const confirmacion = window.confirm(`¿Deseas cambiar el rol de ${userEmail} a "${newRole}"?`);
+    if (!confirmacion) return;
+
+    try {
+        const userRef = doc(db, 'users', userId);
+        await updateDoc(userRef, { role: newRole });
+
+        const adminRTDBRef = ref(rtdb, `admins/${userId}`);
+        await set(adminRTDBRef, newRole === 'admin' ? true : null);
+
+        setUsers(prevUsers => 
+            prevUsers.map(u => u.id === userId ? { ...u, role: newRole } : u)
+        );
+
+        alert(`Rol actualizado a ${newRole} correctamente.`);
+
+    } catch (error) {
+        console.error("Error al cambiar rol:", error);
+        alert("Error de permisos o conexión. Revisa la consola.");
+    }
+};
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -54,7 +80,11 @@ const AdminUsersPage = () => {
                                 </td>
                                 <td>{user.email}</td>
                                 <td>
-                                    <span className={`${styles.badge} ${styles[user.role]}`}>
+                                    <span 
+                                        className={`${styles.badge} ${styles[user.role || 'user']}`}
+                                        onClick={() => handleToggleRole(user.id, user.email, user.role || 'user')}
+                                        title="Haz clic para cambiar el rol"
+                                    >
                                         {user.role || 'user'}
                                     </span>
                                 </td>
@@ -63,6 +93,7 @@ const AdminUsersPage = () => {
                                     <button className={styles.editBtn} title="Editar"><RiUserSettingsLine /></button>
                                     <button className={styles.deleteBtn} title="Eliminar"><RiDeleteBin6Line /></button>
                                 </td>
+                                
                             </tr>
                         ))}
                     </tbody>

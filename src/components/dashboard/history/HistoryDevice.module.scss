@@ -4,7 +4,7 @@
 @use 'sass:math';
 
 .containerHistory {
-    background-color: color.scale(va.$secondary-color, $lightness: 4%);
+    background-color: transparent;
     color: va.$color-text;
     min-height: 100vh;
     margin-bottom: 8rem;

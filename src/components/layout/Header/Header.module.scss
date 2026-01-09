@@ -8,9 +8,11 @@
     top: 0;
     right: 0;
     left: 0px;
+    margin: 0 20px 20px 20px;
+    border-radius: 20px;
     z-index: 1000;
     padding: 15px;
-    background-color: color.mix(va.$primary-color, va.$secondary-color, 7%);
+    background-color: #242424;
     position: fixed;
     border-bottom: 5px solid va.$primary-color;
     .appHeader{
@@ -24,7 +26,6 @@
     }
 
     @include m.tablet {
-        left: 300px;
         .appHeader{
             font-size: 1.4rem;
         }
