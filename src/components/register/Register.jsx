@@ -3,11 +3,12 @@ import styles from './Register.module.scss';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from '../../../node_modules/firebase/auth';
-import { doc, setDoc } from '../../../node_modules/firebase/firestore';
+import { doc, setDoc, serverTimestamp, collection, addDoc } from '../../../node_modules/firebase/firestore';
 import { auth, db } from '../../firebase/firebase-config.js';
 import ButtonForm from '../common/button/ButtonForm';
 import InputForm from '../common/input/InputForm';
 import Form from '../common/form/Form.jsx';
+import toast from 'react-hot-toast';
 
 export default function Register() {
   const [name, setName] = useState('');
@@ -30,7 +31,7 @@ export default function Register() {
     setSuccessMessage('');
 
     if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
+      toast.error('Las contraseñas no coinciden', { className: 'custom-toast-error' });
       return;
     }
     
@@ -41,13 +42,31 @@ export default function Register() {
       const user = userCredential.user;
 
       await setDoc(doc(db, "users", user.uid), {
-        nombre: name,
-        apellido: lastname,
-        celular: number,
-        email: user.email,
+          nombre: name,
+          apellido: lastname,
+          celular: number,
+          email: user.email,
+          role: 'user', 
+          createdAt: serverTimestamp(), 
+          deviceId: null
       });
 
-      setSuccessMessage('¡Registro exitoso! Ya puedes iniciar sesión.');
+      await addDoc(collection(db, "system_logs"), {
+          action: "USER_REGISTERED",
+          category: "AUTH",
+          userId: user.uid,
+          userEmail: user.email,
+          details: "Nueva cuenta de usuario creada",
+          timestamp: serverTimestamp(),
+          metadata: {
+              platform: "Web-App",
+              version: "1.0.0"
+          },
+          userAgent: navigator.userAgent
+      });
+
+      toast.success(`¡Bienvenido ${name}! Registro exitoso.`, { className: 'custom-toast-success' });
+      
       setName('');
       setLastname('');
       setNumber('');
@@ -58,17 +77,20 @@ export default function Register() {
       navigate('/home');
       
     }catch (e){
-      console.error("Error al registrar el usuario:", e.code);
-      if (e.code === 'auth/email-already-in-use') {
-        setError('El correo electrónico ya está registrado. Intenta iniciar sesión.');
-      } 
-      // else if (e.code === 'auth/weak-password') {
-      //   setError('La contraseña es demasiado débil. Usa al menos 6 caracteres.');
-      // }
-      
-      else {
-        setError('Ocurrió un error inesperado. Intenta de nuevo más tarde.');
-      }
+      console.error("Error al registrar:", e.code);
+        
+        // Manejo de errores profesional con Toasts
+        let mensajeError = 'Error al crear la cuenta';
+        
+        if (e.code === 'auth/email-already-in-use') {
+            mensajeError = 'Este correo ya está registrado.';
+        } else if (e.code === 'auth/weak-password') {
+            mensajeError = 'La contraseña debe tener al menos 6 caracteres.';
+        } else if (e.code === 'auth/invalid-email') {
+            mensajeError = 'El formato del correo no es válido.';
+        }
+
+        toast.error(mensajeError, { className: 'custom-toast' });
     }finally{
       setIsLoading(false);
     }

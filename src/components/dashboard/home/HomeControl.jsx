@@ -10,6 +10,8 @@ import moment from 'moment';
 import CircularProgressBar from '../../common/CircularProgressBar/CircularProgressBar';
 import FormFood from '../../common/form/Form';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import toast, { Toaster } from 'react-hot-toast';
+import '../../../scss/base/_toasts.scss';
 
 moment.locale('es');
 
@@ -72,99 +74,63 @@ function HomeControl() {
   const [currentTime, setCurrentTime] = useState(Date.now());
   const [foodPortion, setFoodPortion] = useState('');
   const DIAS_SEMANA = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+  const [isProcessing, setIsProcessing] = useState(false);
   
   //obtener datos de firestore
   useEffect(() => {
-    if(currentUser && currentUser.deviceId) {
-      const fetchHistory = async () => {
+    if (!currentUser?.deviceId) return;
 
-        try {
-
-          const userDocRef = doc(db, 'users', currentUser.uid);
-          const userDocSnap = await getDoc(userDocRef);
-
-          if(userDocSnap.exists()) {
-              const useDataDB = userDocSnap.data();
-              setPetData(useDataDB.pets || { name: '', breed: '', age: '', weight: '' });
-          }
-
-          const inicioHoy = new Date();
-          inicioHoy.setHours(0, 0, 0, 0);
-          const inicioHoyTimestamp = Timestamp.fromDate(inicioHoy);
-
-          const hist = query(
-            collection(db, 'dispense_history'),
-            where('deviceId', '==', currentUser.deviceId),
-            where('timestamp', '>=', inicioHoyTimestamp),
-            orderBy('timestamp', 'desc')
-          );
-
-          const querySnapshot = await getDocs(hist);
-          const historyData = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-
-          setHistory(historyData);
-        } catch (e) {
-          console.error("Error al obtener el historial", e);
-        } finally {
-          setLoading(false);
+    const fetchInitialData = async () => {
+      try {
+        // Datos de la mascota
+        const userDocRef = doc(db, 'users', currentUser.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          setPetData(userDocSnap.data().pets || { name: '', breed: '', age: '', weight: '' });
         }
-      }
 
-
-      const deviceRef = doc(db, 'devicesPet', currentUser.deviceId);
-
-      const unsubscribe = onSnapshot(deviceRef, (docSnap) => {
-        if(docSnap.exists()){
-          setDeviceData(docSnap.data());
-          setLoading(false);
-        }else{
-          console.log("No se encontro el documento del dispositivo.");
-          setLoading(false);
-        }
-        fetchHistory();
-      });
-
-
-    return () => {
-      if (typeof unsubscribe === 'function') {
-        unsubscribe();
+        // Historial inicial
+        const inicioHoy = new Date();
+        inicioHoy.setHours(0, 0, 0, 0);
+        const histQuery = query(
+          collection(db, 'dispense_history'),
+          where('deviceId', '==', currentUser.deviceId),
+          where('timestamp', '>=', Timestamp.fromDate(inicioHoy)),
+          orderBy('timestamp', 'desc')
+        );
+        const querySnapshot = await getDocs(histQuery);
+        setHistory(querySnapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+      } catch (e) {
+        console.error("Error inicial:", e);
+      } finally {
+        setLoading(false);
       }
     };
-  }else{
-    console.log("No se encontro el documento del dispositivo.");
-    setLoading(false);
-  }
-}, [currentUser]);
+
+    fetchInitialData();
+  }, [currentUser?.deviceId, currentUser?.uid]);
 
 // obtener datos de RTDB
 useEffect(() => {
-  if (!currentUser && !currentUser.deviceId) return;
+    if (!currentUser?.deviceId) return;
 
-  const dbRT = getDatabase();
-  const deviceStatusRef = ref(dbRT, `${currentUser.deviceId}/status`);
+    const deviceRef = doc(db, 'devicesPet', currentUser.deviceId);
+    const unsubFirestore = onSnapshot(deviceRef, (docSnap) => {
+      if (docSnap.exists()) setDeviceData(docSnap.data());
+    });
 
-  // DALE UN NOMBRE A LA FUNCIÓN DE CALLBACK
-  const handleRealtimeData = (snapshot) => {
-    if(snapshot.exists()) {
-      setRtdbData(snapshot.val());
-    }else{
-      console.log("No data available in RTDB");
-      setRtdbData(null);
-    }
-  };
+    const dbRT = getDatabase();
+    const statusRef = ref(dbRT, `${currentUser.deviceId}/status`);
+    const unsubRTDB = onValue(statusRef, (snapshot) => {
+      if (snapshot.exists()) setRtdbData(snapshot.val());
+    });
 
-  // USA EL NOMBRE DE LA FUNCIÓN PARA SUSCRIBIRTE
-  onValue(deviceStatusRef, handleRealtimeData);
+    return () => {
+      unsubFirestore();
+      off(statusRef, 'value', unsubRTDB);
+    };
+  }, [currentUser?.deviceId]);
 
-  return () => {
-    off(deviceStatusRef, handleRealtimeData);
-  };
-}, [currentUser])
-
- // para forzar la actualización del tiempo
   useEffect(() => {
         const intervalId = setInterval(() => {
             setCurrentTime(Date.now());
@@ -207,9 +173,10 @@ useEffect(() => {
   // Función para dispensar alimento
   const handleDispenseNow = async (e) => {
     e.preventDefault();
-    if(!currentUser || !currentUser.deviceId) return;
+    if (!currentUser?.deviceId || isProcessing || !foodPortion) return;
 
     try {
+      setIsProcessing(true);
       const deviceRefRTDB = ref(rtdb, `${currentUser.deviceId}/commands`);
 
       await update(deviceRefRTDB, {
@@ -217,11 +184,13 @@ useEffect(() => {
         food_portion: String(foodPortion),
       });
 
-      console.log('Dispensando alimento manualmente...');
+      toast.success('Dosificando Alimento', { className: 'custom-toast-success', });
       setFoodPortion('');
     }catch(error) {
-      console.log('Error al dispensar el alimento: ', error);
-      alert('Hubo un problema al dispensar el alimento. Intente de nuevo.');
+      console.error('Error:', error);
+      toast.error('Error al conectar',  { className: 'custom-toast-error', });
+    } finally {
+        setTimeout(() => setIsProcessing(false), 3000);
     }
   }
 
@@ -317,8 +286,9 @@ useEffect(() => {
               <FormFood
                 fields={fieldFood}
                 onSubmit={handleDispenseNow}
-                submitButtonText= "Dosificar"
+                submitButtonText={isProcessing ? "Procesando..." : "Dosificar"}
                 buttonPosition = "top"
+                isLoading={isProcessing}
                 // isLoading={loading}
               />
             </div>

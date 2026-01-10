@@ -2,10 +2,11 @@ import styles from './Login.module.scss';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/petlog.png';
-import {doc, getDoc} from 'firebase/firestore';
+import {doc, getDoc, collection, addDoc, serverTimestamp} from 'firebase/firestore';
 import { signInWithEmailAndPassword } from '../../../node_modules/firebase/auth';
 import { auth, db } from '../../firebase/firebase-config.js';
 import Form from '../common/form/Form.jsx';
+import toast from 'react-hot-toast';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -20,37 +21,65 @@ export default function Login() {
     setError();
 
     try {
-      const useCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = useCredential.user;
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
       const userDoc = await getDoc(doc(db, 'users', user.uid));
+      let role = 'user';
 
       if (userDoc.exists()){
-        const role = userDoc.data().role;
-        if(role === 'admin'){
-          navigate('/admin');
-        } else {
-          navigate('/home')
-        }
-      } else {
-        navigate('/home')
+        role = userDoc.data().role || 'user';
       }
 
-      console.log('Inicio de sesión exitoso', user);
+      await addDoc(collection(db, "system_logs"), {
+        action: "USER_LOGIN",
+        category: "AUTH",
+        status: "SUCCESS",
+        userId: user.uid,
+        userEmail: user.email,
+        role: role,
+        timestamp: serverTimestamp(),
+        metadata: {
+          platform: "Web-App",
+          version: "1.0.0",
+          userAgent: navigator.userAgent
+        },
+      });
+
+      toast.success('¡Bienvenido de nuevo!', { className: 'custom-toast' });
+
+      if (role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/home');
+      }
+
       setEmail('');
       setPassword('');
-      window.location.href = '/home';
-
     }catch (err) {
       console.log('Error al iniciar sesion', err.code);
-      if(err.code === 'auth/invalid-credential'){
-        setError('Credenciales invalidas. Verifica tu correo y contraseña');
-      }else if(err.code === 'auth/user-disabled'){
-        setError('Tu cuenta ha sido deshabilitada. Contacta al administrador');
-      }else if(err.code === 'auth/too-many-requests'){
-        setError('Demasiados intentos fallidos. Intenta de nuevo mas tarde');
-      }else{
-        setError('Ocuttio un error inesperado. Intenta de nuevo mas tarde');
+
+      await addDoc(collection(db, "system_logs"), {
+        action: "USER_LOGIN_FAILED",
+        category: "SECURITY",
+        status: "FAILED",
+        attemptedEmail: email, 
+        errorCode: err.code,
+        timestamp: serverTimestamp(),
+        details: "Intento de inicio de sesión con credenciales incorrectas",
+        userAgent: navigator.userAgent
+      });
+
+      let friendlyError = 'Ocurrió un error inesperado';
+      
+      if (err.code === 'auth/invalid-credential') {
+        friendlyError = 'Correo o contraseña incorrectos';
+      } else if (err.code === 'auth/user-disabled') {
+        friendlyError = 'Cuenta deshabilitada. Contacta soporte';
+      } else if (err.code === 'auth/too-many-requests') {
+        friendlyError = 'Demasiados intentos. Bloqueado temporalmente';
       }
+
+      toast.error(friendlyError, { className: 'custom-toast' });
     }finally{
       setIsLoading(false);
     }

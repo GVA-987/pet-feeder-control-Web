@@ -4,10 +4,13 @@ import styles from './MainLayout.module.scss';
 import Header from './Header/Header';
 import AdminNavbar from './Navigatebar/AdminNavbar';
 import { useAuth } from '../../context/AuthContext';
+import { useDeviceStatus } from '../../hooks/useDeviceStatus';
 
 const MainLayout = ({ children }) => {
     const {currentUser} = useAuth();
     const isAdmin = currentUser?.role === 'admin';
+
+    useDeviceStatus(currentUser?.deviceId);
 
     return (
         <div className={`${styles.mainLayout} ${isAdmin ? styles.adminTheme : ''}`}>

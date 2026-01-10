@@ -1,12 +1,13 @@
 import Recat, { useState } from 'react';
 import { useAuth } from '../../../../context/AuthContext';
 import { getDatabase, ref, set } from "firebase/database";
-import { doc, getDoc, runTransaction } from 'firebase/firestore';
+import { doc, getDoc, runTransaction, serverTimestamp, collection } from 'firebase/firestore';
 import { db, rtdb } from '../../../../firebase/firebase-config';
 import styles from './DeviceLink.module.scss';
 import Modal from '../../../common/modal/Modal';
 import { useNavigate } from 'react-router-dom';
 import Form from '../../../common/form/Form';
+import toast from 'react-hot-toast';
 
 
 
@@ -21,11 +22,17 @@ const DeviceLink = () => {
     const handleLinkDevice = async (e) => {
         e.preventDefault();
         setError('');
+        const cleanId = deviceId.toUpperCase().trim();
+        
+        if (!cleanId) {
+            toast.error('Por favor, ingresa un ID de equipo');
+            return;
+        }
         setLoading(true);
 
         try {
             await runTransaction (db, async (transaction) => {
-                const deviceRef = doc(db, 'devicesPet', deviceId.toUpperCase());
+                const deviceRef = doc(db, 'devicesPet', cleanId);
                 const userRef = doc(db, 'users', currentUser.uid);
                 const deviceDoc = await transaction.get(deviceRef);
 
@@ -33,32 +40,63 @@ const DeviceLink = () => {
                     throw new Error('Equipo no encontrado. Verifica el ID.');
                 }
                 if(deviceDoc.data().linked_user_id !== "null"){
-                    throw new Error('Este equipo ya esta enlazado a otra cuenta');
+                    throw new Error('Este equipo ya pertenece a otro usuario');
                 }
 
-                transaction.update(deviceRef, {linked_user_id: currentUser.uid})
-                transaction.update(userRef, {deviceId: deviceId.toUpperCase()});
+                transaction.update(deviceRef, {
+                    linked_user_id: currentUser.uid,
+                    last_link_date: serverTimestamp(), // Fecha del último enlace
+                    status_device: 'active'
+                });
+
+                transaction.update(userRef, {
+                    deviceId: cleanId,
+                    updatedAt: serverTimestamp()
+                });
+
+                // 3. REGISTRO DE AUDITORÍA 
+                const auditLogRef = doc(collection(db, 'system_logs'));
+                transaction.set(auditLogRef, {
+                    action: 'DEVICE_PROVISIONING', 
+                    category: 'SECURITY',
+                    deviceId: cleanId,
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    details: `Vinculación de hardware exitosa para el usuario ${currentUser.email}`,
+                    timestamp: serverTimestamp(),
+                    metadata: {
+                        platform: 'Web App',
+                        version: '1.0.2'
+                    },
+                    userAgent: navigator.userAgent
+                });
             });
 
-            const deviceRefRT = ref(rtdb, `${deviceId.toUpperCase()}`);
+            const deviceRefRT = ref(rtdb, cleanId);
 
             await set(deviceRefRT, {
                 ownerUid: currentUser.uid,
                 status: {
                 online: false,
-                lastSeen: Date.now()
+                lastSeen: Date.now(),
+                linkedAt: new Date().toISOString()
                 },
                 commands: {
-                last_command: null
+                    dispense_manual: "desactivado",
+                    food_portion: "0"
                 }
+            });
+            toast.success('¡Equipo enlazado correctamente! 🐾', {
+                duration: 5000,
+                className: 'custom-toast-success' 
             });
             
             //onClose();
             navigate('/home');
             setDeviceId('');
         }catch (e) {
-            console.log(e.message);
-            setError(e.message);
+            console.error(e.message);
+            toast.error(e.message, { className: 'custom-toast-error' });
         }finally {
             setLoading(false)
         }
@@ -82,8 +120,7 @@ const DeviceLink = () => {
                 <Form 
                 fields={linkDeviceFields}
                 onSubmit={handleLinkDevice}
-                submitButtonText={loading ? 'Enlazando...' : 'Enlazar'}
-                // Puedes pasar una prop adicional si tu componente Form maneja el estado "disabled"
+                submitButtonText={loading ? 'Enlazando...' : 'Enlazar Equipo'}
                 disabled={loading}
                 
             />
