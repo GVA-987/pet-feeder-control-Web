@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import styles from './ScheduleManager.module.scss';
 import { useAuth } from '../../../../context/AuthContext';
-import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove, getDoc, addDoc, collection, serverTimestamp} from 'firebase/firestore';
 import { db } from '../../../../firebase/firebase-config';
 import { MdDelete } from 'react-icons/md';
 import Form from '../../../common/form/Form.jsx';
 import moment from 'moment';
+import toast from 'react-hot-toast';
 
 
 
@@ -25,26 +26,17 @@ const ScheduleManager = ({ editData, onClearEdit }) => {
     const [loading, setLoading] = useState(true);
     const [schedules, setSchedules] = useState([]);
     
-
-    // Manejar cambios en el formulario
     const handleInputChange = (eOrName, maybeValue) => {
 
         if (typeof eOrName === 'string') {
-            // const name = eOrName;
-            // const value = maybeValue;
             setNewSchedule(prev => ({ ...prev, [eOrName]: maybeValue }));
             return;
         }
 
-        // const e = eOrName;
-        // if (!e || !e.target) return;
-        // const { name, value } = e.target;
-        // setNewSchedule(prev => ({ ...prev, [name]: value }));
         const { name, value } = eOrName.target;
         setNewSchedule(prev => ({ ...prev, [name]: value }));
     };
 
-    // Manejar selección de días
     const toggleDay = (dayValue) => {
         setSelectedDays(prev => 
             prev.includes(dayValue) 
@@ -52,23 +44,6 @@ const ScheduleManager = ({ editData, onClearEdit }) => {
                 : [...prev, dayValue]
         );
     };
-
-    //Agregar horarios
-    // const handleAddSchedule = async (e) => {
-    // e.preventDefault();
-    //     if (newSchedule.startDate && newSchedule.endDate && newSchedule.time && newSchedule.portion) {
-    //         try {
-    //             const deviceRef = doc(db, 'devicesPet', currentUser.deviceId);
-    //             await updateDoc(deviceRef, {
-    //                 schedule: arrayUnion(newSchedule)
-    //             });
-    //             setNewSchedule({ startDate: '', endDate: '', time: '', portion: '' });
-    //         } catch (error) {
-    //             console.error('Error al guardar el horario:', error);
-    //             alert('Hubo un error al guardar el horario.');
-    //         }
-    //     }
-    // };
 
     useEffect(() => {
         if (editData) {
@@ -82,51 +57,57 @@ const ScheduleManager = ({ editData, onClearEdit }) => {
 
     const handleAddSchedule = async (e) => {
         e.preventDefault();
-
-        // Validaciones básicas
         try {
             const deviceRef = doc(db, 'devicesPet', currentUser.deviceId);
-            
-            const scheduleObject = {
-                id: editData?.id || `${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-                days: [...selectedDays].sort(),
-                time: newSchedule.time,
-                portion: Number(newSchedule.portion),
-                enabled: true,
-            };
+        
+        const scheduleObject = {
+            id: editData?.id || `${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+            days: [...selectedDays].sort(),
+            time: newSchedule.time,
+            portion: Number(newSchedule.portion),
+            enabled: editData ? editData.enabled : true,
+        };
 
-            if (editData) {
-                const docSnap = await getDoc(deviceRef);
-                if (docSnap.exists()) {
-                const currentSchedules = docSnap.data().schedule || [];
-                
-                const updatedSchedules = currentSchedules.map(item => {
-                    if (!item.id || !editData.id) return item; 
-                    return item.id === editData.id ? scheduleObject : item;
+        const docSnap = await getDoc(deviceRef);
+        const currentSchedules = docSnap.exists() ? (docSnap.data().schedule || []) : [];
+
+        let updatedSchedules;
+        if (editData) {
+            updatedSchedules = currentSchedules.map(item => 
+                item.id === editData.id ? scheduleObject : item
+            );
+        } else {
+            updatedSchedules = [...currentSchedules, scheduleObject];
+        }
+
+        await updateDoc(deviceRef, { schedule: updatedSchedules });
+
+                await addDoc(collection(db, "system_logs"), {
+                    action: editData ? "SCHEDULE_UPDATED" : "SCHEDULE_CREATED",
+                    userId: currentUser.uid,
+                    deviceId: currentUser.deviceId,
+                    timestamp: serverTimestamp(),
+                    details: `${editData ? 'Editó' : 'Creó'} el horario: ${scheduleObject.time}`
                 });
-                
-                await updateDoc(deviceRef, { schedule: updatedSchedules });
-                handleCancel();
-                
-            }
-            } else {
-                
-                await updateDoc(deviceRef, { schedule: arrayUnion(scheduleObject) });
-            }
 
-            setNewSchedule({ time: '', portion: '' });
-            setSelectedDays([]);
+                toast.success(editData ? 'Horario actualizado' : 'Horario agregado', { className: 'custom-toast-success' });
+                
+                if(editData) handleCancel(); 
+                setNewSchedule({ time: '', portion: '' });
+                setSelectedDays([]);
+            
         } catch (error) {
+            toast.success('Error al guardar horario', { className: 'custom-toast-error' })
             console.error(error);
         }
         
     };
 
     const handleCancel = () => {
-    setNewSchedule({ time: '', portion: '' });
-    setSelectedDays([]);
-    onClearEdit(); 
-};
+        setNewSchedule({ time: '', portion: '' });
+        setSelectedDays([]);
+        onClearEdit(); 
+    };
     
 
     const scheduleFields = [
@@ -145,53 +126,12 @@ const ScheduleManager = ({ editData, onClearEdit }) => {
             name: 'portion',
             value: newSchedule.portion,
             onChange: handleInputChange,
-            placeholder: 'Ej: 50',
+            placeholder: 'Ej: 2',
             required: true,
             unstyled: true,
         }
-        // {
-        //     label: 'Fecha de Inicio',
-        //     type: 'date',
-        //     name: 'startDate',
-        //     value: newSchedule.startDate,
-        //     onChange: handleInputChange,
-        //     required: true,
-        //     containerClassName: styles.contenerInput,
-        //     unstyled: true,
-        // },
-        // {
-        //     label: 'Hora',
-        //     type: 'time',
-        //     name: 'time',
-        //     value: newSchedule.time,
-        //     onChange: handleInputChange,
-        //     required: true,
-        //     unstyled: true,
-        // },
-        // {
-        //     label: 'Fecha de Fin',
-        //     type: 'date',
-        //     name: 'endDate',
-        //     value: newSchedule.endDate,
-        //     onChange: handleInputChange,
-        //     required: true,
-        //     unstyled: true,
-        // },
-        // {
-        //     label: 'Porción',
-        //     type: 'numeric',
-        //     name: 'portion',
-        //     value: newSchedule.portion,
-        //     onChange: handleInputChange,
-        //     placeholder: 'Porción en gramos',
-        //     required: true,
-        //     unstyled: true,
-        // }
     ];
 
-    // if (loading) {
-    //     return <div>Cargando horarios...</div>;
-    // }
 
     return (
 

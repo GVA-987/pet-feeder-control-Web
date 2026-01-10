@@ -72,6 +72,7 @@
             display: flex;
             justify-content: space-between;
             border-bottom: 2px solid #2c2a2a;
+            font-size: 1.8rem;
             label {
                 font-weight: bold;
                 margin-bottom: 8px;
@@ -79,6 +80,7 @@
             padding: 0 2.5rem 0 2.5rem;
             @include m.tablet{
                 padding: 0 5rem 0 5rem;
+                font-size: 2rem;
             }
         }
         
@@ -92,6 +94,7 @@
             padding: 0 1rem 0 1rem;
             font-weight: bold;
             border-bottom: 2px solid #2c2a2a;
+            font-size: 1.3rem;
             
             label {
                 font-weight: bold;
@@ -110,6 +113,7 @@
             }
             @include m.tablet{
                 padding: 0 3rem 0 3rem;
+                font-size: 1.5rem;
             }
         }
     }
@@ -153,21 +157,22 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-bottom: 150px;
+    margin-bottom: 8px;
 
     .myProgress {
-        width: 210px; 
-        height: 210px;
+        width: 70%; 
+        height: 70%;
         transition: all 0.3s ease;
-        @include m.tablet {
-            width: 420px; 
-            height: 420px;
-        }
     }
 
     form{
-        position:absolute;
-        width: 100%;
+        width: 80%;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: -30px;
+        z-index: 1000;
         .inputPortion {
             outline: none;
             padding: 0 0 8px 0;
@@ -178,6 +183,7 @@
             border-style: none;
             border-bottom: 2px solid va.$tertiary-color;
             color: va.$color-text;
+            width: 80%;
             transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
             &:focus-within {
                 border-bottom: 2px solid va.$primary-color;
@@ -186,25 +192,35 @@
             }
         }
         button{
-            width: 160px !important;
-            height: 160px !important;
-            padding: 13px !important;
-            font-size: 1rem !important;
-            margin-top: 48rem;
-            margin-left: 10px;
-            text-transform: uppercase !important;
-            border-radius: 50% !important;
-            background-color: va.$color-btn_Food !important;
-            &:hover{
-                background-color: color.scale(va.$color-btn_Food, $lightness: -15%) !important;
+            width: 30%; 
+            aspect-ratio: 1 / 1;  
+            border-radius: 50%;   
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;   
+            font-size: 100%;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            background-color: va.$color-btn_Food;
+            transition: background-color 0.3s, transform 0.2s;
+            &:hover {
+                background-color: color.scale(va.$color-btn_Food, $lightness: -15%);
+                transform: scale(1.05);
             }
+
+            &:active {
+                transform: scale(0.95);
+            }
+            @include m.tablet{
+                width: 25%; 
+            }  
         }
 
-        @include m.tablet{
-            font-size: 2rem;
-            button{
-                font-size: 2rem !important;
-            }
+        @include m.telefono{
+            margin-top: -90px;
         }
     }
 }

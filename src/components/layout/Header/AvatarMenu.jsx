@@ -3,14 +3,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './AvatarMenu.module.scss'; 
-import { auth } from '../../../firebase/firebase-config';
+import { auth, db } from '../../../firebase/firebase-config';
 import { signOut } from 'firebase/auth';
+import { useAuth } from '../../../context/AuthContext';
 import Modal from '../../common/modal/Modal';
 import ConfigUser from '../../confGen/userProfile/configUser';
 import ConfigPet from '../../confGen/petProfile/configPet';
+import {serverTimestamp, collection, addDoc} from 'firebase/firestore';
+import toast from 'react-hot-toast';
 // import Config from '../../confGen/conf/conf';
 
 const AvatarMenu = ({ user }) => {
+    const { currentUser } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,10 +31,26 @@ const AvatarMenu = ({ user }) => {
 
     const handleLogout = async () => {
         try{
+            if (currentUser){
+                await addDoc(collection(db, "system_logs"), {
+                    action: "USER_LOGOUT",
+                    category: "AUTH",
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    timestamp: serverTimestamp(),
+                    details: "Sesión cerrada voluntariamente",
+                    metadata: {
+                        platform: "Web-App",
+                        userAgent: navigator.userAgent
+                    }
+                });
+            }
             await signOut(auth);
+            toast.success('Sesión cerrada', { className: 'custom-toast-success' });
             navigate('/login');
         } catch(e) {
-            console.log('Error al cerrar sesión:', e);
+            console.log('Error al cerrar sesión:', { className: 'custom-toast-error' }, e);
+            toast.error('Error al salir');
         }
     };
 

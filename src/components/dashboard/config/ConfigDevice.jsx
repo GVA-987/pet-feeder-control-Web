@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import styles from './ConfigDevice.module.scss';
 import ScheduleManager from './Schedule/ScheduleManager';
-import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
 import { db } from '../../../firebase/firebase-config';
 import { MdDelete, MdEdit } from 'react-icons/md';
 import moment from 'moment';
-
+import toast from 'react-hot-toast';
+import Switch from '../../common/switch/Switch';
 
 const ConfigDevice = () => {
 
@@ -39,22 +40,67 @@ const ConfigDevice = () => {
     }, [currentUser]);
 
     const handleDeleteSchedule = async (scheduleToDelete) => {
-        // if (!window.confirm("¿Estás seguro de eliminar este horario?")) return;
+        if (!window.confirm("¿Estás seguro de eliminar este horario?")) return;
         try {
             const deviceRef = doc(db, 'devicesPet', currentUser.deviceId);
-            await updateDoc(deviceRef, {
-                schedule: arrayRemove(scheduleToDelete)
+        
+            const updatedSchedules = schedules.filter(s => s.id !== scheduleToDelete.id);
+
+            await updateDoc(deviceRef, { schedule: updatedSchedules });
+
+            await addDoc(collection(db, "archived_schedules"), {
+                ...scheduleToDelete,
+                archivedAt: serverTimestamp(),
+                deletedBy: currentUser.uid,
+                deviceId: currentUser.deviceId
             });
+
+        // 4. Log del sistema
+            await addDoc(collection(db, "system_logs"), {
+                action: "SCHEDULE_ARCHIVED",
+                userId: currentUser.uid,
+                deviceId: currentUser.deviceId,
+                timestamp: serverTimestamp(),
+                details: `Horario ${scheduleToDelete.time} movido al archivo.`
+            });
+
+            toast.success('Horario eliminado', { className: 'custom-toast-success' });
+
         } catch (error) {
-            console.error('Error al eliminar:', error);
+            toast.error('Error al eliminar', { className: 'custom-toast-error' });
+            console.error(error);
+        }
+    };
+
+    const handleToggleStatus = async (schedule) => {
+    try {
+        const deviceRef = doc(db, 'devicesPet', currentUser.deviceId);
+        const updatedSchedules = schedules.map(s => 
+            s.id === schedule.id ? { ...s, enabled: !s.enabled } : s
+        );
+
+        await updateDoc(deviceRef, { schedule: updatedSchedules });
+
+
+        await addDoc(collection(db, "system_logs"), {
+            action: schedule.enabled ? "SCHEDULE_DISABLED" : "SCHEDULE_ENABLED",
+            userId: currentUser.uid,
+            deviceId: currentUser.deviceId,
+            timestamp: serverTimestamp(),
+            details: `Horario ${schedule.time} cambiado a ${!schedule.enabled ? 'Habilitado' : 'Deshabilitado'}`
+        });
+
+        toast.success(schedule.enabled ? 'Horario desactivado' : 'Horario activado', { className: 'custom-toast-success' });
+        } catch (error) {
+            toast.error('Error al cambiar estado');
         }
     };
 
     const handleEditClick = (schedule) => {
         setEditingSchedule(schedule);
-        // Opcional: Hacer scroll hacia el formulario para que el usuario sepa que cargó
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
+    const activeSchedules = schedules.filter(s => !s.deleted);
 
     if (loading) return <div className={styles.loader}>Cargando configuración...</div>;
 
@@ -71,7 +117,7 @@ const ConfigDevice = () => {
         <div className={styles.card}>
                     <h2 className={styles.title}>Horarios Programados</h2>
                     <div className={styles.scheduleTableContainer}>
-                        {schedules.length > 0 ? (
+                        {schedules.filter(s => s.deleted !== true).length > 0 ? (
                             <table className={styles.scheduleTable}>
                                 <thead>
                                     <tr>
@@ -82,8 +128,10 @@ const ConfigDevice = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {schedules.map((schedule, index) => (
-                                        <tr key={index} className={styles.scheduleRow}>
+                                    {schedules
+                                        .filter(schedule => schedule.delete !== true)
+                                        .map((schedule, index) => (
+                                        <tr key={schedule.id || index} className={`${styles.scheduleRow} ${!schedule.enabled ? styles.disabledRow : ''}`}>
                                             <td className={styles.timeCell}>
                                                 <strong>{schedule.time}</strong>
                                             </td>
@@ -100,6 +148,11 @@ const ConfigDevice = () => {
                                                 {schedule.portion}
                                             </td>
                                             <td className={styles.actionCell}>
+                                                <Switch 
+                                                    id={schedule.id}
+                                                    isOn={schedule.enabled}
+                                                    handleToggle={() => handleToggleStatus(schedule)}
+                                                />
                                                 <button 
                                                     onClick={() => handleEditClick(schedule)}
                                                     className={styles.editButton}

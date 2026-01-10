@@ -1,7 +1,7 @@
 import Recat, { useState } from 'react';
 import { useAuth } from '../../../../context/AuthContext';
 import { getDatabase, ref, set } from "firebase/database";
-import { doc, getDoc, runTransaction, serverTimestamp, collection } from 'firebase/firestore';
+import { doc, getDoc, runTransaction, serverTimestamp, collection, arrayUnion } from 'firebase/firestore';
 import { db, rtdb } from '../../../../firebase/firebase-config';
 import styles from './DeviceLink.module.scss';
 import Modal from '../../../common/modal/Modal';
@@ -50,6 +50,7 @@ const DeviceLink = () => {
                 });
 
                 transaction.update(userRef, {
+                    devices: arrayUnion(cleanId),
                     deviceId: cleanId,
                     updatedAt: serverTimestamp()
                 });

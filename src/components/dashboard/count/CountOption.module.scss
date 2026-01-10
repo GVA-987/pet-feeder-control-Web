@@ -25,6 +25,87 @@
     }
 }
 
+.containerDeviceList {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    .deviceList {
+        margin-top: 1rem;
+        
+        h4 {
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            color: va.$tertiary-color;
+            opacity: 0.8;
+        }
+        
+        
+    }
+}
+
+.deviceItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    .deviceInfoText{
+        font-size: 1.2rem;
+    }
+    button{
+        max-width: 25% !important;
+        &:disabled {
+            background: #4a5568; // Color neutro para el equipo activo
+            cursor: default;
+            opacity: 0.7;
+        }
+        &:hover:not(:disabled) {
+            opacity: 0.9;
+        }
+    }
+
+    &.active {
+        border-color: va.$primary-color;
+        background: rgba(va.$primary-color, 0.05);
+        box-shadow: 0 0 10px rgba(va.$primary-color, 0.1);
+    }
+    .btnUnlink {
+            background: transparent;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 0.6rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+
+            &:hover {
+                background: #ef4444;
+                color: white;
+                border-color: #ef4444;
+            }
+        }
+
+    .info {
+        strong {
+            display: block;
+            font-size: 1.4rem;
+            color: va.$color-text;
+        }
+        p {
+            margin: 0;
+            padding: 0;
+            font-size: 1.1rem;
+            color: va.$tertiary-color;
+        }
+    }
+}
+
 .card {
     background: va.$background-card;
     border-radius: 12px;
