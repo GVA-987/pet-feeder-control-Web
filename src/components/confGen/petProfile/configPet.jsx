@@ -1,8 +1,10 @@
 import react, { useState, useEffect } from 'react';
 import Form from '../../common/form/Form';
-import { getDoc, doc, updateDoc } from 'firebase/firestore';
+import { getDoc, doc, updateDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../../firebase/firebase-config';
 import { useAuth } from '../../../context/AuthContext';
+import toast from 'react-hot-toast';
+import styles from './configPet.module.scss';
 
 const ConfigPet = () => {
 
@@ -12,47 +14,68 @@ const ConfigPet = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            if (!currentUser?.uid) {
-                setLoading(false);
-                return;
-            }
-            setLoading(true);
+        const fetchPetData = async () => {
+            if (!currentUser?.uid) return;
             try {
                 const userDocRef = doc(db, 'users', currentUser.uid);
                 const userDocSnap = await getDoc(userDocRef);
-                if(userDocSnap.exists()) {
-                    const useDataDB = userDocSnap.data();
-                    setPetData(useDataDB.pets || { name: '', breed: '', age: '', weight: '' });
+                if (userDocSnap.exists()) {
+                    const dbData = userDocSnap.data();
+                    // Si ya existen datos de mascota, los cargamos; si no, dejamos el estado inicial
+                    if (dbData.pets) {
+                        setPetData(dbData.pets);
+                    }
                 }
-            }catch (e) {
-                console.error('Error al obtener los datos del usuario:', e);
-            }finally {
+            } catch (e) {
+                console.error(e);
+                toast.error('Error al cargar datos de la mascota');
+            } finally {
                 setLoading(false);
             }
-        }
-        fetchUserData();
+        };
+        fetchPetData();
     }, [currentUser]);
 
-    const AddandUodatePet = async (e) => {
+    const handleUpdatePet = async (e) => {
             e.preventDefault();
             setIsLoading(true);
-                try {
-                    const petRef = doc(db, 'users', currentUser.uid);
-                    await updateDoc(petRef, {
-                        pets: {
-                            name: petData.name,
-                            breed: petData.breed,
-                            age: petData.age,
-                            weight: petData.weight
-                        }
-                    });
-                    alert('Datos de la mascota actualizados con éxito.');
-                }catch (error) {
-                    console.error('Error al guardar los datos de la mascota:', error);
-                }
-                finally {
-                    setIsLoading(false);
+            try {
+                const petRef = doc(db, 'users', currentUser.uid);
+
+                
+                await updateDoc(petRef, {
+                    pets: {
+                        name: petData.name,
+                        breed: petData.breed,
+                        age: petData.age,
+                        weight: petData.weight,
+                        updateAt: serverTimestamp()
+                    }
+                });
+
+                await addDoc(collection(db, "system_logs"), {
+                    action: "PET_DATA_UPDATED",
+                    userId: currentUser.uid,
+                    timestamp: serverTimestamp(),
+                    details: `Actualizados datos de: ${petData.name}`,
+                    category: 'config',
+                    metadata: {
+                        platform: 'Web App',
+                        version: '1.0.2',
+                        userAgent: navigator.userAgent
+                    }
+                });
+                toast.success('¡Datos de la mascota guardados!', {
+                    icon: '🐶',
+                    position: 'bottom-right',
+                    className: 'custom-toast-success'
+                });
+            }catch (error) {
+                console.error('Error:', error);
+                toast.error('No se pudieron guardar los cambios', {className: 'custom-toast-error'});
+            }
+            finally {
+                setIsLoading(false);
             }
         }
 
@@ -60,7 +83,7 @@ const ConfigPet = () => {
         {
             label: 'Nombre',
             type: 'text',
-            placeholder: '',
+            placeholder: 'Nombre de Mascota',
             value: petData.name,
             onChange: (e) => setPetData({ ...petData, name: e.target.value }),
             required: true,
@@ -68,37 +91,39 @@ const ConfigPet = () => {
         {
             label: 'Raza',
             type: 'text',
-            placeholder: '',
+            placeholder: 'Raza',
             value: petData.breed,
             onChange: (e) => setPetData({ ...petData, breed: e.target.value }),
             required: true,
         },
         {
             label: 'Edad',
-            type: 'text',
-            placeholder: '',
+            type: 'number',
+            placeholder: 'Edad',
             value: petData.age,
             onChange: (e) => setPetData({ ...petData, age: e.target.value }),
             required: true,
         },
         {
-            label: 'Peso',
-            type: 'text',
-            placeholder: '',
+            label: 'Peso (Kg)',
+            type: 'number',
+            placeholder: 'Peso de la Mascota',
             value: petData.weight,
             onChange: (e) => setPetData({ ...petData, weight:e.target.value }),
             required: true,
         }
     ]
-
+    if (loading) return <div className={styles.loader}>Cargando...</div>;
     return (
-        <div> 
-            <p>Edita tus datos personales. La contraseña es opcional.</p>
+        <div className={styles.configBox}>
+            <div className={styles.header}>
+                <p>Gestiona los datos de tu Mascota.</p>
+            </div>
+            
             <Form
                 fields={fieldsPet}
-                onSubmit={AddandUodatePet}
-                // submitButtonText={loading ? <div className={styles['circle-loader']}></div> : "Actualizar Datos de la Mascota"}
-                submitButtonText={"Actualizar Datos de la Mascota"}
+                onSubmit={handleUpdatePet}
+                submitButtonText={isLoading ? "Actualizando..." : "Actualizar Datos de la Mascota"}
                 isLoading={isLoading}
             />
         </div>

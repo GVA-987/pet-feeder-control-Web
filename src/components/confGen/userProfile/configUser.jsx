@@ -1,8 +1,11 @@
 import react, { useState, useEffect } from 'react';
 import Form from '../../common/form/Form';
-import { getDoc, doc, updateDoc } from 'firebase/firestore';
+import { getDoc, doc, updateDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../../firebase/firebase-config';
+import toast from 'react-hot-toast';
 import { useAuth } from '../../../context/AuthContext';
+import styles from './configUser.module.scss';
+
 
 const ConfigUser = () => {
     
@@ -27,12 +30,11 @@ const ConfigUser = () => {
                         name: useDataDB.nombre || '',
                         lastname: useDataDB.apellido || '',
                         number: useDataDB.celular || '',
-                        email: useDataDB.email || '',
-                        // password: useDataDB.password || ''
+                        email: useDataDB.email || currentUser.email,
                     });
                 }
             }catch (e) {
-                console.error('Error al obtener los datos del usuario:', e);
+                toast.error('Error al cargar datos', { className: 'custom-toast-error' });
             }finally {
                 setLoading(false);
             }
@@ -40,7 +42,7 @@ const ConfigUser = () => {
         fetchUserData();
     }, [currentUser])
 
-    const updateUserData = async (e) => {
+    const handleUpdate = async (e) => {
         e.preventDefault();
         setIsLoading(true);
 
@@ -51,14 +53,39 @@ const ConfigUser = () => {
                 apellido: userData.lastname,
                 celular: userData.number,
                 email: userData.email,
+                lastUpdate: serverTimestamp()
             });
-            console.log('Datos de usuario actualizado con éxito!');
+
+            if (userData.password && userData.password.length >= 6) {
+                await updatePassword(currentUser, userData.password);
+                toast.success('Contraseña actualizada');
+            } else if (userData.password && userData.password.length < 6) {
+                toast.error('La contraseña debe tener al menos 6 caracteres');
+                return;
+            }
+
+            await addDoc(collection(db, "system_logs"), {
+                action: "USER_PROFILE_UPDATED",
+                userId: currentUser.uid,
+                timestamp: serverTimestamp(),
+                details: "Actualización de datos personales y/o contraseña",
+                metadata: {
+                    platform: 'Web App',
+                    version: '1.0.2',
+                    userAgent: navigator.userAgent
+                },
+            });
+
+            toast.success('Perfil actualizado con éxito', { position: 'bottom-right', className: 'custom-toast-success' });
+            setUserData(prev => ({ ...prev, password: '' })); 
             // onClose();
         }catch (error){
             console.error('Error al actualizar los datos del usuario', error);
 
-            if(error.code === 'permission-denied'){
-                console.log('Permisos denegados para actualizar. Contacta al administrador.');
+            if (error.code === 'auth/requires-recent-login') {
+                toast.error('Por seguridad, cierra sesión y vuelve a entrar para cambiar la contraseña',  { className: 'custom-toast-error' });
+            } else {
+                toast.error('Error al actualizar los datos',  { className: 'custom-toast-error' });
             }
         }finally{
             setIsLoading(false);
@@ -87,7 +114,7 @@ const ConfigUser = () => {
         },
         {
             label: 'Celular',
-            type: 'number',
+            type: 'tel',
             placeholder: '',
             name: 'number',
             value: userData.number,
@@ -102,44 +129,32 @@ const ConfigUser = () => {
             value: userData.email,
             onChange: (e) => setUserData({ ...userData, email: e.target.value }),
             required: true,
+            disabled:true,
         },
-        // {
-        //     label: 'Contraseña',
-        //     type: 'password',
-        //     placeholder: '',
-        //     name: 'password',
-        //     // value: userData.password,
-        //     // onChange: (e) => setUserData({ ...userData, password: e.target.value }),
-        //     // onChange: (e) => setPassword(e.target.value),
-        //     required: false,
-        // },
-        // {
-        //     type: 'password',
-        //     placeholder: 'Confirma tu contraseña',
-        //     // value: password,
-        //     // onChange: (e) => setPassword(e.target.value),
-        //     // value: confirmPassword,
-        //     // onChange: (e) => setConfirmPassword(e.target.value),
-        //     required: false,
-        //     iconType: 'password',
-        // }
-    ]
+        {
+            label: 'Nueva Contraseña',
+            type: 'password',
+            name: 'password',
+            value: userData.password,
+            onChange: (e) => setUserData({ ...userData, password: e.target.value }),
+            placeholder: 'Mínimo 6 caracteres',
+        },
+    ];
+    if (loading) return <div className={styles.loader}>Cargando...</div>;
 
     return (
-        <div> 
-            <p>Edita tus datos personales. La contraseña es opcional.</p>
+        <div className={styles.configBox}>
+            <div className={styles.header}>
+                <h2>Mi Perfil</h2>
+                <p>Gestiona tu información personal y seguridad.</p>
+            </div>
             
-            {loading ? (
-                <p>Cargando datos del usuario...</p>
-            ) : (
-                <Form
+            <Form
                 fields={fieldsUser}
-                onSubmit={updateUserData}
-                // submitButtonText={loading ? <div className={styles['circle-loader']}></div> : "Actualizar Datos del Usuario"}
-                submitButtonText={"Actualizar Datos del Usuario"}
+                onSubmit={handleUpdate}
+                submitButtonText={isLoading ? "Guardando..." : "Guardar Cambios"}
                 isLoading={isLoading}
             />
-            )}
         </div>
     );
 
