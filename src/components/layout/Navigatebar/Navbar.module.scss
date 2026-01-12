@@ -4,6 +4,12 @@
 @use 'sass:color';
 @use 'sass:math';
 
+$slate-900: #0f172a;
+$slate-800: #1e293b;
+$slate-700: #334155;
+$slate-400: #94a3b8;
+$sky-400: #38bdf8;
+$red-500: #ef4444;
 
 .sidebar{
     background-color: #242424;
@@ -119,57 +125,198 @@
     }
 
 
-    &.adminSidebar {
-        background-color: #1c1c1e;
-        border-right: 1px solid #3a3a3c;
-        margin-top: 15px;
-        height: 95%;
-        width: 20%;
+    
 
-        .logoText {
-            color: va.$color-text;
-            font-weight: bold;
-            letter-spacing: 1px;
+}
+.adminSidebar {
+    background-color: $slate-900;
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    color: #f8fafc;
+    border-right: 1px solid $slate-800;
+    z-index: 1100;
+
+    // --- SECCIÓN LOGO ---
+    .brand {
+        padding: 2rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid $slate-800;
+
+        .logoBox {
+            background: #ffffff;
+            padding: 6px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+            img {
+                width: 35px;
+                height: 35px;
+                object-fit: contain;
+            }
         }
 
-        .navLink {
-            color: #a1a1a6; 
-            
-            &:hover {
-                background-color: rgba(255, 255, 255, 0.1);
-                color: va.$color-text;
+        .brandText {
+            display: flex;
+            flex-direction: column;
+
+            span {
+                font-size: 1.1rem;
+                font-weight: 800;
+                letter-spacing: 1.5px;
+                color: #ffffff;
+                line-height: 1;
             }
 
-            svg {
-                color: va.$primary-color-admin; 
-            }
-        }
-
-        .active {
-            background-color: va.$primary-color-admin;
-            color: va.$color-text;
-            
-            svg {
-                color: va.$color-text;
-            }
-        }
-        .logoutContainer{
-            .logoutBtn{
-                border-style: none;
-                border-radius: 10px;
-                padding: 1.5rem;
-                background-color: #d62727;
-                cursor: pointer;
-                color: va.$color-text;
-                transition: .2s ease-in-out 0s;
-
-                &:hover{
-                    background-color: #be2323;
-                    transform: scale(1.05);
-                    box-shadow: 0 0 15px #be2323;
-                }
+            small {
+                font-size: 0.65rem;
+                color: $sky-400;
+                font-weight: 700;
+                margin-top: 4px;
+                text-transform: uppercase;
             }
         }
     }
 
+    // --- NAVEGACIÓN ---
+    .auditNav {
+        flex: 1;
+        padding: 1.5rem 0.8rem;
+        overflow-y: auto;
+
+        .navGroupLabel {
+            font-size: 0.7rem;
+            color: $slate-400;
+            font-weight: 800;
+            margin: 1.5rem 0 0.5rem 1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .link, .activeLink {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 1rem;
+            margin-bottom: 4px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            color: $slate-400;
+
+            svg {
+                font-size: 1.4rem;
+                transition: transform 0.2s ease;
+            }
+
+            &:hover {
+                background-color: $slate-800;
+                color: #ffffff;
+                
+                svg {
+                    transform: translateX(3px);
+                    color: $sky-400;
+                }
+            }
+        }
+
+        .activeLink {
+            background-color: rgba($sky-400, 0.1);
+            color: $sky-400;
+            font-weight: 700;
+            border-left: 4px solid $sky-400;
+            border-radius: 0 8px 8px 0;
+
+            svg {
+                color: $sky-400;
+            }
+            
+            &:hover {
+                background-color: rgba($sky-400, 0.15);
+                color: $sky-400;
+            }
+        }
+    }
+
+    // --- FOOTER / LOGOUT ---
+    .sidebarFooter {
+        padding: 1.5rem;
+        border-top: 1px solid $slate-800;
+
+        .logoutAction {
+            width: 100%;
+            padding: 12px;
+            background: rgba($red-500, 0.05);
+            border: 1px solid rgba($red-500, 0.5);
+            color: $red-500;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+            svg {
+                font-size: 1.2rem;
+            }
+
+            &:hover {
+                background: $red-500;
+                color: #ffffff;
+                border-color: $red-500;
+                box-shadow: 0 4px 15px rgba($red-500, 0.3);
+                transform: translateY(-2px);
+            }
+
+            &:active {
+                transform: translateY(0);
+            }
+        }
+    }
+}
+
+// Soporte para pantallas pequeñas (Tablet/Phone)
+@media (max-width: 1024px) {
+    .adminSidebar {
+        width: 80px; // Versión colapsada automática
+        
+        .brandText, .navGroupLabel, span {
+            display: none;
+        }
+        
+        .brand {
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .auditNav {
+            .link, .activeLink {
+                justify-content: center;
+                padding: 15px 0;
+                svg { margin: 0; font-size: 1.8rem; }
+            }
+        }
+        
+        .sidebarFooter {
+            .logoutAction {
+                span { display: none; }
+                padding: 15px 0;
+            }
+        }
+    }
 }

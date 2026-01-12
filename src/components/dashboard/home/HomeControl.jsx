@@ -108,7 +108,7 @@ function HomeControl() {
     };
 
     fetchInitialData();
-  }, [currentUser?.deviceId, currentUser?.uid]);
+  }, [currentUser?.deviceId]);
 
 // obtener datos de RTDB
 useEffect(() => {
@@ -182,6 +182,16 @@ useEffect(() => {
       await update(deviceRefRTDB, {
         dispense_manual: "activado",
         food_portion: String(foodPortion),
+      });
+
+      await addDoc(collection(db, 'system_logs'), {
+          action: 'DISPENSACION_MANUAL',
+          details: `Usuario ${currentUser.email} dispensó ${foodPortion} porciones.`,
+          deviceId: currentUser.deviceId,
+          uid: currentUser.uid,
+          userEmail: currentUser.email,
+          timestamp: serverTimestamp(),
+          type: 'info'
       });
 
       toast.success('Dosificando Alimento', { className: 'custom-toast-success', });

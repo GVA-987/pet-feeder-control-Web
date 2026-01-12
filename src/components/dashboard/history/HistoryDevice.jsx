@@ -16,8 +16,13 @@ const HistoryPage = () => {
     useEffect(() => {
     const fetchHistory = async () => {
         if (!currentUser?.deviceId) {
-        setLoading(false);
-        return;
+            setLoading(false);
+            return (
+                <div className={styles.noData}>
+                    <MdInfoOutline />
+                    <p>No hay un equipo vinculado para mostrar el historial.</p>
+                </div>
+            );
         }
 
         try {
@@ -87,14 +92,15 @@ const HistoryPage = () => {
     // Datos para el gráfico de barras
     const dailyDataMap = hist.reduce((acc, item) => {
         if (!item.timestamp) return acc;
+        let dateObj;
+        if (item.timestamp.toDate) dateObj = item.timestamp.toDate();
+        else if (item.timestamp.seconds) dateObj = new Date(item.timestamp.seconds * 1000);
+        else dateObj = new Date(item.timestamp);
 
-        // Convertir a objeto Date de forma segura
-        const dateObj = item.timestamp?.toDate ? item.timestamp.toDate() : new Date(item.timestamp * 1000);
-        
-        // Creamos una clave basada en la fecha pura (YYYY-MM-DD) para agrupar
-        const dateISO = dateObj.toISOString().split('T')[0]; 
+        // Usar la fecha local para que el usuario vea su propio día, no el UTC
+        const dateLabel = dateObj.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
 
-        acc[dateISO] = (acc[dateISO] || 0) + (parseInt(item.portion) || 0);
+        acc[dateLabel] = (acc[dateLabel] || 0) + (parseInt(item.portion) || 0);
         return acc;
     }, {});
 

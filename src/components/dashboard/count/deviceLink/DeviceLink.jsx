@@ -1,4 +1,4 @@
-import Recat, { useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../../../context/AuthContext';
 import { getDatabase, ref, set } from "firebase/database";
 import { doc, getDoc, runTransaction, serverTimestamp, collection, arrayUnion } from 'firebase/firestore';
@@ -39,7 +39,8 @@ const DeviceLink = () => {
                 if(!deviceDoc.exists()){
                     throw new Error('Equipo no encontrado. Verifica el ID.');
                 }
-                if(deviceDoc.data().linked_user_id !== "null"){
+                const data = deviceDoc.data();
+                if(data.linked_user_id && data.linked_user_id !== "null"){
                     throw new Error('Este equipo ya pertenece a otro usuario');
                 }
 

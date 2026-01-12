@@ -1,56 +1,254 @@
-.container{
-    margin-top: -100px;
-    padding: 0 3rem 0 5rem;
-    font-size: 1.5rem;
-}
-.deviceGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-    font-size: 1.5rem;
-}
+.container {
+    padding: 2rem;
+    background: #f8f9fc;
+    min-height: 100vh;
 
-.deviceCard {
-    background: rgb(39, 39, 39);
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1.5rem;
 
-.statusIndicator {
-    font-weight: bold;
-    font-size: 0.8rem;
-    display: flex;
-    align-items: center;
+        .titleInfo {
+            h2 { margin: 0; color: #2d3436; display: flex; align-items: center; gap: 0.7rem; }
+            p { margin: 5px 0 0; color: #636e72; font-size: 0.95rem; }
+        }
 
-    .dot {
-        height: 10px;
-        width: 10px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-right: 8px;
-    }
+        .filterTabs {
+            background: #fff;
+            padding: 5px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 5px;
 
-    .online {
-        color: #27ae60;
-        .dot {
-            background-color: #2ecc71;
-            box-shadow: 0 0 8px #2ecc71; // Brillo verde
-            animation: pulse-green 2s infinite;
+            button {
+                border: none;
+                background: transparent;
+                padding: 8px 16px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: #636e72;
+                transition: all 0.3s;
+
+                &.active {
+                    background: #4e73df;
+                    color: #fff;
+                }
+
+                &:hover:not(.active) {
+                    background: #f1f2f6;
+                }
+            }
         }
     }
 
-    .offline {
-        color: #c0392b;
-        .dot { background-color: #e74c3c; }
+    .deviceGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 1.5rem;
+        position: relative;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+        border: 1px solid #edf2f7;
+        transition: transform 0.3s, box-shadow 0.3s;
+
+        &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        &.offlineCard {
+            background: #fdfdfe;
+            filter: grayscale(0.6);
+            border-style: dashed;
+
+            .onlineBadge { color: #a4b0be; }
+            .circle { stroke: #a4b0be !important; }
+        }
+
+        .cardStatus {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+
+            .onlineBadge {
+                font-size: 0.7rem;
+                font-weight: 800;
+                letter-spacing: 1px;
+                color: #2ecc71;
+            }
+
+            code {
+                background: #f1f2f6;
+                padding: 2px 8px;
+                border-radius: 6px;
+                font-size: 0.75rem;
+                color: #4e73df;
+            }
+        }
+
+        .cardBody {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+
+            .mainMetric {
+                text-align: center;
+                
+                .progressCircle {
+                    position: relative;
+                    width: 120px;
+                    height: 120px;
+                    margin: 0 auto 10px;
+
+                    .circularChart { display: block; margin: 10px auto; max-height: 250px; }
+                    .circleBg { fill: none; stroke: #eee; stroke-width: 2.8; }
+                    .circle {
+                        fill: none;
+                        stroke-width: 2.8;
+                        stroke-linecap: round;
+                        transition: stroke-dasharray 1s ease;
+                    }
+
+                    .percentage {
+                        position: absolute;
+                        top: 50%; left: 50%;
+                        transform: translate(-50%, -50%);
+                        font-size: 1.2rem;
+                        font-weight: 700;
+                        color: #2d3436;
+                    }
+                }
+
+                .metricLabel {
+                    font-size: 0.8rem;
+                    color: #b2bec3;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                }
+            }
+
+            .infoList {
+                width: 100%;
+                display: flex;
+                justify-content: space-around;
+                background: #f8f9fa;
+                padding: 10px;
+                border-radius: 12px;
+
+                .infoItem {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    font-size: 0.75rem;
+                    color: #636e72;
+                    svg { color: #4e73df; font-size: 1rem; }
+                }
+            }
+        }
+
+        .cardActions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 1.5rem;
+
+            button {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                border: 1px solid #edf2f7;
+                background: #fff;
+                color: #636e72;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+                transition: all 0.2s;
+
+                &:hover {
+                    background: #4e73df;
+                    color: #fff;
+                    transform: rotate(15deg);
+                }
+            }
+        }
+
+        .cardFooter {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f1f2f6;
+            text-align: center;
+            span { font-size: 0.75rem; color: #a4b0be; }
+        }
     }
 }
 
-@keyframes pulse-green {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(46, 204, 113, 0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+.loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60vh;
+    color: #4e73df;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+// Añadir a AdminDevices.module.scss o Modal.module.scss
+.modalForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    .inputGroup {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        label { font-weight: 600; color: #444; font-size: 0.9rem; }
+        input {
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            outline: none;
+            &:focus { border-color: #4e73df; }
+        }
+        small { color: #888; font-size: 0.75rem; }
+    }
+
+    .btnSubmit {
+        background: #4e73df;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        &:hover { background: #2e59d9; }
+        &:disabled { background: #ccc; }
+    }
+}
+
+.btnAddDevice {
+    background: #1cc88a;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 20px;
+    &:hover { background: #17a673; }
 }

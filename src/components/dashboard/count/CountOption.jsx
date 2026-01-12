@@ -8,7 +8,7 @@ import DeviceLink from './deviceLink/DeviceLink';
 import {db, rtdb} from '../../../firebase/firebase-config.js';
 import {useAuth} from '../../../context/AuthContext'
 import {doc, getDoc, onSnapshot, updateDoc, serverTimestamp, collection, addDoc, getDocs, where, query, orderBy, arrayRemove} from 'firebase/firestore';
-import { getDatabase, ref, onValue, off, update as updateRTDB } from "firebase/database";
+import { getDatabase, ref, onValue, off, update } from "firebase/database";
 import toast from 'react-hot-toast';
 
 const GeneralOptions = () => {
@@ -68,9 +68,11 @@ const GeneralOptions = () => {
                 weight_portion: String(calibratePortion),
             });
 
+            toast.success("Calibración enviada al equipo", {className: 'custom-toast-success'});
             setCalibratePortion('');
         } catch (error) {
             console.error('Error al calibrar porción:', error);
+            toast.error("Fallo al comunicar con el equipo", {className: 'custom-toast-error'});
         }
     }
 
@@ -101,6 +103,11 @@ const GeneralOptions = () => {
             const deviceRef = doc(db, 'devicesPet', deviceId);
             const userRef = doc(db, 'users', currentUser.uid);
 
+            await update(ref(rtdb, `${deviceId}`), { 
+                ownerUid: null,
+                "commands/dispense_manual": "desactivado" 
+            });
+
             // Actualización en Firestore
             await updateDoc(deviceRef, {
                 linked_user_id: "null",
@@ -114,11 +121,9 @@ const GeneralOptions = () => {
             }
             await updateDoc(userRef, updateData);
 
-            // RTDB: Limpiar el dueño
-            await updateRTDB(ref(rtdb, `${deviceId}`), { ownerUid: null });
-
             // Auditoría
             await addDoc(collection(db, 'system_logs'), {
+                type: "info",
                 action: 'DEVICE_UNLINKED',
                 category: 'SECURITY',
                 userId: currentUser.uid,

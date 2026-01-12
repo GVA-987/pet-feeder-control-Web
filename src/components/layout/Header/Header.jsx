@@ -5,20 +5,22 @@ import { div } from 'framer-motion/client';
 import {useAuth} from '../../../context/AuthContext'
 import AvatarMenu from './AvatarMenu';
 
-const getPageTitle = (pathname) => {
+const getPageTitle = (pathname, isAdmin) => {
+    if (isAdmin) {
+        if (pathname === '/admin') return 'Panel de Control';
+        if (pathname.includes('/admin/users')) return 'Gestión de Usuarios';
+        if (pathname.includes('/admin/devices')) return 'Inventario de Hardware';
+        if (pathname.includes('/admin/logs')) return 'Consola de Auditoría';
+        return 'Administración';
+    }
+
     switch (pathname) {
-        case '/home':
-            return 'home'; 
-        case '/ConfDevice':
-            return 'Programacion de Comidas';
-        case '/history':
-            return 'Historial de Dispensaciones';
-        case '/count':
-            return 'Ajustes del Dispositivo';
-        case '/cuenta':
-            return 'Mi Cuenta y Perfil de Mascota';
-        default:
-            return 'Pet Feeder Control';
+        case '/home': return 'home'; 
+        case '/ConfDevice': return 'Programación de Comidas';
+        case '/history': return 'Historial de Dispensaciones';
+        case '/count': return 'Ajustes del Dispositivo';
+        case '/cuenta': return 'Mi Cuenta';
+        default: return 'Pet Feeder Control';
     }
 };
 
@@ -33,31 +35,64 @@ const getGreeting = (name) => {
 
 
 
-function Header ()  { 
+function Header() { 
     const { currentUser } = useAuth();
-    
     const location = useLocation();
-    const pathname = location.pathname;
+    const isAdmin = currentUser?.role === 'admin';
+    const pageTitle = getPageTitle(location.pathname, isAdmin);
     
-    const pageTitle = getPageTitle(pathname);
     const headerContent = (pageTitle === 'home') 
         ? getGreeting(currentUser.nombre) 
         : pageTitle;
 
-    return (
-        <div className={styles.contectHeader}>
-            <header className={styles.appHeader}>
-                <h1 className={styles.headerTitle}>
-                    {headerContent}
-                </h1>
+    const SystemClock = () => {
+        const [time, setTime] = useState(new Date());
 
-                <div className={styles.contAvatarMenu}>
-                    <AvatarMenu />
-                {/* <img src={logo} alt="PetLog Logo" className={styles.logo} /> */}
+        useEffect(() => {
+            const timer = setInterval(() => setTime(new Date()), 1000);
+            return () => clearInterval(timer);
+        }, []);
+
+        return (
+            <div className={styles.systemClock}>
+                <span>{time.toLocaleDateString()}</span>
+                <span className={styles.divider}>|</span>
+                <span>{time.toLocaleTimeString()}</span>
+            </div>
+        );
+    };
+
+    return (
+        <div className={`${styles.contectHeader} ${isAdmin ? styles.adminHeader : ''}`}>
+            <header className={styles.appHeader}>
+                <div className={styles.titleSection}>
+                    {isAdmin && <span className={styles.auditIndicator}>AUDIT_MODE</span>}
+                    <h1 className={styles.headerTitle}>{pageTitle}</h1>
+                    
+                    
+                </div>
+{isAdmin && (
+    <div className={styles.adminMeta}>
+        <SystemClock />
+    </div>
+)}
+                <div className={styles.adminStatus}>
+                    {isAdmin ? (
+                        
+                        <div className={styles.adminProfile}>
+                            <div className={styles.adminInfo}>
+                                
+                                <span className={styles.adminName}>{currentUser.nombre}</span>
+                                <span className={styles.adminRole}>Administrator</span>
+                            </div>
+                            <div className={styles.statusDot}></div>
+                        </div>
+                    ) : (
+                        <AvatarMenu />
+                    )}
                 </div>
             </header>
         </div>
-        
     );
 };
 

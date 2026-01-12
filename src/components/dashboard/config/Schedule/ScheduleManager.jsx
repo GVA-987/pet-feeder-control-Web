@@ -57,37 +57,43 @@ const ScheduleManager = ({ editData, onClearEdit }) => {
 
     const handleAddSchedule = async (e) => {
         e.preventDefault();
+
+        if (selectedDays.length === 0) {
+            toast.error("Selecciona al menos un día");
+            return;
+        }
         try {
             const deviceRef = doc(db, 'devicesPet', currentUser.deviceId);
         
-        const scheduleObject = {
-            id: editData?.id || `${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-            days: [...selectedDays].sort(),
-            time: newSchedule.time,
-            portion: Number(newSchedule.portion),
-            enabled: editData ? editData.enabled : true,
-        };
+            const scheduleObject = {
+                id: editData?.id || `${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+                days: [...selectedDays].sort(),
+                time: newSchedule.time,
+                portion: Number(newSchedule.portion),
+                enabled: editData ? editData.enabled : true,
+            };
 
-        const docSnap = await getDoc(deviceRef);
-        const currentSchedules = docSnap.exists() ? (docSnap.data().schedule || []) : [];
+            const docSnap = await getDoc(deviceRef);
+            const currentSchedules = docSnap.exists() ? (docSnap.data().schedule || []) : [];
 
-        let updatedSchedules;
-        if (editData) {
-            updatedSchedules = currentSchedules.map(item => 
-                item.id === editData.id ? scheduleObject : item
-            );
-        } else {
-            updatedSchedules = [...currentSchedules, scheduleObject];
-        }
+            let updatedSchedules;
+            if (editData) {
+                updatedSchedules = currentSchedules.map(item => 
+                    item.id === editData.id ? scheduleObject : item
+                );
+            } else {
+                updatedSchedules = [...currentSchedules, scheduleObject];
+            }
 
-        await updateDoc(deviceRef, { schedule: updatedSchedules });
+            await updateDoc(deviceRef, { schedule: updatedSchedules });
 
                 await addDoc(collection(db, "system_logs"), {
                     action: editData ? "SCHEDULE_UPDATED" : "SCHEDULE_CREATED",
                     userId: currentUser.uid,
                     deviceId: currentUser.deviceId,
                     timestamp: serverTimestamp(),
-                    details: `${editData ? 'Editó' : 'Creó'} el horario: ${scheduleObject.time}`
+                    details: `${editData ? 'Editó' : 'Creó'} el horario: ${scheduleObject.time}`,
+                    type: "info"
                 });
 
                 toast.success(editData ? 'Horario actualizado' : 'Horario agregado', { className: 'custom-toast-success' });

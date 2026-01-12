@@ -30,5 +30,119 @@
             font-size: 1.4rem;
         }
     }
+    .contAvatarMenu {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 
+    .adminBadge {
+        background-color: #3a3a3c; // Gris oscuro profesional
+        color: #0a84ff; // Azul brillante de sistema
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        border: 1px solid rgba(10, 132, 255, 0.3);
+        letter-spacing: 1px;
+    }
+}
+
+}
+.adminHeader {
+    background-color: #ffffff !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    margin: 0 !important; // Quita el margen flotante del usuario
+    border-radius: 0 !important; // Cuadrado profesional
+    padding: 0 2rem;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    
+    // IMPORTANTE: Se desplaza a la derecha para dejar espacio al Sidebar Admin
+    @include m.tablet {
+        left: 280px; 
+    }
+
+    .appHeader {
+        width: 100%;
+        margin: 0;
+    }
+
+    .headerTitle {
+        color: #1e293b !important; // Texto oscuro sobre fondo blanco
+        font-size: 1.3rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .titleSection {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .auditIndicator {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.65rem;
+        background: #0f172a;
+        color: #22c55e; // Verde neón
+        padding: 2px 8px;
+        border-radius: 4px;
+        margin-bottom: 4px;
+        font-weight: bold;
+    }
+
+    .adminStatus {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .adminProfile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-left: 1px solid #e2e8f0;
+        padding-left: 20px;
+
+        .adminInfo {
+            display: flex;
+            flex-direction: column;
+            text-align: right;
+
+            .adminName { 
+                font-weight: 700; 
+                color: #1e293b; 
+                font-size: 0.95rem; 
+                line-height: 1;
+            }
+            .adminRole { 
+                font-size: 0.7rem; 
+                color: #64748b; 
+                text-transform: uppercase;
+                font-weight: 600;
+            }
+        }
+
+        .statusDot {
+            width: 10px;
+            height: 10px;
+            background: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+        }
+    }
+
+    .adminMeta {
+        color: #94a3b8;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 1.2rem;
+        font-weight: 600;
+        
+        .divider {
+            margin: 0 10px;
+            color: #e2e8f0;
+        }
+    }
 }

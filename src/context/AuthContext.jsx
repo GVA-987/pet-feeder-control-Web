@@ -25,13 +25,20 @@ export function AuthProvider({ children }) {
     };
 
     useEffect(() => {
+    let unsubscribeUserDoc = null;
 
-        setPersistence(auth, browserSessionPersistence)
-        .catch((error) => console.error("Error al establecer persistencia:", error));
-        const unsubscribeAuth = onAuthStateChanged(auth, user => {
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+        // 1. Si hay un cambio de auth, primero limpiamos cualquier suscripción activa anterior
+        if (unsubscribeUserDoc) {
+            unsubscribeUserDoc();
+            unsubscribeUserDoc = null;
+        }
+
         if (user) {
             const userDocRef = doc(db, 'users', user.uid);
-            const unsubscribeUserDoc = onSnapshot(userDocRef, (userDoc) => {
+            
+            // 2. Usamos onSnapshot para mantener el rol y deviceId actualizados en tiempo real
+            unsubscribeUserDoc = onSnapshot(userDocRef, (userDoc) => {
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
                     setCurrentUser({
@@ -39,21 +46,36 @@ export function AuthProvider({ children }) {
                         email: user.email,
                         ...userData,
                         role: userData.role || 'user',
-                        devicePetId: userData.deviceId || "null",
+                        // Usamos deviceId consistente con tus capturas de pantalla
+                        deviceId: userData.deviceId || null, 
                     });
                 } else {
-                    setCurrentUser(user);
+                    // Si el documento no existe aún (ej. registro nuevo)
+                    setCurrentUser({
+                        uid: user.uid,
+                        email: user.email,
+                        ...userData,
+                        role: userData.role || 'user',
+                        deviceId: userData.deviceId || null, // Usa 'deviceId' para que coincida con Firestore
+                    });
                 }
                 setLoading(false);
+            }, (error) => {
+                console.error("Error en Snapshot de usuario:", error);
+                setLoading(false);
             });
-            return () => unsubscribeUserDoc();   
         } else {
+            // 3. Al cerrar sesión, limpiamos el estado completamente
             setCurrentUser(null);
             setLoading(false);
         }
     });
-        return () => unsubscribeAuth();
-    }, []);
+
+    return () => {
+        unsubscribeAuth();
+        if (unsubscribeUserDoc) unsubscribeUserDoc();
+    };
+}, []);
 
     const value = {
         currentUser,

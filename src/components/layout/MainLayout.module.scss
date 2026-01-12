@@ -29,13 +29,13 @@
             }
         }
     }
-    // &.adminTheme {
-    //     background-color: #f5f5f7; 
+    &.adminTheme {
+        background-color: #e0e0e0; 
         
-    //     .contentArea {
-    //         main {
-    //             background-color: transparent; 
-    //         }
-    //     }
-    // }
+        .contentArea {
+            main {
+                background-color: transparent; 
+            }
+        }
+    }
 }

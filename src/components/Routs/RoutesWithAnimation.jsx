@@ -15,6 +15,8 @@ import configUser from '../confGen/userProfile/configUser';
 import AdminPage from '../../pages/AdminPage';
 import AdminUsersPage from '../../pages/AdminUsersPage';
 import AdminDevicesPage from '../../pages/AdminDevicesPage';
+import AdminLogsPage from '../../pages/AdminsLogsPages';
+
 // import NotFound from '../pages/NotFound'; // Opcional:  404
 
 function RoutesWithAnimation() {
@@ -55,6 +57,17 @@ function RoutesWithAnimation() {
                 <PrivateRoute allowedRoles={['admin']}>
                     <MainLayout>
                         <AdminDevicesPage />
+                    </MainLayout>
+                </PrivateRoute>
+            } 
+        />
+
+        <Route 
+            path="/admin/logs" 
+            element={
+                <PrivateRoute allowedRoles={['admin']}>
+                    <MainLayout>
+                        <AdminLogsPage />
                     </MainLayout>
                 </PrivateRoute>
             } 

@@ -61,7 +61,8 @@ const ConfigDevice = () => {
                 userId: currentUser.uid,
                 deviceId: currentUser.deviceId,
                 timestamp: serverTimestamp(),
-                details: `Horario ${scheduleToDelete.time} movido al archivo.`
+                details: `Horario ${scheduleToDelete.time} movido al archivo.`,
+                type: "info"
             });
 
             toast.success('Horario eliminado', { className: 'custom-toast-success' });

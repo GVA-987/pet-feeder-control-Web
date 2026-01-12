@@ -16,7 +16,8 @@ const MainLayout = ({ children }) => {
         <div className={`${styles.mainLayout} ${isAdmin ? styles.adminTheme : ''}`}>
             {isAdmin ? <AdminNavbar /> : <Navbar />}
             <div className={styles.contentArea}>
-                {!isAdmin && <Header />}
+                {/* Habilitamos Header para ambos, pero el Header decidirá qué mostrar */}
+                <Header /> 
                 <main className={styles.mainContent}>
                     {children}
                 </main>

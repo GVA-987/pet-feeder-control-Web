@@ -1,103 +1,110 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
-import { db, rtdb } from '../../../firebase/firebase-config';
-import { ref, set } from 'firebase/database';
+import { collection, query, orderBy, onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../../firebase/firebase-config';
 import styles from './AdminUsers.module.scss';
-import { RiUserSettingsLine, RiDeleteBin6Line } from "react-icons/ri";
+import { 
+    RiUserSearchLine, RiShieldUserLine, RiSettings4Line, 
+    RiDeviceLine, RiMailLine, RiTimeLine 
+} from "react-icons/ri";
+import toast from 'react-hot-toast';
 
 const AdminUsersPage = () => {
     const [users, setUsers] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
 
-    const handleToggleRole = async (userId, userEmail, currentRole) => {
-    const newRole = currentRole === 'admin' ? 'user' : 'admin';
-    
-    const confirmacion = window.confirm(`¿Deseas cambiar el rol de ${userEmail} a "${newRole}"?`);
-    if (!confirmacion) return;
-
-    try {
-        const userRef = doc(db, 'users', userId);
-        await updateDoc(userRef, { role: newRole });
-
-        const adminRTDBRef = ref(rtdb, `admins/${userId}`);
-        await set(adminRTDBRef, newRole === 'admin' ? true : null);
-
-        setUsers(prevUsers => 
-            prevUsers.map(u => u.id === userId ? { ...u, role: newRole } : u)
-        );
-
-        alert(`Rol actualizado a ${newRole} correctamente.`);
-
-    } catch (error) {
-        console.error("Error al cambiar rol:", error);
-        alert("Error de permisos o conexión. Revisa la consola.");
-    }
-};
-
     useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                const querySnapshot = await getDocs(collection(db, 'users'));
-                const usersList = querySnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-                setUsers(usersList);
-            } catch (error) {
-                console.error("Error cargando usuarios:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchUsers();
+        const q = query(collection(db, 'users'), orderBy('email', 'asc'));
+        
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const usersList = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setUsers(usersList);
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
     }, []);
 
-    if (loading) return <div className={styles.loader}>Cargando usuarios...</div>;
+    const toggleAdminRole = async (userId, currentRole) => {
+        const newRole = currentRole === 'admin' ? 'user' : 'admin';
+        try {
+            await updateDoc(doc(db, 'users', userId), { role: newRole });
+            toast.success(`Rol actualizado a ${newRole.toUpperCase()}`);
+        } catch (e) {
+            toast.error("Error al cambiar privilegios");
+        }
+    };
+
+    const filteredUsers = users.filter(u => 
+        u.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        u.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (loading) return <div className={styles.loader}>Cargando directorio...</div>;
 
     return (
         <div className={styles.container}>
             <header className={styles.header}>
-                <h2>Gestión de Usuarios</h2>
-                <p>Administra los permisos y revisa los dispositivos vinculados.</p>
+                <div className={styles.titleArea}>
+                    <h2><RiShieldUserLine /> Directorio de Usuarios</h2>
+                    <p>Gestión de permisos y vinculación de hardware</p>
+                </div>
+                <div className={styles.searchBox}>
+                    <RiUserSearchLine />
+                    <input 
+                        type="text" 
+                        placeholder="Buscar por email o nombre..." 
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
             </header>
 
-            <div className={styles.tableWrapper}>
-                <table className={styles.userTable}>
-                    <thead>
-                        <tr>
-                            <th>Usuario</th>
-                            <th>Email</th>
-                            <th>Rol</th>
-                            <th>Dispositivo ID</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.map(user => (
-                            <tr key={user.id}>
-                                <td className={styles.userName}>
-                                    {user.name || 'Sin nombre'}
-                                </td>
-                                <td>{user.email}</td>
-                                <td>
-                                    <span 
-                                        className={`${styles.badge} ${styles[user.role || 'user']}`}
-                                        onClick={() => handleToggleRole(user.id, user.email, user.role || 'user')}
-                                        title="Haz clic para cambiar el rol"
-                                    >
-                                        {user.role || 'user'}
-                                    </span>
-                                </td>
-                                <td><code>{user.deviceId || 'No vinculado'}</code></td>
-                                <td className={styles.actions}>
-                                    <button className={styles.editBtn} title="Editar"><RiUserSettingsLine /></button>
-                                    <button className={styles.deleteBtn} title="Eliminar"><RiDeleteBin6Line /></button>
-                                </td>
-                                
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            <div className={styles.userGrid}>
+                {filteredUsers.map(user => (
+                    <div key={user.id} className={styles.userCard}>
+                        <div className={styles.cardTop}>
+                            <div className={styles.avatar}>
+                                {user.name ? user.name.charAt(0) : user.email.charAt(0)}
+                            </div>
+                            <div className={styles.basicInfo}>
+                                <h4>{user.name || 'Sin nombre'}</h4>
+                                <span><RiMailLine /> {user.email}</span>
+                            </div>
+                            <div className={`${styles.roleBadge} ${styles[user.role || 'user']}`}>
+                                {user.role || 'user'}
+                            </div>
+                        </div>
+
+                        <div className={styles.cardStats}>
+                            <div className={styles.statItem}>
+                                <RiDeviceLine />
+                                <div>
+                                    <small>Dispositivo</small>
+                                    <p>{user.deviceId || 'No vinculado'}</p>
+                                </div>
+                            </div>
+                            <div className={styles.statItem}>
+                                <RiTimeLine />
+                                <div>
+                                    <small>Miembro desde</small>
+                                    <p>{user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className={styles.cardActions}>
+                            <button 
+                                className={styles.btnRole}
+                                onClick={() => toggleAdminRole(user.id, user.role)}
+                            >
+                                <RiSettings4Line /> {user.role === 'admin' ? 'Quitar Admin' : 'Hacer Admin'}
+                            </button>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );
