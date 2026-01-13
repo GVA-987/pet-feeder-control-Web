@@ -6,13 +6,10 @@ const CircularProgressBar = ({
     size, 
     strokeWidth = 3.37, 
     className,
-    label = "FULL" // Añadido para el texto de abajo
+    label = "FULL",
+    color = "#00bcd4" 
 }) => {
     const radius = 16;
-    const circumference = 2 * Math.PI * radius; // Aprox 100
-    
-    // Ajustamos para que el círculo no sea completo (estilo Gauge)
-    // 75 significa que el arco mide el 75% de un círculo (270 grados)
     const dashArray = 75; 
     const dashOffset = (percentage / 100) * dashArray;
 
@@ -22,15 +19,6 @@ const CircularProgressBar = ({
                 viewBox="0 0 36 36"
                 className={styles.circleBar}
             >
-                {/* Definición del degradado (puedes cambiar los colores vía CSS variables) */}
-                <defs>
-                    <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" className={styles.stopStart} />
-                        <stop offset="100%" className={styles.stopEnd} />
-                    </linearGradient>
-                </defs>
-
-                {/* Fondo (Track) */}
                 <path
                     className={styles.circleBg}
                     strokeWidth={strokeWidth}
@@ -40,12 +28,12 @@ const CircularProgressBar = ({
                         a 15.9155 15.9155 0 0 1 0 31.831
                         a 15.9155 15.9155 0 0 1 0 -31.831"
                 />
-                
-                {/* Barra de Progreso */}
+
                 <path
                     className={styles.circle}
                     strokeWidth={strokeWidth}
-                    stroke="url(#progressGradient)"
+                    stroke={color} 
+                    style={{ stroke: color }}
                     strokeDasharray={`${dashOffset}, 100`}
                     strokeLinecap="round"
                     d="M18 2.0845
@@ -53,8 +41,7 @@ const CircularProgressBar = ({
                         a 15.9155 15.9155 0 0 1 0 -31.831"
                 />
 
-                {/* Textos */}
-                <text x="18" y="19" className={styles.percentage}>
+                <text x="18" y="19" className={styles.percentage} style={{ fill: '#fff' }}>
                     {percentage}%
                 </text>
                 <text x="18" y="26" className={styles.label}>

@@ -6,7 +6,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { db } from '../../../firebase/firebase-config';
 import { MdDelete, MdEdit } from 'react-icons/md';
 import moment from 'moment';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import Switch from '../../common/switch/Switch';
 
 const ConfigDevice = () => {
@@ -17,7 +17,6 @@ const ConfigDevice = () => {
     const [editingSchedule, setEditingSchedule] = useState(null);
     const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
-    // Escuchar horarios en tiempo real
     useEffect(() => {
         if (currentUser && currentUser.deviceId) {
             const deviceRef = doc(db, 'devicesPet', currentUser.deviceId);
@@ -55,7 +54,6 @@ const ConfigDevice = () => {
                 deviceId: currentUser.deviceId
             });
 
-        // 4. Log del sistema
             await addDoc(collection(db, "system_logs"), {
                 action: "SCHEDULE_ARCHIVED",
                 userId: currentUser.uid,
@@ -107,76 +105,61 @@ const ConfigDevice = () => {
 
     return (
         <div className={styles.container}>
-        <div className={styles.contentGrid}>
-        {/* Tarjeta de Horarios Programados */}
-        <div className={styles.card}>
-            <ScheduleManager 
-                editData = {editingSchedule}
-                onClearEdit = {() => setEditingSchedule(null)}
-            />
-        </div>
-        <div className={styles.card}>
-                    <h2 className={styles.title}>Horarios Programados</h2>
-                    <div className={styles.scheduleTableContainer}>
-                        {schedules.filter(s => s.deleted !== true).length > 0 ? (
-                            <table className={styles.scheduleTable}>
-                                <thead>
-                                    <tr>
-                                        <th>Hora</th>
-                                        <th>Días</th>
-                                        <th>Porción</th>
-                                        <th>Acción</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {schedules
-                                        .filter(schedule => schedule.delete !== true)
-                                        .map((schedule, index) => (
-                                        <tr key={schedule.id || index} className={`${styles.scheduleRow} ${!schedule.enabled ? styles.disabledRow : ''}`}>
-                                            <td className={styles.timeCell}>
-                                                <strong>{schedule.time}</strong>
-                                            </td>
-                                            <td className={styles.daysCell}>
-                                                <div className={styles.daysList}>
-                                                    {schedule.days?.map(d => (
-                                                        <span key={d} className={styles.dayBadge}>
-                                                            {dayNames[d]}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </td>
-                                            <td className={styles.portionCell}>
-                                                {schedule.portion}
-                                            </td>
-                                            <td className={styles.actionCell}>
-                                                <Switch 
-                                                    id={schedule.id}
-                                                    isOn={schedule.enabled}
-                                                    handleToggle={() => handleToggleStatus(schedule)}
-                                                />
-                                                <button 
-                                                    onClick={() => handleEditClick(schedule)}
-                                                    className={styles.editButton}
-                                                    title="Editar"
-                                                >
-                                                    <MdEdit /> {/* Importa MdEdit de react-icons/md */}
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDeleteSchedule(schedule)}
-                                                    className={styles.deleteButton}
-                                                >
-                                                    <MdDelete />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        ) : (
-                            <p className={styles.noScheduleMessage}>No hay rutinas activas.</p>
-                        )}
-                    </div>
+            <div className={styles.contentGrid}>
+            <div className={styles.card}>
+                <ScheduleManager 
+                    editData = {editingSchedule}
+                    onClearEdit = {() => setEditingSchedule(null)}
+                />
+            </div>
+            <div className={styles.card}>
+                <h2 className={styles.title}>Horarios Programados</h2>
+                <div className={styles.routineGrid}>
+                    {schedules.filter(s => s.delete !== true).length > 0 ? (
+                        schedules
+                            .filter(schedule => schedule.delete !== true)
+                            .map((schedule, index) => (
+                                <div key={schedule.id || index} 
+                                    className={`${styles.routineCard} ${!schedule.enabled ? styles.disabledRow : ''}`}>
+                                    
+                                    <div className={styles.cardHeader}>
+                                        <span className={styles.timeText}>{schedule.time}</span>
+                                        <Switch 
+                                            id={schedule.id}
+                                            isOn={schedule.enabled}
+                                            handleToggle={() => handleToggleStatus(schedule)}
+                                        />
+                                    </div>
+                            
+                                    <div className={styles.cardBody}>
+                                        <div className={styles.portionBadge}>
+                                            {schedule.portion} Porción(es)
+                                        </div>
+                                        <div className={styles.daysList}>
+                                            {schedule.days?.map(d => (
+                                                <span key={d} className={styles.dayBadge}>
+                                                    {dayNames[d]}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                        
+                                    <div className={styles.cardActions}>
+                                        <button onClick={() => handleEditClick(schedule)} className={styles.editBtn}>
+                                            <MdEdit />
+                                        </button>
+                                        <button onClick={() => handleDeleteSchedule(schedule)} className={styles.deleteBtn}>
+                                            <MdDelete />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                    ) : (
+                        <p className={styles.noScheduleMessage}>No hay rutinas activas.</p>
+                    )}
                 </div>
+            </div>
+            <Toaster position="bottom-right" />
         </div>
     </div>
     );

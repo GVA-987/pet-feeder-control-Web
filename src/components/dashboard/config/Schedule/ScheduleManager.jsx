@@ -59,7 +59,7 @@ const ScheduleManager = ({ editData, onClearEdit }) => {
         e.preventDefault();
 
         if (selectedDays.length === 0) {
-            toast.error("Selecciona al menos un día");
+            toast.error("Selecciona al menos un día", { className: 'custom-toast-error', });
             return;
         }
         try {
@@ -144,7 +144,6 @@ const ScheduleManager = ({ editData, onClearEdit }) => {
         <div className={styles.scheduleFormContainer}>
         <h3>{editData ? 'Editar Horario' : 'Añadir Nuevo Horario'}</h3>
         
-        {/* Este contenedor DEBE estar arriba para que ocupe todo el ancho */}
         <div className={styles.daysSelectorContainer}>
             <div className={styles.daysGrid}>
                 {daysOfWeek.map((day) => (
@@ -160,7 +159,6 @@ const ScheduleManager = ({ editData, onClearEdit }) => {
             </div>
         </div>
 
-        {/* El formulario con los inputs de Hora y Porción */}
         <Form
             fields={scheduleFields}
             onSubmit={handleAddSchedule}

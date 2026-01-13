@@ -1,49 +1,59 @@
 import React from 'react';
-import { signOut } from 'firebase/auth';
-import { auth } from '../../../firebase/firebase-config';
-import { IoHomeOutline } from "react-icons/io5";
+import { NavLink } from 'react-router-dom';
+import { IoHomeOutline, IoLogOutOutline } from "react-icons/io5";
 import { HiOutlineAdjustments } from "react-icons/hi";
 import { GrHistory, GrConfigure } from "react-icons/gr";
-import { NavLink, useNavigate } from 'react-router-dom';
+import { auth } from '../../../firebase/firebase-config';
+import { signOut } from 'firebase/auth';
 import petLogo from '../../../assets/petlog.png';
 import styles from './Navbar.module.scss';
 
 const Navbar = () => {
-    const navigate = useNavigate();
+    
 
-    const handleLogout = async () => {
-    try {
-        await signOut(auth);
-        navigate('/login');
-    } catch (error) {
-        console.error('Error al cerrar sesión:', error);
-    }
-    };
+    const handleLogout = () => signOut(auth);
 
     return (
     <aside className={styles.sidebar}>
-        <div className={styles.logo}>
-            <img src={petLogo} alt="Logo" />
-            <span className={styles.logoText}>Dosificadora Pet-GVA</span>
-        </div>
-        <nav className={styles.navPet}>
-            <ul>
-                <li>
-                    <NavLink to="/home" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}><IoHomeOutline /> Inicio</NavLink>
-                </li>
-                <li>
-                    <NavLink to="/ConfDevice" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}><HiOutlineAdjustments /> Programación</NavLink>
-                </li>
-                <li>
-                    <NavLink to="/history" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}><GrHistory /> Historial</NavLink>
-                </li>
-                <li>
-                    <NavLink to="/count" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}><GrConfigure /> Ajustes</NavLink>
-                </li>
+            <div className={styles.logo}>
+                <img src={petLogo} alt="Logo" />
+                <div className={styles.logoText}>
+                    <span>Pet-GVA</span>
+                    <small>Smart Feeder</small>
+                </div>
+            </div>
 
-            </ul>
-        </nav>
-    </aside>
+            <nav className={styles.navPet}>
+                <ul>
+                    <li>
+                        <NavLink to="/home" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
+                            <IoHomeOutline /> <span>Inicio</span>
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/ConfDevice" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
+                            <HiOutlineAdjustments /> <span>Programación</span>
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/history" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
+                            <GrHistory /> <span>Historial</span>
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/count" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
+                            <GrConfigure /> <span>Ajustes</span>
+                        </NavLink>
+                    </li>
+                </ul>
+            </nav>
+
+            <div className={styles.footerNav}>
+                <button onClick={handleLogout} className={styles.logoutBtn}>
+                    <IoLogOutOutline /> <span>Salir</span>
+                </button>
+            </div>
+        </aside>
     );
 };
 

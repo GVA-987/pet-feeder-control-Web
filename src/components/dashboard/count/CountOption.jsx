@@ -1,29 +1,26 @@
-// src/components/configuration/GeneralOptions.jsx
-
 import React, { useState, useEffect } from 'react';
 import styles from './CountOption.module.scss';
 import Form from '../../common/form/Form.jsx';
 import Button from '../../common/button/ButtonForm.jsx';
 import DeviceLink from './deviceLink/DeviceLink';
-import {db, rtdb} from '../../../firebase/firebase-config.js';
-import {useAuth} from '../../../context/AuthContext'
-import {doc, getDoc, onSnapshot, updateDoc, serverTimestamp, collection, addDoc, getDocs, where, query, orderBy, arrayRemove} from 'firebase/firestore';
-import { getDatabase, ref, onValue, off, update } from "firebase/database";
-import toast from 'react-hot-toast';
+import { db, rtdb } from '../../../firebase/firebase-config.js';
+import { useAuth } from '../../../context/AuthContext';
+import { doc, onSnapshot, updateDoc, serverTimestamp, collection, addDoc, where, query, arrayRemove } from 'firebase/firestore';
+import { getDatabase, ref, onValue, update } from "firebase/database";
+import { MdSettingsInputAntenna, MdScale, MdDevices, MdDeleteSweep, MdWifiTethering } from 'react-icons/md';
+import toast, { Toaster } from 'react-hot-toast';
 
 const GeneralOptions = () => {
     const { currentUser } = useAuth();
     const [calibratePortion, setCalibratePortion] = useState('');
-    const [weightPortion, setWeightPortion] = useState('');
-    const [rtdbData, setRtdbData] = useState(null);
-    const [commands, setCommands] = useState(null);
     const [userDevices, setUserDevices] = useState([]);
     const [loadingDevices, setLoadingDevices] = useState(true);
+    const [commands, setCommands] = useState(null);
     const [status, setStatus] = useState(null);
 
     //RTDB
-    useEffect (() => {
-        if (!currentUser && !currentUser.deviceId) return;
+    useEffect(() => {
+        if (!currentUser) return;
 
         const q = query(
             collection(db, 'devicesPet'),
@@ -31,36 +28,43 @@ const GeneralOptions = () => {
         );
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
-            const devices = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
+            const devices = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             setUserDevices(devices);
             setLoadingDevices(false);
         });
 
-        const dbRT = getDatabase();
-        const portionRef = ref(dbRT, `${currentUser.deviceId}/commands`);
-        const wifiRef = ref(dbRT, `${currentUser.deviceId}/status`);
+        if (currentUser.deviceId) {
+            const dbRT = getDatabase();
+            const portionRef = ref(dbRT, `${currentUser.deviceId}/commands`);
+            const wifiRef = ref(dbRT, `${currentUser.deviceId}/status`);
 
-        const unsubscribePortion = onValue(portionRef, (snapshot) => {
-            setCommands(snapshot.exists() ? snapshot.val() : null);
-        });
+            const unsubscribePortion = onValue(portionRef, (snapshot) => setCommands(snapshot.val()));
+            const unsubscribeWifi = onValue(wifiRef, (snapshot) => setStatus(snapshot.val()));
 
-        const unsubscribeWifi = onValue(wifiRef, (snapshot) => {
-            setStatus(snapshot.exists() ? snapshot.val() : null);
-        });
-        return () => {
-            unsubscribePortion();
-            unsubscribe();
-            unsubscribeWifi();
-        };
+            return () => {
+                unsubscribe();
+                unsubscribePortion();
+                unsubscribeWifi();
+            };
+        }
+        return () => unsubscribe();
     }, [currentUser]);
 
     const handleWeightCalibrate = async (e) => {
         e.preventDefault();
 
-        if (!currentUser && !currentUser.deviceId) return;
+        const activeDeviceId = currentUser?.deviceId;
+        if (!activeDeviceId) {
+            toast.error("Selecciona un equipo activo primero",  {className: 'custom-toast-error'});
+            return;
+        }
+        
+        const portionValue = parseFloat(calibratePortion);
+
+        if (!calibratePortion || isNaN(portionValue) || portionValue <= 0 || portionValue > 500) {
+            toast.error("Ingresa un peso válido (1g - 500g)",  {className: 'custom-toast-error'});
+            return;
+        }
 
         try {
             const deviceRefRTDB = ref(rtdb, `${currentUser.deviceId}/commands`);
@@ -68,7 +72,19 @@ const GeneralOptions = () => {
                 weight_portion: String(calibratePortion),
             });
 
-            toast.success("Calibración enviada al equipo", {className: 'custom-toast-success'});
+            const logData = {
+            action: 'CALIBRATE_FOOD',
+            userId: currentUser.uid,
+            deviceId: activeDeviceId,
+            timestamp: serverTimestamp(),
+            details: `Calibración ajustada a ${calibratePortion}g`,
+            type: 'info',
+            category: 'CONFIG'
+        };
+
+        await addDoc(collection(db, 'system_logs'), logData);
+
+            toast.success("Calibración ajustada exitosamente", {className: 'custom-toast-success'});
             setCalibratePortion('');
         } catch (error) {
             console.error('Error al calibrar porción:', error);
@@ -80,14 +96,14 @@ const GeneralOptions = () => {
         try {
             const userRef = doc(db, 'users', currentUser.uid);
             await updateDoc(userRef, { deviceId: deviceId });
-            
-            // Registramos en auditoría el cambio de foco
+
             await addDoc(collection(db, 'system_logs'), {
                 action: 'SWITCH_ACTIVE_DEVICE',
                 userId: currentUser.uid,
                 deviceId: deviceId,
                 timestamp: serverTimestamp(),
-                details: `Usuario cambió el control activo al equipo ${deviceId}`
+                details: `Usuario cambió el control activo al equipo ${deviceId}`,
+                type: 'info'
             });
 
             toast.success(`Controlando: ${deviceId}`, { className: 'custom-toast' });
@@ -114,7 +130,6 @@ const GeneralOptions = () => {
                 status_system: 'inactive'
             });
 
-            // Si el equipo que quitamos era el activo, limpiamos el deviceId del usuario
             const updateData = { devices: arrayRemove(deviceId) };
             if (currentUser.deviceId === deviceId) {
                 updateData.deviceId = null;
@@ -143,22 +158,19 @@ const GeneralOptions = () => {
         }
     };
 
-    const calibratePortionFields = [
-        {
-            type: 'text',
-            placeholder: 'Porcion a Calibrar (g)',
-            value: calibratePortion,
-            onChange: (e) => setCalibratePortion(e.target.value),
-            required: true,
-        }
-    ]
+    const calibratePortionFields = [{
+        type: 'number', 
+        placeholder: 'Ej: 10',
+        value: calibratePortion,
+        onChange: (e) => setCalibratePortion(e.target.value),
+        required: true,
+    }];
 
 
     return (
     <div className={styles.containerConfig}>
         <div className={styles.contentGrid}>
 
-            {/* Tarjeta de Dispositivos */}
             <div className={styles.card}>
                 <h3>Dispositivos</h3>
                 <div className={styles.containerDeviceList}>
@@ -218,6 +230,7 @@ const GeneralOptions = () => {
                 </Button>
             </div>
         </div>
+        <Toaster position="bottom-right" />
     </div>
     );
 };

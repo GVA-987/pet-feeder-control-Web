@@ -1,5 +1,3 @@
-// src/layout/Header/AvatarMenu.jsx (Componente Único)
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './AvatarMenu.module.scss'; 
@@ -10,6 +8,7 @@ import Modal from '../../common/modal/Modal';
 import ConfigUser from '../../confGen/userProfile/configUser';
 import ConfigPet from '../../confGen/petProfile/configPet';
 import {serverTimestamp, collection, addDoc} from 'firebase/firestore';
+import { IoPersonOutline, IoPawOutline, IoLogOutOutline, IoChevronDown } from "react-icons/io5";
 import toast from 'react-hot-toast';
 // import Config from '../../confGen/conf/conf';
 
@@ -19,6 +18,7 @@ const AvatarMenu = ({ user }) => {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalContent, setModalContent] = useState(null);
+    const getInitial = (name) => name ? name.charAt(0).toUpperCase() : '?';
 
     const userName = user?.displayName || 'Usuario';
     const avatarUrl = user?.avatarUrl || '/avatars/default_1.png';
@@ -71,13 +71,25 @@ const AvatarMenu = ({ user }) => {
                 title: 'Confirmación de Salida',
                 size: 'small',
                 body: (
-                    <>
-                        <p>¿Estás seguro de que quieres salir de tu cuenta? Se cerrará tu sesión en todos los dispositivos.</p>
+                    <div className={styles.logoutModalContainer}>
+                        <p style={{ opacity: 0.8, lineHeight: '1.5' }}>
+                            ¿Estás seguro de que quieres cerrar tu sesión?
+                        </p>
                         <div className={styles.modalActions}>
-                            <button onClick={closeModal} className={`${styles.modalActionButton} ${styles.secondaryButton}`}>Cancelar</button>
-                            <button onClick={handleLogout} className={`${styles.modalActionButton} ${styles.primaryButton}`}>Sí, Cerrar Sesión</button>
+                            <button 
+                                onClick={closeModal} 
+                                className={`${styles.modalActionButton} ${styles.secondaryButton}`}
+                            >
+                                Cancelar
+                            </button>
+                            <button 
+                                onClick={handleLogout} 
+                                className={`${styles.modalActionButton} ${styles.primaryButton}`}
+                            >
+                                Cerrar Sesión
+                            </button>
                         </div>
-                    </>
+                    </div>
                 )
             };
         case 'user':
@@ -90,7 +102,6 @@ const AvatarMenu = ({ user }) => {
             return {
                 title: 'Editar Perfil de Mascota',
                 size: 'medium',
-                // body: <p>Aquí va el formulario de Configuración de datos de la mascota.</p>
                 body: <ConfigPet user={user} onClose={closeModal} />
             };
         case 'general':
@@ -108,43 +119,37 @@ const content = renderModalContent(modalContent);
 
     return (
         <div className={styles.contentMenu}>
-            <div style={{ position: 'relative' }}>
-            
-            <button 
-                className={styles.avatarPill} 
-                onClick={() => setIsOpen(!isOpen)}
-                aria-expanded={isOpen}
-            >
+            <button className={styles.avatarPill} onClick={() => setIsOpen(!isOpen)}>
                 <div className={styles.avatarImg}>
-                    <img src={avatarUrl} alt="." /> 
+                    {currentUser?.photoURL ? (
+                        <img src={currentUser.photoURL} alt="profile" />
+                    ) : (
+                        getInitial(currentUser?.nombre)
+                    )}
                 </div>
-
-                <p className={styles.userName}>{userName}</p>
-
-                <span 
+                <span className={styles.userName}>{currentUser?.nombre || 'Usuario'}</span>
+                <IoChevronDown 
                     className={styles.dropdownIcon} 
-                    style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                >
-                    ▼
-                </span>
+                    style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} 
+                />
             </button>
 
-            {/* 2. Menú Dropdown (Opciones) */}
             {isOpen && (
                 <div className={styles.dropdownMenu}> 
-                    <button onClick={() => openModal('user')}>Mi Perfil / Mi Cuenta</button>
-                    <button onClick={() => openModal('mascota')}>Perfil de Mascota</button>
-                    <button onClick={() => openModal('general')}>Configuración General</button>
-                    
+                    <button onClick={() => openModal('user')}>
+                        <IoPersonOutline /> Mi Cuenta
+                    </button>
+                    <button onClick={() => openModal('mascota')}>
+                        <IoPawOutline /> Perfil Mascota
+                    </button>
+
                     <div className={styles.divider}></div>
-                    
+
                     <button onClick={() => openModal('logout')} className={styles.logoutButton}>
-                        Cerrar Sesión
+                        <IoLogOutOutline /> Cerrar Sesión
                     </button>
                 </div>
             )}
-            
-            {/* 3. Modal Reutilizable */}
             {modalContent && (
                 <Modal 
                     isOpen={!!modalContent} 
@@ -155,7 +160,6 @@ const content = renderModalContent(modalContent);
                     {content.body}
                 </Modal>
             )}
-        </div>
 
         </div>
     );

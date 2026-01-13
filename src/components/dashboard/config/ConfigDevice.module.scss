@@ -4,191 +4,111 @@
 @use 'sass:math';
 
 .container {
-    margin-bottom: 35px;
-    background-color: transparent;
-    min-height: 100vh;
-    font-size: 1.8rem;
-    margin-top: 0;
-    @include m.telefono{
-        padding: 0 50px 50px 50px;
-    }
+    padding: 20px;
+    margin-top: 80px;
 }
 
 .contentGrid {
-    gap: 8px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 15px;
-    @include m.telefono{
-        padding: 5px;
-        gap: 25px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    gap: 30px;
+    grid-template-columns: 1fr;
+
+    @include m.tablet {
+        grid-template-columns: 350px 1fr;
+        align-items: start;
     }
 }
 
 .card {
-    background-color: va.$background-card;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 25px;
+}
+
+.title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    text-align: left;
+    color: va.$primary-color;
+}
+
+.routineGrid {
+    display: grid;
+    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.routineCard {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
     padding: 20px;
-    margin-bottom: 25px;
-    color: va.$color-text;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    width: 100%;
-    font-size: 1.3rem;
-    .scheduleTableContainer {
-        width: 100%;
-        margin: 0 auto;
-        padding: 20px;
-        overflow-x: auto;
-        display: flex;
-        justify-content: center;
-        overflow-x: auto;
-        display: block;
+    gap: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+
+    &.disabledRow {
+        opacity: 0.5;
+        filter: grayscale(0.5);
     }
 
-    .daysList {
-        display: flex;
-        gap: 6px;
-        flex-wrap:wrap;
-        justify-content: space-evenly;
-        padding: 25px;
-        width: 200px;
-        span{
-            font-size: 12px;
-            padding: 6.5px;
-            position: inherit;
-        }
+    &:hover {
+        border-color: rgba(va.$primary-color, 0.3);
+        transform: translateY(-5px);
     }
+}
 
-    .dayBadge {
-        background-color: rgba(va.$primary-color, 0.15);
-        color: color.scale(va.$primary-color, $lightness: 70%);
-        border: 1px solid va.$primary-color;
-        padding: 2px 8px;
-        border-radius: 12px;
-        font-size: 1.2rem;
-        font-weight: 600;
-    }
-    .scheduleTable {
-        width: 100%;
-        border-collapse: collapse;
-        
-        
-        thead{
-            display: none;
-        }
-        tr {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            border: 1px solid rgba(va.$tertiary-color, 0.8);
-            border-radius: 8px;
-            padding: 10px;
-            background-color: color.scale(va.$background-card, $lightness: -2%);
-        }
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-        td {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 12px 5px;
-            width: 100%;
-            border-bottom: 1px solid rgba(va.$tertiary-color, 0.3);
-            font-size: 1.5rem;
-
-        }
-        
-        .actionCell {
-            display: flex;
-            gap: 8px;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-
-            button {
-                background: none;
-                border: none;
-                cursor: pointer;
-                font-size: 2.8rem;
-                padding-bottom: 20px;
-                display: flex;
-                align-items: center;
-            }
-
-            .editButton {
-                color: #4caf50; // Verde para editar
-                &:hover { transform: scale(1.1); }
-            }
-
-            .deleteButton {
-                color: #f44336; // Rojo para eliminar
-                &:hover { transform: scale(1.1); }
-            }
-        }
-
-        .scheduleRow:hover {
-            background-color: rgba(va.$secondary-color, 0.2); 
-        }
-    }
-
-    @include m.tablet{
-        width: 100%;
-        padding: 40px 90px 40px 90px;
-        margin-bottom: 5px;
+    .timeText {
         font-size: 2rem;
-        .daysList {
-            gap: 6px;
-            span{
-                font-size: 12px;
-                padding: 7px;
-            }
-        }
-        .scheduleTable {
-            th, td {
-            text-align: center;
-            padding: 20px;
-            font-size: 1.3rem;
-            }
-
-            thead th {
-                background-color: color.scale(va.$tertiary-color, $lightness: -40%); 
-                color: va.$color-text;
-                font-size: 1.5rem;
-            }
-                thead{
-                    display: contents;
-                }
-                tr {
-                display: table-row;
-                border: none;
-                background: none;
-            }
-
-            td {
-                display: table-cell;
-                text-align: center;
-                padding: 20px;
-                border-bottom: 1px solid rgba(va.$tertiary-color, 0.8);
-                
-            }
-        }
-        .timeCell { width: 20%; }
-        .daysCell { width: 40%; }
-        .portionCell { width: 20%; }
-        .actionCell {
-            gap: 10px;
-            button {
-                font-size: 5rem;
-                margin: 50px 0 50px 0;
-            }
-        }
+        font-weight: 800;
+        color: #fff;
     }
+}
 
+.cardBody {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 
+    .portionBadge {
+        background: rgba(va.$primary-color, 0.1);
+        color: va.$primary-color;
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        width: fit-content;
+    }
+}
+
+.cardActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 15px;
+
+    button {
+        background: rgba(255, 255, 255, 0.05);
+        border: none;
+        color: #fff;
+        padding: 10px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: 0.2s;
+
+        &:hover { background: rgba(255, 255, 255, 0.15); }
+        &.editBtn:hover { color: #4caf50; }
+        &.deleteBtn:hover { color: #f44336; }
+    }
 }

@@ -18,354 +18,353 @@
     }
 }
 .HomeContainer {
-    padding: 0 20px 80px 20px;
-    // background-color: color.scale(va.$secondary-color, $lightness: 17%);
-    background-color: transparent;
-    // min-height: 100vh;
-    font-size: 0.9rem;
+    padding: 20px;
     color: va.$color-text;
-    h2{
-        color: color.scale(va.$color-text, $lightness: 50%);
-    }
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    font-size: 1.5rem;
 
     @include m.tablet {
-        padding: 0 40px 40px 40px;
-        font-size: 1.5rem;
+        padding: 0 40px 80px 40px;
     }
-}
-
-.connected {
-    color: #19d768;
-}
-
-.disconnected {
-    color: #ff1900;
-
 }
 
 .contentHome {
     display: grid;
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
     gap: 25px;
-    grid-template-areas: 
-        "pet-info"
-        "food-control"
-        "device-status"
-        "activity"
-        "schedule";
-
-    @include m.telefono{
-        grid-template-columns: 1fr 1fr 1.2fr; 
-    grid-template-areas: 
-        "food-control food-control pet-info" 
-        "food-control food-control device-status" 
-        "activity   activity    schedule";
+    width: 100%;
+    max-width: 1200px;
+    @include m.tablet {
+        grid-template-columns: 1.4fr 1fr; 
     }
+    .leftColumn{
+        
+        .historyContainer {
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 10px;
 
-    .card-food-control {
-        grid-area: food-control; 
-    }
-
-    .card-pet-info {
-        grid-area: pet-info;
-        p {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 2px solid #2c2a2a;
-            font-size: 1.8rem;
-            label {
-                font-weight: bold;
-                margin-bottom: 8px;
-            }
-            padding: 0 2.5rem 0 2.5rem;
-            @include m.tablet{
-                padding: 0 5rem 0 5rem;
-                font-size: 2rem;
+            &::-webkit-scrollbar { width: 5px; }
+            &::-webkit-scrollbar-thumb {
+                background: rgba(255,255,255,0.1);
+                border-radius: 10px;
             }
         }
-        
+
+        .nextEventBox {
+            background: rgba(va.$primary-color, 0.05);
+            border: 1px dashed rgba(va.$primary-color, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+
+            .time {
+                font-size: 2.2rem;
+                font-weight: 800;
+                color: va.$primary-color;
+                display: block;
+                margin: 5px 0;
+            }
+        }
     }
-    
-    .card-device-status {
-        grid-area: device-status;
-        p {
+    .rightColumn{
+        .infoRow {
             display: flex;
             justify-content: space-between;
-            padding: 0 1rem 0 1rem;
-            font-weight: bold;
-            border-bottom: 2px solid #2c2a2a;
-            font-size: 1.3rem;
-            
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             label {
-                font-weight: bold;
-                text-transform: uppercase;
-                margin-bottom: 8px;
+                font-size: 1.8rem;
+                color: rgba(255, 255, 255, 0.45);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            
                 svg {
-                    font-size: 18px;
                     color: va.$primary-color;
+                    font-size: 1.1rem;
                 }
             }
+        
             strong {
-                text-transform: none;
-                font-weight: normal;
-                text-transform: uppercase;
-                margin-bottom: 8px;
-            }
-            @include m.tablet{
-                padding: 0 3rem 0 3rem;
                 font-size: 1.5rem;
+                font-weight: 600;
+                color: #fff;
+            }
+        
+        
+            .connected {
+                padding: 6px 14px;
+                border-radius: 12px;
+                font-size: 1rem;
+                font-weight: 800;
+                text-transform: uppercase;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+
+                &::before {
+                    content: '';
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                }
+                background: rgba(16, 185, 129, 0.15);
+                color: #10b981;
+                border: 1px solid rgba(16, 185, 129, 0.2);
+                &::before { 
+                    background: #10b981; 
+                    box-shadow: 0 0 8px #10b981;
+                }
+            }
+        
+            .disconnected {
+                padding: 6px 14px;
+                border-radius: 12px;
+                font-size: 1rem;
+                font-weight: 800;
+                text-transform: uppercase;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+
+                &::before {
+                    content: '';
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                }
+                background: rgba(239, 68, 68, 0.15);
+                color: #ef4444;
+                border: 1px solid rgba(239, 68, 68, 0.2);
+                &::before { 
+                    background: #ef4444; 
+                }
             }
         }
-    }
-    .card-activity {
-        grid-area: activity;
-    }
-    .card-schedule-today {
-        grid-area: schedule;
-        width: 100%;
-    }
-    .card-schedule {
-        grid-area: schedule;
+
     }
     
-    .card-food-control {
-        .foodControls {
-            flex-grow: 1; 
-        }
-    }
+}
+
+.card {
     
-    .card {
-        background-color: va.$background-card;
-        padding: 25px;
-        border-radius: 10px;
+    background: rgba(48, 48, 48, 0.45);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 30px;
+    padding: 28px;
+    // height: fit-content;
+    height:auto;
+    transition: all 0.3s ease;
+    margin-bottom: 2rem;
+
+    h2 {
+        font-size: 1.2rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: rgba(va.$color-text, 0.4);
+        margin-bottom: 25px;
         display: flex;
-        flex-direction: column;
-        text-align: center;
-        height: 100%;
-        h2{
-            text-align: center;
-            text-transform: uppercase;
+        align-items: center;
+        gap: 12px;
+
+        &::before {
+            content: '';
+            width: 3px;
+            height: 15px;
+            background: va.$primary-color;
+            border-radius: 10px;
+            box-shadow: 0 0 10px va.$primary-color;
         }
+    }
+
+    &:hover {
+        border-color: rgba(va.$primary-color, 0.2);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
     }
 }
 
-
-
-
-.foodControls {
+.foodControlWrapper {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    margin-bottom: 8px;
+    position: relative;
+    padding: 20px 0 60px 0;
 
-    .myProgress {
-        width: 70%; 
-        height: 70%;
-        transition: all 0.3s ease;
+    .progressContainer {
+        position: relative;
+        width: 280px;
+        height: 280px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    form{
-        width: 80%;
-        text-align: center;
+    .centerAction {
+        position: absolute;
+        bottom: -50px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        margin-top: -30px;
-        z-index: 1000;
-        .inputPortion {
-            outline: none;
-            padding: 0 0 8px 0;
-            margin: 15px;
-            text-align: center;
-            align-items: center;
-            background-color: va.$background-card;
-            border-style: none;
-            border-bottom: 2px solid va.$tertiary-color;
-            color: va.$color-text;
-            width: 80%;
-            transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-            &:focus-within {
-                border-bottom: 2px solid va.$primary-color;
-                transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out
-
-            }
-        }
-        button{
-            width: 30%; 
-            aspect-ratio: 1 / 1;  
-            border-radius: 50%;   
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;   
-            font-size: 100%;
-            text-transform: uppercase;
-            border: none;
-            cursor: pointer;
-            background-color: va.$color-btn_Food;
-            transition: background-color 0.3s, transform 0.2s;
-            &:hover {
-                background-color: color.scale(va.$color-btn_Food, $lightness: -15%);
-                transform: scale(1.05);
-            }
-
-            &:active {
-                transform: scale(0.95);
-            }
-            @include m.tablet{
-                width: 25%; 
-            }  
-        }
-
-        @include m.telefono{
-            margin-top: -90px;
-        }
+        gap: 12px;
+        width: 100%;
     }
 }
 
-.deviceStatus {
+.btnCircular {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: va.$primary-color;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: #000;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(va.$primary-color, 0.4);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    &:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 30px rgba(va.$primary-color, 0.6);
+    }
+
+    &:disabled {
+        background: #444;
+        box-shadow: none;
+        cursor: not-allowed;
+    }
+
+    svg {
+        filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+    }
+}
+
+.inputMinimalist {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 8px 15px;
+    color: #fff;
+    text-align: center;
+    font-size: 0.9rem;
+    width: 140px;
+    margin-bottom: 50px;
+    
+    &:focus {
+        outline: none;
+        border-color: va.$primary-color;
+        background: rgba(255, 255, 255, 0.08);
+    }
+}
+
+@include m.telefono {
+    .contentHome {
+        padding-bottom: 100px;
+    }
+}
+
+.agendaList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.scheduledItem {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 15px;
+    border-radius: 18px;
+    border-left: 4px solid va.$primary-color;
+    transition: opacity 0.3s;
+
+    &.passed {
+        opacity: 0.5;
+        border-left-color: #555;
+        .timeBadge { background: #444; }
+    }
+
+    .timeBadge {
+        background: rgba(va.$primary-color, 0.2);
+        color: va.$primary-color;
+        padding: 5px 10px;
+        border-radius: 10px;
+        font-weight: 800;
+        font-family: monospace;
+    }
+
+    .details {
+        flex-grow: 1;
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        strong { font-size: 0.95rem; }
+        span { font-size: 0.75rem; text-transform: uppercase; opacity: 0.6; }
+    }
+
+    .checkIcon { color: #10b981; font-weight: bold; }
+}
+
+.activityList {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-top: 20px;
 }
 
-.wifiIcon {
-    text-align: center;
-    font-size: 2.5rem;
-    vertical-align: middle;
-}
+.activityItem {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+    border-radius: 15px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.02) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 
-//Historial
-.historyContainer{
-    max-height: 330px;
-    overflow-y: auto;
-    margin-top: 18px;
-    padding: 40px;
-    &::-webkit-scrollbar{
-        width: 8px;
-        height: 8px;
-    }
-    &::-webkit-scrollbar-track {
-        background: #2c2f33;
-        border-radius: 10px;
-    }
-    &::-webkit-scrollbar-thumb {
-        background-color: #55585c;
-        border-radius: 10px;
-        border: 2px solid #2c2f33;
-    }
-    .historyItem{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 0;
-        font-size: 8px;
-        border-bottom: 2px solid #6d6b6b;
-        strong{
-            color: color.scale(va.$primary-color, $lightness: 50%);
-            text-transform: uppercase;
+    .statusDot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        &.manual { 
+            background: #923bf6; 
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); 
         }
-        @include m.tablet{
-            font-size: 15px;
-        }
-    }
-}
-// Horarios Programados
-
-.card-schedule-today {
-    .nextEvent {
-        padding: 2rem;
-        border-radius: 15px;
-        justify-content: space-around;
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-        margin-bottom: 2.5rem;
-        border: 1.5px solid va.$primary-color;
-        animation: pulse 2s infinite ease-in-out;
-
-        .iconTime {
-            font-size: 4rem;
-            color: va.$tertiary-color;
-        }
-
-        h3 {
-            font-size: 2rem;
-            margin: 1.2rem 0;
-            color: va.$color-text;
-        }
-
-        span {
-            font-weight: bold;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.9rem;
+        &.auto { 
+            background: va.$primary-color; 
+            box-shadow: 0 0 10px rgba(va.$primary-color, 0.5); 
         }
     }
 
-    .todayList {
+    .activityInfo {
+        flex-grow: 1;
+        text-align: left;
         display: flex;
         flex-direction: column;
-        gap: 1rem;
-
-        .todayItem {
-            display: flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1.2rem;
-            border-radius: 12px;
-            transition: transform 0.2s;
-
-            &.passed {
-                opacity: 0.4;
-                filter: grayscale(0.8);
-                .timeBadge {
-                    background: transparent;
-                    border: 1px solid #666;
-                }
-            }
-
-            .timeBadge {
-                background: va.$tertiary-color;
-                color: va.$color-text;
-                padding: 6px 12px;
-                border-radius: 6px;
-                font-family: monospace;
-                font-size: 1.4rem;
-            }
-
-            .itemInfo {
-                flex-grow: 1;
-                margin-left: 1.5rem;
-                display: flex;
-                flex-direction: column;
-
-                strong { font-size: 1.4rem; }
-                small { font-size: 1rem; text-transform: uppercase; opacity: 0.7; }
-            }
-
-            .check {
-                color: #4caf50;
-                font-size: 1.8rem;
-            }
-        }
+        small { font-size: 0.7rem; opacity: 0.5; }
+        strong { font-size: 0.85rem; }
     }
-    @include m.tablet {
-        .nextEvent{
-            .iconTime{
-                font-size: 4rem;
-            }
-            h3{
-                font-size: 2.4rem;
-            }
-            span{
-                font-size: 1.2rem;
-            }
-        }
 
+    .portionTag {
+        font-size: 1.2rem;
+        background: rgba(255, 255, 255, 0.08);
+        padding: 4px 10px;
+        border-radius: 8px;
+        color: va.$primary-color;
+        font-weight: 600;
     }
+}
+
+.emptyState {
+    padding: 20px;
+    opacity: 0.4;
+    font-size: 1rem;
+    font-style: italic;
 }

@@ -28,7 +28,6 @@ export function AuthProvider({ children }) {
     let unsubscribeUserDoc = null;
 
     const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
-        // 1. Si hay un cambio de auth, primero limpiamos cualquier suscripción activa anterior
         if (unsubscribeUserDoc) {
             unsubscribeUserDoc();
             unsubscribeUserDoc = null;
@@ -37,7 +36,6 @@ export function AuthProvider({ children }) {
         if (user) {
             const userDocRef = doc(db, 'users', user.uid);
             
-            // 2. Usamos onSnapshot para mantener el rol y deviceId actualizados en tiempo real
             unsubscribeUserDoc = onSnapshot(userDocRef, (userDoc) => {
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
@@ -46,17 +44,15 @@ export function AuthProvider({ children }) {
                         email: user.email,
                         ...userData,
                         role: userData.role || 'user',
-                        // Usamos deviceId consistente con tus capturas de pantalla
                         deviceId: userData.deviceId || null, 
                     });
                 } else {
-                    // Si el documento no existe aún (ej. registro nuevo)
                     setCurrentUser({
                         uid: user.uid,
                         email: user.email,
                         ...userData,
                         role: userData.role || 'user',
-                        deviceId: userData.deviceId || null, // Usa 'deviceId' para que coincida con Firestore
+                        deviceId: userData.deviceId || null,
                     });
                 }
                 setLoading(false);
@@ -65,7 +61,6 @@ export function AuthProvider({ children }) {
                 setLoading(false);
             });
         } else {
-            // 3. Al cerrar sesión, limpiamos el estado completamente
             setCurrentUser(null);
             setLoading(false);
         }
