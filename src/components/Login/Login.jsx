@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/petlog.png';
 import {doc, getDoc, collection, addDoc, serverTimestamp} from 'firebase/firestore';
-import { signInWithEmailAndPassword } from '../../../node_modules/firebase/auth';
+import { signInWithEmailAndPassword, setPersistence, browserSessionPersistence } from '../../../node_modules/firebase/auth';
 import { auth, db } from '../../firebase/firebase-config.js';
 import Form from '../common/form/Form.jsx';
 import toast from 'react-hot-toast';
@@ -21,18 +21,34 @@ export default function Login() {
     setError();
 
     try {
+
+      await setPersistence(auth, browserSessionPersistence);
+
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       const userDoc = await getDoc(doc(db, 'users', user.uid));
       let role = 'user';
 
+      if (!user.emailVerified) {
+        toast.error("Debes verificar tu correo antes de ingresar.", {
+          icon: '📧',
+          className: 'custom-toast-error'
+        });
+        await auth.signOut();
+        setIsLoading(false);
+        return;
+      }
+
       if (userDoc.exists()){
         role = userDoc.data().role || 'user';
       }
 
+
+
       await addDoc(collection(db, "system_logs"), {
         action: "USER_LOGIN",
         category: "AUTH",
+        type: "info",
         status: "SUCCESS",
         userId: user.uid,
         userEmail: user.email,

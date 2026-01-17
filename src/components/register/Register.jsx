@@ -2,7 +2,7 @@ import { countryCode } from '../../utils/countryCode';
 import styles from './Register.module.scss';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { createUserWithEmailAndPassword } from '../../../node_modules/firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from '../../../node_modules/firebase/auth';
 import { doc, setDoc, serverTimestamp, collection, addDoc } from '../../../node_modules/firebase/firestore';
 import { auth, db } from '../../firebase/firebase-config.js';
 import ButtonForm from '../common/button/ButtonForm';
@@ -41,6 +41,8 @@ export default function Register() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
+      await sendEmailVerification(user);
+
       await setDoc(doc(db, "users", user.uid), {
           nombre: name,
           apellido: lastname,
@@ -48,15 +50,17 @@ export default function Register() {
           email: user.email,
           role: 'user', 
           createdAt: serverTimestamp(), 
-          deviceId: null
+          deviceId: null,
+          emailVerified: false
       });
 
       await addDoc(collection(db, "system_logs"), {
           action: "USER_REGISTERED",
+          type: 'info',
           category: "AUTH",
           userId: user.uid,
           userEmail: user.email,
-          details: "Nueva cuenta de usuario creada",
+          details: "Cuenta creada - Pendiente de verificaión",
           timestamp: serverTimestamp(),
           metadata: {
               platform: "Web-App",
@@ -65,7 +69,7 @@ export default function Register() {
           userAgent: navigator.userAgent
       });
 
-      toast.success(`¡Bienvenido ${name}! Registro exitoso.`, { className: 'custom-toast-success' });
+      toast.success(`¡Bienvenido ${name}! Registro exitoso. Por favor, verifica tu correo antes de iniciar sesión.`, { className: 'custom-toast-success', duration: 6000 });
       
       setName('');
       setLastname('');
@@ -74,12 +78,12 @@ export default function Register() {
       setPassword('');
       setConfirmPassword('');
 
-      navigate('/home');
+      await auth.signOut();
+      navigate('/login');
       
     }catch (e){
-      console.error("Error al registrar:", e.code);
+        console.error("Error al registrar:", e.code);
         
-        // Manejo de errores profesional con Toasts
         let mensajeError = 'Error al crear la cuenta';
         
         if (e.code === 'auth/email-already-in-use') {

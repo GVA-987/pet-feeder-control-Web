@@ -16,10 +16,12 @@ import AdminPage from '../../pages/AdminPage';
 import AdminUsersPage from '../../pages/AdminUsersPage';
 import AdminDevicesPage from '../../pages/AdminDevicesPage';
 import AdminLogsPage from '../../pages/AdminsLogsPages';
+import { useInactivityTimeout } from '../../hooks/useInactivityTimeout';
 
 // import NotFound from '../pages/NotFound'; // Opcional:  404
 
 function RoutesWithAnimation() {
+    useInactivityTimeout(60);
     const location = useLocation();
 
     return (
