@@ -62,7 +62,7 @@
       }
 
       &.active {
-        background: #10b981; // Color verde para barras activas
+        background: #10b981;
         box-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
       }
     }
@@ -259,11 +259,11 @@
 }
 
 .card {
-  padding: 20px; // Padding reducido en móvil
+  padding: 20px;
   border-radius: 20px;
 
   h2 {
-    font-size: 1rem; // Títulos que quepan en pantallas chicas
+    font-size: 1rem;
     margin-bottom: 15px;
   }
 
@@ -279,7 +279,7 @@
 .rightColumn {
   .infoRow {
     label {
-      font-size: 1rem; // En móvil 1.8rem era demasiado
+      font-size: 1rem;
       @include m.tablet {
         font-size: 1.2rem;
       }
@@ -341,12 +341,12 @@
   flex-direction: column;
   align-items: center;
   position: relative;
-  padding: 20px 0 60px 0;
+  padding: 20px 0 90px 0;
 
   .progressContainer {
     position: relative;
-    width: 280px;
-    height: 280px;
+    width: 200px;
+    height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -360,6 +360,13 @@
     align-items: center;
     gap: 12px;
     width: 100%;
+  }
+  @include m.telefono {
+    padding: 20px 0 70px 0;
+    .progressContainer {
+      width: 280px;
+      height: 280px;
+    }
   }
 }
 

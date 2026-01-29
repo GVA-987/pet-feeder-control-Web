@@ -103,7 +103,6 @@ export default function Register() {
         action: "USER_REGISTER_FAILED",
         type: "error",
         category: "AUTH",
-        details: "Error al registrar usuario",
         status: "FAILED",
         attemptedEmail: email,
         errorCode: e.code,

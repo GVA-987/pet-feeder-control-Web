@@ -51,7 +51,6 @@ const GeneralOptions = () => {
     return () => unsubscribe();
   }, [currentUser]);
 
-  // 2. Escuchar RTDB (Status y Commands) - AQUÍ ESTABA EL FALLO
   useEffect(() => {
     if (!currentUser?.deviceId) return;
 
@@ -59,12 +58,10 @@ const GeneralOptions = () => {
     const statusRef = ref(dbRT, `${currentUser.deviceId}/status`);
     const commandsRef = ref(dbRT, `${currentUser.deviceId}/commands`);
 
-    // Escuchar Status (Online, WiFi, etc)
     const unsubStatus = onValue(statusRef, (snapshot) => {
       if (snapshot.exists()) setStatus(snapshot.val());
     });
 
-    // Escuchar Commands (Porción actual)
     const unsubCommands = onValue(commandsRef, (snapshot) => {
       if (snapshot.exists()) setCommands(snapshot.val());
     });
@@ -269,7 +266,6 @@ const GeneralOptions = () => {
           </div>
         </div>
 
-        {/* Tarjeta 2 Calibracion */}
         <div className={styles.card}>
           <h3>Ajustar de porcion</h3>
           <p>Define cuántos gramos equivale a una unidad de Comida.</p>
@@ -286,7 +282,6 @@ const GeneralOptions = () => {
           />
         </div>
 
-        {/* Tarjeta 3 Wi-Fi */}
         <div className={styles.card}>
           <h3>Conectividad</h3>
           <p>Revisa la conexión Wi-Fi de tu dispositivo.</p>

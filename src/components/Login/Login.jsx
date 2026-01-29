@@ -99,7 +99,6 @@ export default function Login() {
         action: "USER_LOGIN_FAILED",
         type: "error",
         category: "SECURITY",
-        details: "Fallo en el intento de inicio de sesión",
         status: "FAILED",
         attemptedEmail: email,
         errorCode: err.code,

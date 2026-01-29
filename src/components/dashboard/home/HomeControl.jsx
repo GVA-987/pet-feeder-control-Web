@@ -68,17 +68,16 @@ const getTempStatus = (temp) => {
 
   const t = parseFloat(temp);
   let label = "Normal";
-  let color = "#10b981"; // Verde
+  let color = "#10b981";
 
   if (t > 70) {
     label = "Crítico";
-    color = "#ef4444"; // Rojo
+    color = "#ef4444";
   } else if (t > 55) {
     label = "Caliente";
-    color = "#f59e0b"; // Naranja
+    color = "#f59e0b";
   }
 
-  // Mapeamos de 0 a 100 para un termómetro visual (asumiendo 0°C a 100°C)
   const percent = Math.min(Math.max(t, 0), 100);
 
   return { label, color, percent };
@@ -225,9 +224,6 @@ function HomeControl() {
     }
 
     return date.toLocaleString("es-ES", {
-      // year: 'numeric',
-      // month: 'short',
-      // day: 'numeric',
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",

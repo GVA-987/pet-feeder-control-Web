@@ -1,188 +1,227 @@
-@use '../../../scss/base/variables' as va;
-@use '../../../scss/base/mixins' as m;
+@use "../../../scss/base/variables" as va;
+@use "../../../scss/base/mixins" as m;
 @use "sass:color";
 
 .containerHistory {
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto 8rem;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto 8rem;
 
-    .header {
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+
+    .titleGroup {
+      h1 {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        margin-bottom: 3rem;
-        flex-wrap: wrap;
-        gap: 1.5rem;
-
-        .titleGroup {
-            h1 {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                font-size: 2.4rem;
-                margin: 0;
-            }
-            p { font-size: 1.4rem; opacity: 0.7; margin: 5px 0 0; }
-        }
+        gap: 10px;
+        font-size: 2.4rem;
+        margin: 0;
+      }
+      p {
+        font-size: 1.4rem;
+        opacity: 0.7;
+        margin: 5px 0 0;
+      }
     }
+  }
 }
 
 .filterBar {
-    display: flex;
-    background: color.adjust(va.$background-card, $lightness: 10%);
-    padding: 5px;
-    border-radius: 12px;
-    gap: 5px;
+  display: flex;
+  background: color.adjust(va.$background-card, $lightness: 10%);
+  padding: 5px;
+  border-radius: 12px;
+  gap: 5px;
 
-    button {
-        background: transparent;
-        border: none;
-        color: va.$color-text;
-        padding: 8px 16px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 500;
-        font-size: 1.2rem;
-        transition: all 0.3s ease;
+  button {
+    background: transparent;
+    border: none;
+    color: va.$color-text;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
 
-        &:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        &.active {
-            background: va.$primary-color;
-            color: white;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
     }
 
-    @include m.telefono {
-        order: 3;
-        width: 100%;
-        justify-content: space-around;
+    &.active {
+      background: va.$primary-color;
+      color: white;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
+  }
+
+  @include m.telefono {
+    order: 3;
+    width: 100%;
+    justify-content: space-around;
+  }
 }
 
 .reportButton {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: va.$primary-color;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 12px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: va.$primary-color;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
 
-    &:hover { transform: translateY(-2px); opacity: 0.9; }
+  &:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+  }
 }
 
 .dashboard {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+
+  .kpiGrid {
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 2rem;
-    margin-bottom: 3rem;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
 
-    @include m.tablet { grid-template-columns: 1fr; }
-
-    .kpiGrid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-
-        @include m.tablet { grid-template-columns: 1fr 1fr; }
+  .kpiCard {
+    background: va.$background-card;
+    padding: 2rem;
+    border-radius: 16px;
+    border-left: 4px solid va.$primary-color;
+    span {
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.6;
     }
-
-    .kpiCard {
-        background: va.$background-card;
-        padding: 2rem;
-        border-radius: 16px;
-        border-left: 4px solid va.$primary-color;
-        span { font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; }
-        h3 { font-size: 3rem; margin: 10px 0 0; }
+    h3 {
+      font-size: 3rem;
+      margin: 10px 0 0;
     }
+  }
 
-    .chartsGrid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
-        @include m.telefono { grid-template-columns: 1fr; }
+  .chartsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    @include m.telefono {
+      grid-template-columns: 1fr 1fr;
     }
+  }
 
-    .chartCard {
-        background: va.$background-card;
-        padding: 1.5rem;
-        border-radius: 16px;
-        h3 { font-size: 1.4rem; margin-bottom: 1.5rem; text-align: center; }
+  .chartCard {
+    background: va.$background-card;
+    padding: 1.5rem;
+    border-radius: 16px;
+    h3 {
+      font-size: 1.4rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
     }
+  }
 }
 
 .tableSection {
-    background: va.$background-card;
-    border-radius: 20px;
-    padding: 2rem;
-    
-    h3 { margin-bottom: 2rem; font-size: 1.8rem; }
+  background: va.$background-card;
+  border-radius: 20px;
+  padding: 2rem;
 
-    .tableWrapper {
-        max-height: 500px;
-        overflow-y: auto;
-        border-radius: 12px;
+  h3 {
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+  }
 
-        &::-webkit-scrollbar { width: 6px; }
-        &::-webkit-scrollbar-thumb { background: va.$primary-color; border-radius: 10px; }
+  .tableWrapper {
+    max-height: 500px;
+    overflow-y: auto;
+    border-radius: 12px;
+
+    &::-webkit-scrollbar {
+      width: 6px;
     }
+    &::-webkit-scrollbar-thumb {
+      background: va.$primary-color;
+      border-radius: 10px;
+    }
+  }
 }
 
 .historyTable {
-    width: 100%;
-    border-collapse: collapse;
-    
-    th {
-        text-align: left;
-        padding: 1.5rem;
-        background: color.adjust(va.$background-card, $lightness: 5%);
-        position: sticky;
-        top: 0;
-        font-size: 1.2rem;
-        color: va.$primary-color;
-    }
+  width: 100%;
+  border-collapse: collapse;
 
-    td {
-        padding: 1.5rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        font-size: 1.3rem;
-    }
+  th {
+    text-align: left;
+    padding: 1.5rem;
+    background: color.adjust(va.$background-card, $lightness: 5%);
+    position: sticky;
+    top: 0;
+    font-size: 1.2rem;
+    color: va.$primary-color;
+  }
 
-    .timeCell {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        svg { color: va.$primary-color; font-size: 1.6rem; }
-    }
+  td {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 1.3rem;
+  }
 
-    .tagManual, .tagScheduled {
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 1.1rem;
-        text-transform: uppercase;
-        font-weight: bold;
+  .timeCell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    svg {
+      color: va.$primary-color;
+      font-size: 1.6rem;
     }
+  }
 
-    .tagManual { background: rgba(#f97316, 0.2); color: #f97316; }
-    .tagScheduled { background: rgba(#10b981, 0.2); color: #10b981; }
+  .tagManual,
+  .tagScheduled {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+
+  .tagManual {
+    background: rgba(#f97316, 0.2);
+    color: #f97316;
+  }
+  .tagScheduled {
+    background: rgba(#10b981, 0.2);
+    color: #10b981;
+  }
 }
 
-.loading, .noData {
-    height: 60vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    font-size: 1.8rem;
-    svg { font-size: 5rem; color: va.$primary-color; }
+.loading,
+.noData {
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 1.8rem;
+  svg {
+    font-size: 5rem;
+    color: va.$primary-color;
+  }
 }
