@@ -1,4 +1,4 @@
-$fuente_principal : "Montserrat", sans-serif;
+$fuente_principal: "Montserrat", sans-serif;
 
 $primary-color: #057ba2;
 $secondary-color: #080808;
@@ -7,15 +7,12 @@ $color-text: #fefefe;
 $background-card: #1c1c1d;
 $color-btn_Food: #d06800;
 
-
 $primary-color-admin: #0063db;
 $secondary-color-admin: #3a3a3c;
 
-
 //Media Queries
-$telefono: 480px;
-$tablet: 990px;
+$telefono: 576px;
+$tablet: 768px;
 $desktop: 1024px;
 $desktopXL: 1280px;
-$ultraWide: 1440px
-
+$ultraWide: 1440px;

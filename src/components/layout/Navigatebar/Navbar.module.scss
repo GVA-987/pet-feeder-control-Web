@@ -1,8 +1,8 @@
-@use '../../../../node_modules/normalize.css/normalize.css';
-@use '../../../scss/base/variables' as va;
-@use '../../../scss/base/mixins' as m;
-@use 'sass:color';
-@use 'sass:math';
+@use "../../../../node_modules/normalize.css/normalize.css";
+@use "../../../scss/base/variables" as va;
+@use "../../../scss/base/mixins" as m;
+@use "sass:color";
+@use "sass:math";
 
 $slate-900: #0f172a;
 $slate-800: #1e293b;
@@ -12,348 +12,387 @@ $sky-400: #38bdf8;
 $red-500: #ef4444;
 
 .sidebar {
-    background: rgba(29, 29, 29, 0.8);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    position: fixed;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    height: 70px;
-    border-radius: 25px;
-    z-index: 1000;
-    display: flex;
-    padding: 0 10px;
-    justify-content: center;;
+  background: rgba(29, 29, 29, 0.8);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 70px;
+  border-radius: 25px;
+  z-index: 1000;
+  display: flex;
+  padding: 0 10px;
+  justify-content: center;
 
-    .logo, .footerNav { display: none; } 
-    .navPet {
-        width: 100%;
-        ul {
-            display: flex;
-            justify-content: space-around;
-            align-items: start;
-            height: 100%;
-            padding: 0;
-            margin: 0;
-            list-style: none;
+  .logo,
+  .footerNav {
+    display: none;
+  }
+  .navPet {
+    width: 100%;
+    ul {
+      display: flex;
+      justify-content: space-around;
+      align-items: start;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+      list-style: none;
 
-            .navLink {
-                color: rgba(255, 255, 255, 0.6);
-                text-decoration: none;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 4px;
-                font-size: 1.5rem;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-                svg { font-size: 2.58rem; }
-                span { font-weight: 500; }
-
-                &:hover { color: va.$primary-color; }
-            }
-
-            .active {
-                color: va.$primary-color;
-                position: relative;
-                
-                &::after {
-                    content: '';
-                    position: absolute;
-                    bottom: -8px;
-                    width: 5px;
-                    height: 5px;
-                    background: va.$primary-color;
-                    border-radius: 50%;
-                    box-shadow: 0 0 10px va.$primary-color;
-                }
-            }
-        }
-    }
-
-    @include m.tablet {
-        bottom: auto;
-        top: 20px;
-        left: 20px;
-        transform: none;
-        width: 260px;
-        height: calc(100vh - 40px);
+      .navLink {
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+        display: flex;
         flex-direction: column;
-        justify-content: flex-start;
-        background: linear-gradient(180deg, rgba(30, 30, 30, 0.95) 0%, rgba(20, 20, 20, 0.95) 100%);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        padding: 30px 15px;
+        align-items: center;
+        gap: 4px;
+        font-size: 1.5rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 40px;
-            padding-left: 10px;
-
-            img { width: 45px; height: 45px; filter: drop-shadow(0 0 8px rgba(va.$primary-color, 0.4)); }
-            
-            .logoText {
-                display: flex;
-                flex-direction: column;
-                span { font-size: 2rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
-                small { font-size: 1.5rem; color: va.$primary-color; font-weight: 600; text-transform: uppercase; }
-            }
+        svg {
+          font-size: 2.58rem;
+        }
+        span {
+          font-weight: 500;
         }
 
-        .navPet {
-            flex: 1;
-            ul {
-                flex-direction: column;
-                justify-content: space-evenly;
-                gap: 10px;
-
-                .navLink {
-                    flex-direction:row;
-                    width: 100%;
-                    height: 100%;
-                    padding: 30px;
-                    font-size: 2rem;
-                    gap: 15px;
-                    border-radius: 15px;
-                    transition: 0.3s;
-
-                    svg { font-size: 2.4rem; }
-                    &::after { display: none; } 
-
-                    &:hover {
-                        background: rgba(255, 255, 255, 0.03);
-                        transform: translateX(5px);
-                    }
-                }
-
-                .active {
-                    background: rgba(va.$primary-color, 0.15) !important;
-                    color: va.$primary-color;
-                    border-left: 3px solid va.$primary-color;
-                    border-radius: 0 15px 15px 0;
-                }
-            }
+        &:hover {
+          color: va.$primary-color;
         }
+      }
 
-        .footerNav {
-            display: block;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+      .active {
+        color: va.$primary-color;
+        position: relative;
 
-            .logoutBtn {
-                width: 100%;
-                background: transparent;
-                border: none;
-                color: #ff5f5f;
-                display: flex;
-                align-items: center;
-                gap: 15px;
-                padding: 14px 20px;
-                cursor: pointer;
-                font-weight: 600;
-                transition: 0.3s;
-                border-radius: 15px;
-                font-size: 2rem;
-
-                &:hover {
-                    background: rgba(255, 95, 95, 0.1);
-                    transform: translateX(5px);
-                }
-            }
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: -8px;
+          width: 5px;
+          height: 5px;
+          background: va.$primary-color;
+          border-radius: 50%;
+          box-shadow: 0 0 10px va.$primary-color;
         }
+      }
     }
-}
+  }
 
-
-.adminSidebar {
-    background-color: $slate-900;
-    width: 280px;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    display: flex;
+  @include m.tablet {
+    bottom: auto;
+    top: 20px;
+    left: 20px;
+    transform: none;
+    width: 260px;
+    height: calc(100vh - 40px);
     flex-direction: column;
-    color: #f8fafc;
-    border-right: 1px solid $slate-800;
-    z-index: 1100;
+    justify-content: flex-start;
+    background: linear-gradient(
+      180deg,
+      rgba(30, 30, 30, 0.95) 0%,
+      rgba(20, 20, 20, 0.95) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 30px 15px;
 
-    .brand {
-        padding: 2rem 1.5rem;
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 40px;
+      padding-left: 10px;
+
+      img {
+        width: 45px;
+        height: 45px;
+        filter: drop-shadow(0 0 8px rgba(va.$primary-color, 0.4));
+      }
+
+      .logoText {
+        display: flex;
+        flex-direction: column;
+        span {
+          font-size: 2rem;
+          font-weight: 800;
+          color: #fff;
+          letter-spacing: -0.5px;
+        }
+        small {
+          font-size: 1.5rem;
+          color: va.$primary-color;
+          font-weight: 600;
+          text-transform: uppercase;
+        }
+      }
+    }
+
+    .navPet {
+      flex: 1;
+      ul {
+        flex-direction: column;
+        justify-content: space-evenly;
+        gap: 10px;
+
+        .navLink {
+          flex-direction: row;
+          width: 100%;
+          height: 100%;
+          padding: 30px;
+          font-size: 2rem;
+          gap: 15px;
+          border-radius: 15px;
+          transition: 0.3s;
+
+          svg {
+            font-size: 2.4rem;
+          }
+          &::after {
+            display: none;
+          }
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.03);
+            transform: translateX(5px);
+          }
+        }
+
+        .active {
+          background: rgba(va.$primary-color, 0.15) !important;
+          color: va.$primary-color;
+          border-left: 3px solid va.$primary-color;
+          border-radius: 0 15px 15px 0;
+        }
+      }
+    }
+
+    .footerNav {
+      display: block;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+      .logoutBtn {
+        width: 100%;
+        background: transparent;
+        border: none;
+        color: #ff5f5f;
         display: flex;
         align-items: center;
-        gap: 12px;
-        border-bottom: 1px solid $slate-800;
+        gap: 15px;
+        padding: 14px 20px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+        border-radius: 15px;
+        font-size: 2rem;
 
-        .logoBox {
-            background: #ffffff;
-            padding: 6px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-
-            img {
-                width: 35px;
-                height: 35px;
-                object-fit: contain;
-            }
+        &:hover {
+          background: rgba(255, 95, 95, 0.1);
+          transform: translateX(5px);
         }
+      }
+    }
+  }
+}
 
-        .brandText {
-            display: flex;
-            flex-direction: column;
+.adminSidebar {
+  background-color: $slate-900;
+  width: 280px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  color: #f8fafc;
+  border-right: 1px solid $slate-800;
+  z-index: 1100;
 
-            span {
-                font-size: 1.1rem;
-                font-weight: 800;
-                letter-spacing: 1.5px;
-                color: #ffffff;
-                line-height: 1;
-            }
+  .brand {
+    padding: 2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid $slate-800;
 
-            small {
-                font-size: 0.65rem;
-                color: $sky-400;
-                font-weight: 700;
-                margin-top: 4px;
-                text-transform: uppercase;
-            }
-        }
+    .logoBox {
+      background: #ffffff;
+      padding: 6px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+      img {
+        width: 35px;
+        height: 35px;
+        object-fit: contain;
+      }
     }
 
-    .auditNav {
-        flex: 1;
-        padding: 1.5rem 0.8rem;
-        overflow-y: auto;
+    .brandText {
+      display: flex;
+      flex-direction: column;
 
-        .navGroupLabel {
-            font-size: 0.7rem;
-            color: $slate-400;
-            font-weight: 800;
-            margin: 1.5rem 0 0.5rem 1rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
+      span {
+        font-size: 1.1rem;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        color: #ffffff;
+        line-height: 1;
+      }
 
-        .link, .activeLink {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 1rem;
-            margin-bottom: 4px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            color: $slate-400;
+      small {
+        font-size: 0.65rem;
+        color: $sky-400;
+        font-weight: 700;
+        margin-top: 4px;
+        text-transform: uppercase;
+      }
+    }
+  }
 
-            svg {
-                font-size: 1.4rem;
-                transition: transform 0.2s ease;
-            }
+  .auditNav {
+    flex: 1;
+    padding: 1.5rem 0.8rem;
+    overflow-y: auto;
 
-            &:hover {
-                background-color: $slate-800;
-                color: #ffffff;
-                
-                svg {
-                    transform: translateX(3px);
-                    color: $sky-400;
-                }
-            }
-        }
-
-        .activeLink {
-            background-color: rgba($sky-400, 0.1);
-            color: $sky-400;
-            font-weight: 700;
-            border-left: 4px solid $sky-400;
-            border-radius: 0 8px 8px 0;
-
-            svg {
-                color: $sky-400;
-            }
-            
-            &:hover {
-                background-color: rgba($sky-400, 0.15);
-                color: $sky-400;
-            }
-        }
+    .navGroupLabel {
+      font-size: 0.7rem;
+      color: $slate-400;
+      font-weight: 800;
+      margin: 1.5rem 0 0.5rem 1rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
 
-    // --- FOOTER / LOGOUT ---
-    .sidebarFooter {
-        padding: 1.5rem;
-        border-top: 1px solid $slate-800;
+    .link,
+    .activeLink {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 1rem;
+      margin-bottom: 4px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      color: $slate-400;
 
-        .logoutAction {
-            width: 100%;
-            padding: 12px;
-            background: rgba($red-500, 0.05);
-            border: 1px solid rgba($red-500, 0.5);
-            color: $red-500;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      svg {
+        font-size: 1.4rem;
+        transition: transform 0.2s ease;
+      }
 
-            svg {
-                font-size: 1.2rem;
-            }
+      &:hover {
+        background-color: $slate-800;
+        color: #ffffff;
 
-            &:hover {
-                background: $red-500;
-                color: #ffffff;
-                border-color: $red-500;
-                box-shadow: 0 4px 15px rgba($red-500, 0.3);
-                transform: translateY(-2px);
-            }
-
-            &:active {
-                transform: translateY(0);
-            }
+        svg {
+          transform: translateX(3px);
+          color: $sky-400;
         }
+      }
     }
+
+    .activeLink {
+      background-color: rgba($sky-400, 0.1);
+      color: $sky-400;
+      font-weight: 700;
+      border-left: 4px solid $sky-400;
+      border-radius: 0 8px 8px 0;
+
+      svg {
+        color: $sky-400;
+      }
+
+      &:hover {
+        background-color: rgba($sky-400, 0.15);
+        color: $sky-400;
+      }
+    }
+  }
+
+  // --- FOOTER / LOGOUT ---
+  .sidebarFooter {
+    padding: 1.5rem;
+    border-top: 1px solid $slate-800;
+
+    .logoutAction {
+      width: 100%;
+      padding: 12px;
+      background: rgba($red-500, 0.05);
+      border: 1px solid rgba($red-500, 0.5);
+      color: $red-500;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+      svg {
+        font-size: 1.2rem;
+      }
+
+      &:hover {
+        background: $red-500;
+        color: #ffffff;
+        border-color: $red-500;
+        box-shadow: 0 4px 15px rgba($red-500, 0.3);
+        transform: translateY(-2px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
 }
 
 @media (max-width: 1024px) {
-    .adminSidebar {
-        width: 80px; 
-        
-        .brandText, .navGroupLabel, span {
-            display: none;
-        }
-        
-        .brand {
-            justify-content: center;
-            padding: 1rem;
-        }
+  .adminSidebar {
+    width: 80px;
 
-        .auditNav {
-            .link, .activeLink {
-                justify-content: center;
-                padding: 15px 0;
-                svg { margin: 0; font-size: 1.8rem; }
-            }
-        }
-        
-        .sidebarFooter {
-            .logoutAction {
-                span { display: none; }
-                padding: 15px 0;
-            }
-        }
+    .brandText,
+    .navGroupLabel,
+    span {
+      display: none;
     }
+
+    .brand {
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .auditNav {
+      .link,
+      .activeLink {
+        justify-content: center;
+        padding: 15px 0;
+        svg {
+          margin: 0;
+          font-size: 1.8rem;
+        }
+      }
+    }
+
+    .sidebarFooter {
+      .logoutAction {
+        span {
+          display: none;
+        }
+        padding: 15px 0;
+      }
+    }
+  }
 }

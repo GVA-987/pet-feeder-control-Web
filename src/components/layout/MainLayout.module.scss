@@ -1,56 +1,56 @@
-@use '../../scss/base/variables' as va;
-@use '../../scss//base//mixins' as m;
-@use 'sass:color';
-@use 'sass:math';
+@use "../../scss/base/variables" as va;
+@use "../../scss//base//mixins" as m;
+@use "sass:color";
+@use "sass:math";
 
 .mainLayout {
-    background-color: color.scale(va.$secondary-color, $lightness: 5%);
-    min-height: 100vh;
+  background-color: color.scale(va.$secondary-color, $lightness: 5%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow-x: hidden;
+
+  .contentArea {
+    flex: 1;
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     width: 100%;
-    overflow-x: hidden;
+    transition: all 0.3s ease;
+
+    main {
+      padding: 1.5rem;
+      margin-bottom: 90px;
+      margin-top: 80px;
+      width: 100%;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  @include m.tablet {
+    flex-direction: row;
 
     .contentArea {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        transition: all 0.3s ease;
+      margin-left: 300px;
 
-        main {
-            padding: 1.5rem;
-            margin-bottom: 90px; 
-            margin-top: 80px;
-            width: 100%;
-            max-width: 1400px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+      main {
+        margin-bottom: 0;
+        margin-top: 100px;
+        padding: 2.5rem;
+      }
     }
+  }
+  &.adminTheme {
+    background-color: #e0e0e0;
 
-    @include m.tablet {
-        flex-direction: row;
+    .contentArea {
+      margin-left: 80px;
 
-        .contentArea {
-            margin-left: 300px; 
-            
-            main {
-                margin-bottom: 0;
-                margin-top: 100px; 
-                padding: 2.5rem;
-            }
-        }
+      @include m.tablet {
+        margin-left: 280px;
+      }
     }
-    &.adminTheme {
-        background-color: #e0e0e0; 
-        
-        .contentArea {
-            margin-left: 80px; 
-            
-            @include m.tablet {
-                margin-left: 280px; 
-            }
-        }
-    }
+  }
 }

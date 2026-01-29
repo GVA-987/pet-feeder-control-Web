@@ -1,25 +1,31 @@
-@use 'variables' as va;
+@use "variables" as va;
 
-@mixin telefono{
-    @media (min-width: va.$telefono) {
-        @content;
-    }
+@mixin telefono {
+  @media (min-width: va.$telefono) {
+    @content;
+  }
 }
 
-@mixin tablet{
-    @media (min-width: va.$tablet) {
-        @content;
-    }
+@mixin tablet {
+  @media (min-width: va.$tablet) {
+    @content;
+  }
 }
 
-@mixin desktop{
-    @media (min-width: va.$desktop) {
-        @content;
-    }
+@mixin desktop {
+  @media (min-width: va.$desktop) {
+    @content;
+  }
 }
 
-@mixin desktopXL{
-    @media (max-width: va.$desktopXL) {
-        @content;
-    }
+@mixin desktopXL {
+  @media (max-width: va.$desktopXL) {
+    @content;
+  }
+}
+
+@mixin telefono-max {
+  @media (max-width: (va.$tablet - 1px)) {
+    @content;
+  }
 }
