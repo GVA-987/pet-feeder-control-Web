@@ -135,6 +135,7 @@ export default function Register() {
       onChange: (e) => setName(e.target.value),
       required: true,
       iconType: "user",
+      autoComplete: "on",
     },
     {
       type: "text",
@@ -143,6 +144,7 @@ export default function Register() {
       onChange: (e) => setLastname(e.target.value),
       required: true,
       iconType: "user",
+      autoComplete: "on",
     },
     {
       type: "tel",
@@ -151,6 +153,7 @@ export default function Register() {
       onChange: (e) => setNumber(e.target.value),
       required: true,
       iconType: "phone",
+      autoComplete: "on",
     },
     {
       type: "email",
@@ -159,6 +162,7 @@ export default function Register() {
       onChange: (e) => setEmail(e.target.value),
       required: true,
       iconType: "email",
+      autoComplete: "on",
     },
     {
       type: "password",
@@ -167,6 +171,7 @@ export default function Register() {
       onChange: (e) => setPassword(e.target.value),
       required: true,
       iconType: "password",
+      autoComplete: "on",
     },
     {
       type: "password",
@@ -175,6 +180,7 @@ export default function Register() {
       onChange: (e) => setConfirmPassword(e.target.value),
       required: true,
       iconType: "password",
+      autoComplete: "on",
     },
   ];
   return (

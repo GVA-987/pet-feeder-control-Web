@@ -233,6 +233,12 @@ function HomeControl() {
   // Función para dispensar alimento
   const handleDispenseNow = async (e) => {
     e.preventDefault();
+    if (!finalConnectionStatus) {
+      toast.error("No se puede dosificar: El equipo está offline", {
+        id: "offline-error",
+      });
+      return;
+    }
     if (!currentUser?.deviceId || isProcessing || !foodPortion) return;
 
     try {
@@ -313,7 +319,7 @@ function HomeControl() {
   const CONNECTION_THRESHOLD_MS = 16000; // 16 segundos
   const isRecentlySeen = currentTime - lastSeenMs < CONNECTION_THRESHOLD_MS; // true si se vio recientemente
   const isDataAvailable = rtdbData !== null; // true si hay datos disponibles
-  const finalConnectionStatus = isRecentlySeen && isDataAvailable; // estado final de conexión
+
   // const foodLevel = 50;
 
   const rawFoodLevel = rtdbData?.foodLevel || 0;
@@ -323,6 +329,8 @@ function HomeControl() {
   const uptime = rtdbData?.uptime || "--";
   const schedule = deviceData.schedule || [];
   const online = rtdbData?.online;
+
+  const finalConnectionStatus = online === "conectado"; // estado final de conexión
 
   const onlineStatus = getOnline(online);
   const wifiStatus = getWifiQuality(rssi);
@@ -381,7 +389,19 @@ function HomeControl() {
 
   return (
     <div className={styles.HomeContainer}>
-      <div className={styles.contentHome}>
+      {!finalConnectionStatus && (
+        <div className={styles.offlineBanner}>
+          <PiWifiSlashFill />
+          <span>
+            El alimentador <strong>Pet-GVA</strong> no responde. Comprueba la
+            conexión del equipo.
+          </span>
+        </div>
+      )}
+      <div
+        className={styles.contentHome}
+        style={{ opacity: finalConnectionStatus ? 1 : 0.85 }}
+      >
         <div className={styles.leftColumns}>
           <section className={`${styles.card} ${styles["card-food-control"]}`}>
             <h2 style={{ marginBottom: "0" }}>Nivel de Tolva</h2>
@@ -395,10 +415,14 @@ function HomeControl() {
 
               <div className={styles.centerAction}>
                 <button
-                  className={styles.btnCircular}
+                  className={`${styles.btnCircular} ${!finalConnectionStatus ? styles.btnDisabled : ""}`}
                   onClick={handleDispenseNow}
-                  disabled={isProcessing}
-                  title="Dosificar Alimento"
+                  disabled={isProcessing || !finalConnectionStatus}
+                  title={
+                    finalConnectionStatus
+                      ? "Dosificar Alimento"
+                      : "Equipo desconectado"
+                  }
                 >
                   <FaPaw />
                 </button>

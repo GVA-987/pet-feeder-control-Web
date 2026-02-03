@@ -267,22 +267,6 @@ const GeneralOptions = () => {
         </div>
 
         <div className={styles.card}>
-          <h3>Ajustar de porcion</h3>
-          <p>Define cuántos gramos equivale a una unidad de Comida.</p>
-          <p className={styles.deviceInfo}>
-            <label>Porción actual:</label>
-            <strong>
-              1 porcion = {commands?.weight_portion || "fija Una Medida"} g.
-            </strong>
-          </p>
-          <Form
-            fields={calibratePortionFields}
-            onSubmit={handleWeightCalibrate}
-            submitButtonText="Calibrar"
-          />
-        </div>
-
-        <div className={styles.card}>
           <h3>Conectividad</h3>
           <p>Revisa la conexión Wi-Fi de tu dispositivo.</p>
           <p>
@@ -309,6 +293,22 @@ const GeneralOptions = () => {
             <strong>{status?.rssi || "No disponible"} dBm</strong>
           </p>
           <Button>Restaurar Wi-Fi</Button>
+        </div>
+
+        <div className={styles.card}>
+          <h3>Ajustar de porcion</h3>
+          <p>Define cuántos gramos equivale a una unidad de Comida.</p>
+          <p className={styles.deviceInfo}>
+            <label>Porción actual:</label>
+            <strong>
+              1 porcion = {commands?.weight_portion || "fija Una Medida"} g.
+            </strong>
+          </p>
+          <Form
+            fields={calibratePortionFields}
+            onSubmit={handleWeightCalibrate}
+            submitButtonText="Ajustar Porción"
+          />
         </div>
       </div>
       <Toaster position="bottom-right" />

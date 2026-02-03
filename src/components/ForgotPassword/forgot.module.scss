@@ -4,7 +4,7 @@
 @use "../../scss//base//mixins" as m;
 @import "../../../node_modules/normalize.css/normalize.css";
 
-.loginContainer {
+.forgotcontainer {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -13,7 +13,7 @@
   background-color: color.scale(va.$secondary-color, $lightness: 5%);
   width: 80%;
   max-width: 500px;
-  height: 65vh;
+  height: 42vh;
   padding: 4rem;
   margin: 5rem auto;
   border-radius: 25px;
@@ -28,7 +28,7 @@
 
   @include m.telefono {
     padding: 5rem; // Recuperamos tu diseño original aquí
-    height: 80vh;
+    height: 45vh;
     font-size: 1.5rem;
     form {
       input {
@@ -38,30 +38,15 @@
   }
 
   h2 {
-    // color: va.$title-form;
     margin-bottom: 1.5rem;
     text-align: center;
     text-transform: uppercase;
     font-weight: bold;
   }
-  img {
-    display: block;
-    background-color: color.scale(va.$primary-color, $lightness: 75%);
-    border-radius: 50%;
-    padding: 5px;
-    margin: 4rem auto 4rem;
-    width: 100px;
-    height: auto;
-    transition: transform 0.5s ease-in-out;
-    box-shadow: 0 6px 10px va.$tertiary-color;
-    &:hover {
-      transform: scale(1.08);
-      transition: transform 0.5s ease-in-out;
-      // box-shadow: 0 9px 13px rgba(225, 218, 218, 0.716) 0.5s;
-    }
-    @include m.telefono {
-      width: 150px;
-    }
+  p {
+    font-size: 1.2rem;
+    text-align: center;
+    opacity: 0.6;
   }
   button {
     .circle-loader {
@@ -89,19 +74,8 @@
     cursor: not-allowed;
     opacity: 0.7;
   }
-  .forgotPassword {
-    text-align: end;
-    margin-bottom: 1rem;
-    a {
-      text-decoration: none;
-      color: va.$primary-color;
-      &:hover {
-        text-decoration: underline;
-        color: color.adjust(va.$primary-color, $lightness: 15%);
-      }
-    }
-  }
-  .registerPrompt {
+
+  .backToLogin {
     text-align: center;
     a {
       text-decoration: none;
