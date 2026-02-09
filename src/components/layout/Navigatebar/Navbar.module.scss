@@ -247,7 +247,7 @@ $red-500: #ef4444;
       }
 
       small {
-        font-size: 0.65rem;
+        font-size: 1.5rem;
         color: $sky-400;
         font-weight: 700;
         margin-top: 4px;
@@ -262,7 +262,7 @@ $red-500: #ef4444;
     overflow-y: auto;
 
     .navGroupLabel {
-      font-size: 0.7rem;
+      font-size: 1.3rem;
       color: $slate-400;
       font-weight: 800;
       margin: 1.5rem 0 0.5rem 1rem;
@@ -279,13 +279,13 @@ $red-500: #ef4444;
       margin-bottom: 4px;
       border-radius: 8px;
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 1.2rem;
       font-weight: 500;
       transition: all 0.2s ease;
       color: $slate-400;
 
       svg {
-        font-size: 1.4rem;
+        font-size: 1.6rem;
         transition: transform 0.2s ease;
       }
 
@@ -335,13 +335,13 @@ $red-500: #ef4444;
       justify-content: center;
       gap: 10px;
       font-weight: 700;
-      font-size: 0.8rem;
+      font-size: 1.4rem;
       letter-spacing: 1px;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
       svg {
-        font-size: 1.2rem;
+        font-size: 2rem;
       }
 
       &:hover {

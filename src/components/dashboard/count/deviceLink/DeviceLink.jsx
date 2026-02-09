@@ -64,7 +64,6 @@ const DeviceLink = () => {
           updatedAt: serverTimestamp(),
         });
 
-        // 3. REGISTRO DE AUDITORÍA
         const auditLogRef = doc(collection(db, "system_logs"));
         transaction.set(auditLogRef, {
           action: "DEVICE_PROVISIONING",

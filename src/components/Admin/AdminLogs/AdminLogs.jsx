@@ -23,6 +23,7 @@ import {
 
 const AdminLogsPage = () => {
   const [logs, setLogs] = useState([]);
+  const [logSources, setLogSources] = useState({ devices: [], users: [] });
   const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -58,6 +59,33 @@ const AdminLogsPage = () => {
     },
   ];
 
+  const normalizeData = (doc, origin) => {
+    const data = doc.data();
+
+    // Forzamos minúsculas y manejamos nulos
+    let rawType = (data.type || data.level || "info").toLowerCase();
+
+    // Mapeo de sinónimos de errores/éxitos
+    if (["success", "ok", "done"].includes(rawType)) rawType = "info";
+    if (["critical", "fatal", "emergency"].includes(rawType)) rawType = "error";
+
+    return {
+      id: doc.id,
+      origin: origin, // "DEVICE" o "USER_ACTION"
+      ...data,
+      type: rawType, // Tipo normalizado para el filtro y CSS
+      // Campo unificado para mostrar en la columna "SUJETO"
+      displaySubject:
+        data.deviceId ||
+        data.userEmail ||
+        data.attemptedEmail ||
+        data.userId ||
+        "Sistema",
+      // Timestamp seguro para ordenar
+      sortTime: data.timestamp?.seconds || 0,
+    };
+  };
+
   const registerNewDevice = async (newId) => {
     try {
       await setDoc(doc(db, "devicesPet", newId), {
@@ -83,51 +111,35 @@ const AdminLogsPage = () => {
   };
 
   useEffect(() => {
-    // Fuentes actuales
     const qDevice = query(
       collection(db, "device_logs"),
       orderBy("timestamp", "desc"),
-      limit(100),
+      limit(400),
     );
     const qUser = query(
       collection(db, "system_logs"),
       orderBy("timestamp", "desc"),
-      limit(100),
+      limit(400),
     );
 
     let deviceArr = [];
     let userArr = [];
 
     const mergeLogs = () => {
+      // Combinar y ordenar por tiempo real de Firebase
       const combined = [...deviceArr, ...userArr].sort(
-        (a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0),
+        (a, b) => b.sortTime - a.sortTime,
       );
       setLogs(combined);
     };
 
     const unsubDevice = onSnapshot(qDevice, (snap) => {
-      deviceArr = snap.docs.map((doc) => ({
-        id: doc.id,
-        origin: "DEVICE",
-        ...doc.data(),
-      }));
+      deviceArr = snap.docs.map((doc) => normalizeData(doc, "DEVICE"));
       mergeLogs();
     });
 
     const unsubUser = onSnapshot(qUser, (snap) => {
-      userArr = snap.docs.map((doc) => {
-        const data = doc.data();
-        let normalizedType = (data.type || "info").toLowerCase();
-
-        if (normalizedType === "success") normalizedType = "info";
-
-        return {
-          id: doc.id,
-          origin: "USER_ACTION",
-          ...data,
-          type: normalizedType,
-        };
-      });
+      userArr = snap.docs.map((doc) => normalizeData(doc, "USER_ACTION"));
       mergeLogs();
     });
 
@@ -137,12 +149,19 @@ const AdminLogsPage = () => {
     };
   }, []);
 
-  // Filtro inteligente
+  // 2. FILTRO INTELIGENTE (Busca en cualquier parte del objeto)
   const filteredLogs = logs.filter((log) => {
     const matchesType = filter === "all" || log.type === filter;
-    const searchContent =
-      `${log.action} ${log.details} ${log.deviceId || ""} ${log.userEmail || ""}`.toLowerCase();
-    return matchesType && searchContent.includes(searchTerm.toLowerCase());
+
+    // Buscamos en el ID, Acción, Detalles y Sujeto al mismo tiempo
+    const searchableText = `
+      ${log.action} 
+      ${log.details} 
+      ${log.displaySubject} 
+      ${log.type}
+    `.toLowerCase();
+
+    return matchesType && searchableText.includes(searchTerm.toLowerCase());
   });
 
   return (
@@ -228,54 +247,55 @@ const AdminLogsPage = () => {
           <span>SUJETO</span>
           <span>ACCIÓN REALIZADA</span>
           <span>DETALLES</span>
-          <span>HORA EXACTA</span>
+          <span>FECHA HORA</span>
         </div>
 
-        <div className={styles.tableBody}>
-          {filteredLogs.map((log) => (
-            <div key={log.id} className={`${styles.row} ${styles[log.type]}`}>
-              <div className={styles.colType}>
-                {log.type === "error" ? (
-                  <RiErrorWarningLine className={styles.err} />
-                ) : log.type === "warning" ? (
-                  <RiAlertLine className={styles.warn} />
-                ) : (
-                  <RiInformationLine className={styles.info} />
-                )}
+        <div className={styles.containerTable}>
+          <div className={styles.tableBody}>
+            {filteredLogs.map((log) => (
+              <div key={log.id} className={`${styles.row} ${styles[log.type]}`}>
+                <div className={styles.colType}>
+                  {log.type === "error" ? (
+                    <RiErrorWarningLine className={styles.err} />
+                  ) : log.type === "warning" ? (
+                    <RiAlertLine className={styles.warn} />
+                  ) : (
+                    <RiInformationLine className={styles.info} />
+                  )}
+                </div>
+                <div className={styles.colOrigin}>
+                  {log.origin === "DEVICE" ? (
+                    <span className={styles.badgeDevice}>
+                      <RiCpuLine /> HARDWARE
+                    </span>
+                  ) : (
+                    <span className={styles.badgeUser}>
+                      <RiUserSettingsLine /> USUARIO
+                    </span>
+                  )}
+                </div>
+                <div className={styles.colSubject}>
+                  <code>
+                    {log.origin === "DEVICE"
+                      ? log.deviceId
+                      : log.userEmail || log.attemptedEmail || "Admin"}
+                  </code>
+                </div>
+                <div className={styles.colAction}>
+                  <strong>{log.action}</strong>
+                </div>
+                <div className={styles.colDetails}>{log.details}</div>
+                <div className={styles.colTime}>
+                  {log.timestamp
+                    ? log.timestamp.toDate().toLocaleString("es-ES", {
+                        dateStyle: "short",
+                        timeStyle: "short",
+                      })
+                    : "Sin fecha"}
+                </div>
               </div>
-              <div className={styles.colOrigin}>
-                {log.origin === "DEVICE" ? (
-                  <span className={styles.badgeDevice}>
-                    <RiCpuLine /> HARDWARE
-                  </span>
-                ) : (
-                  <span className={styles.badgeUser}>
-                    <RiUserSettingsLine /> USUARIO
-                  </span>
-                )}
-              </div>
-              <div className={styles.colSubject}>
-                <code>
-                  {log.origin === "DEVICE"
-                    ? log.deviceId
-                    : log.userEmail || "Admin"}
-                </code>
-              </div>
-              <div className={styles.colAction}>
-                <strong>{log.action}</strong>
-              </div>
-              <div className={styles.colDetails}>{log.details}</div>
-              <div className={styles.colTime}>
-                {log.timestamp
-                  ?.toDate()
-                  .toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                  })}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>

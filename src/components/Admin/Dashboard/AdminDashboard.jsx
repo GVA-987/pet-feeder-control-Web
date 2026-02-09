@@ -7,7 +7,8 @@ import {
   limit,
   onSnapshot,
 } from "firebase/firestore";
-import { db } from "../../../firebase/firebase-config";
+import { db, rtdb } from "../../../firebase/firebase-config";
+import { ref, onValue, getDatabase } from "firebase/database";
 import {
   RiUserFollowLine,
   RiPulseLine,
@@ -29,8 +30,34 @@ const AdminDashboardPage = () => {
   });
   const [combinedLogs, setCombinedLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isDbOnline, setIsDbOnline] = useState(false);
+  const [mqttStatus, setMqttStatus] = useState("checking");
 
   useEffect(() => {
+    const connectedRef = ref(rtdb, ".info/connected");
+    let gracePeriodTimeout;
+    const unsubConnection = onValue(connectedRef, (snap) => {
+      const isConnected = snap.val() === true;
+      if (isConnected) {
+        clearTimeout(gracePeriodTimeout);
+        setIsDbOnline(true);
+      } else {
+        gracePeriodTimeout = setTimeout(() => {
+          setIsDbOnline(false);
+        }, 10000);
+      }
+    });
+
+    const mqttRef = ref(rtdb, "system_status/mqtt_broker");
+
+    const unsubMqtt = onValue(mqttRef, (snap) => {
+      if (snap.exists()) {
+        setMqttStatus(snap.val());
+      } else {
+        setMqttStatus("unknown");
+      }
+    });
+
     const fetchStats = async () => {
       try {
         const usersSnap = await getDocs(collection(db, "users"));
@@ -49,9 +76,9 @@ const AdminDashboardPage = () => {
     };
 
     const qLogs = query(
-      collection(db, "system_logs"),
+      collection(db, "device_logs"),
       orderBy("timestamp", "desc"),
-      limit(8),
+      limit(100),
     );
     const unsubLogs = onSnapshot(qLogs, (snap) => {
       const logs = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
@@ -64,7 +91,12 @@ const AdminDashboardPage = () => {
     });
 
     fetchStats();
-    return () => unsubLogs();
+    return () => {
+      unsubConnection();
+      unsubMqtt();
+      unsubLogs();
+      clearTimeout(gracePeriodTimeout);
+    };
   }, []);
 
   if (loading)
@@ -81,8 +113,13 @@ const AdminDashboardPage = () => {
           <h1>Vista General</h1>
           <p>Bienvenido al Centro de Mando Pet-GVA</p>
         </div>
-        <div className={styles.serverStatus}>
-          <span className={styles.pulse}></span> Servidores Operativos
+        <div
+          className={`${styles.serverStatus} ${!isDbOnline ? styles.statusCritical : ""}`}
+        >
+          <span
+            className={`${styles.pulse} ${!isDbOnline ? styles.pulseError : ""}`}
+          ></span>
+          {isDbOnline ? "Servidores Operativos" : "Problemas de Conexión"}
         </div>
       </header>
 
@@ -148,14 +185,24 @@ const AdminDashboardPage = () => {
         {/* Sección lateral de Accesos Rápidos o Salud del Sistema */}
         <aside className={styles.sidePanel}>
           <div className={styles.healthCard}>
-            <h4>Estado del Bridge</h4>
+            <h4>Estado del Sistema</h4>
             <div className={styles.healthItem}>
               <span>MQTT Broker</span>
-              <span className={styles.statusOk}>Online</span>
+              <span
+                className={
+                  mqttStatus === "online" ? styles.statusOk : styles.statusError
+                }
+              >
+                {mqttStatus === "online" ? "Online" : "Offline"}
+              </span>
             </div>
             <div className={styles.healthItem}>
               <span>Base de Datos</span>
-              <span className={styles.statusOk}>Online</span>
+              <span
+                className={isDbOnline ? styles.statusOk : styles.statusError}
+              >
+                {isDbOnline ? "Online" : "Offline"}
+              </span>
             </div>
           </div>
 

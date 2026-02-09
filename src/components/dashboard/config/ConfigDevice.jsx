@@ -63,12 +63,16 @@ const ConfigDevice = () => {
         archivedAt: serverTimestamp(),
         deletedBy: currentUser.uid,
         deviceId: currentUser.deviceId,
+        userEmail: currentUser.email,
+        name: currentUser.nombre,
       });
 
       await addDoc(collection(db, "system_logs"), {
         action: "SCHEDULE_ARCHIVED",
         userId: currentUser.uid,
         deviceId: currentUser.deviceId,
+        userEmail: currentUser.email,
+        name: currentUser.nombre,
         timestamp: serverTimestamp(),
         details: `Horario ${scheduleToDelete.time} movido al archivo.`,
         type: "info",

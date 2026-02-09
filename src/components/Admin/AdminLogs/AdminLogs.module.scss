@@ -1,36 +1,52 @@
 .container {
-    padding: 2rem;
-    background: #f8f9fc;
-    min-height: 100vh;
+  padding: 2rem;
+  background: #f8f9fc;
+  min-height: 100vh;
 
-    .topSection {
-        display: grid;
-        grid-template-columns: 1fr 350px; // El gráfico a la derecha
-        gap: 2rem;
-        margin-bottom: 2rem;
-        
-        @media (max-width: 1024px) { grid-template-columns: 1fr; }
+  .topSection {
+    display: grid;
+    grid-template-columns: 1fr 350px; // El gráfico a la derecha
+    gap: 2rem;
+    margin-bottom: 2rem;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
     }
-    
-    .analyticsMini {
-        background: #fff;
-        padding: 1.2rem;
-        border-radius: 16px;
+  }
+
+  .analyticsMini {
+    background: #fff;
+    padding: 1.2rem;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #edf2f7;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+
+    .chartInfo {
+      flex: 1;
+      h4 {
+        margin: 0;
+        font-size: 1.4rem;
+        color: #2d3436;
         display: flex;
         align-items: center;
-        border: 1px solid #edf2f7;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-    
-        .chartInfo {
-            flex: 1;
-            h4 { margin: 0; font-size: 0.9rem; color: #2d3436; display: flex; align-items: center; gap: 8px; }
-            p { margin: 4px 0 0; font-size: 0.75rem; color: #a4b0be; }
-        }
-    
-        .chartWrapper { width: 120px; height: 120px; }
+        gap: 8px;
+      }
+      p {
+        margin: 4px 0 0;
+        font-size: 1.2rem;
+        color: #a4b0be;
+      }
     }
 
-.btnExport {
+    .chartWrapper {
+      width: 120px;
+      height: 120px;
+    }
+  }
+
+  .btnExport {
     background: #1cc88a;
     color: #fff;
     border: none;
@@ -39,198 +55,238 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.85rem;
+    font-size: 1.2rem;
     font-weight: 600;
     cursor: pointer;
     transition: 0.3s;
-    &:hover { background: #17a673; transform: translateY(-2px); }
-}
+    &:hover {
+      background: #17a673;
+      transform: translateY(-2px);
+    }
+  }
 
-    .header {
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+
+    .titleArea {
+      h2 {
+        margin: 0;
         display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 2rem;
-        flex-wrap: wrap;
-        gap: 1.5rem;
-
-        .titleArea {
-            h2 { margin: 0; display: flex; align-items: center; gap: 0.7rem; color: #2d3436; }
-            p { margin: 5px 0 0; color: #636e72; font-size: 0.9rem; }
-        }
-
-        .toolBar {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-wrap: wrap;
-
-            .search {
-                background: #fff;
-                border: 1px solid #edf2f7;
-                padding: 0.6rem 1rem;
-                border-radius: 10px;
-                display: flex; 
-                align-items: center; 
-                gap: 0.5rem;
-                width: 300px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-
-                input { 
-                    background: transparent; 
-                    border: none; 
-                    color: #2d3436; 
-                    outline: none; 
-                    font-size: 0.85rem; 
-                    width: 100%; 
-                }
-                svg { color: #a4b0be; }
-            }
-
-            .filterChips {
-                display: flex; 
-                background: #eee; 
-                padding: 4px; 
-                border-radius: 10px;
-                gap: 2px;
-
-                button {
-                    background: transparent; 
-                    border: none; 
-                    color: #7f8c8d; 
-                    padding: 6px 14px;
-                    border-radius: 8px; 
-                    cursor: pointer; 
-                    font-size: 0.75rem; 
-                    font-weight: 700;
-                    transition: all 0.2s;
-
-                    &.active { 
-                        background: #fff; 
-                        color: #4e73df; 
-                        box-shadow: 0 2px 6px rgba(0,0,0,0.1); 
-                    }
-                    &:hover:not(.active) { color: #2d3436; }
-                }
-            }
-        }
+        align-items: center;
+        gap: 0.7rem;
+        color: #2d3436;
+      }
+      p {
+        margin: 5px 0 0;
+        color: #636e72;
+        font-size: 1.2rem;
+      }
     }
 
-    .logTable {
-        background: #fff; 
-        border-radius: 16px; 
+    .toolBar {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+
+      .search {
+        background: #fff;
         border: 1px solid #edf2f7;
-        overflow: hidden; 
-        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        padding: 0.6rem 1rem;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 300px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 
-        .tableHeader {
-            display: grid;
-            grid-template-columns: 60px 130px 150px 180px 1fr 120px;
-            padding: 1.2rem 1rem; 
-            background: #f1f2f6;
-            font-size: 0.75rem; 
-            font-weight: 800; 
-            color: #a4b0be; 
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        input {
+          background: transparent;
+          border: none;
+          color: #2d3436;
+          outline: none;
+          font-size: 1.2rem;
+          width: 100%;
         }
-
-        .tableBody {
-            max-height: 70vh; 
-            overflow-y: auto;
-
-            .row {
-                display: grid;
-                grid-template-columns: 60px 130px 150px 180px 1fr 120px;
-                padding: 1rem; 
-                border-bottom: 1px solid #f8f9fa;
-                font-size: 0.85rem; 
-                align-items: center;
-                transition: background 0.2s;
-
-                &:hover { background: #fdfdfd; }
-
-                .colType {
-                    font-size: 1.3rem;
-                    display: flex;
-                    justify-content: center;
-                    .err { color: #e74c3c; }
-                    .warn { color: #f39c12; }
-                    .info { color: #3498db; }
-                }
-
-                .badgeDevice {
-                    background: #e0f2fe; color: #0369a1; 
-                    padding: 4px 8px; border-radius: 6px; 
-                    font-size: 0.65rem; font-weight: 800; 
-                    display: flex; align-items: center; gap: 4px;
-                }
-
-                .badgeUser {
-                    background: #fef3c7; color: #92400e; 
-                    padding: 4px 8px; border-radius: 6px; 
-                    font-size: 0.65rem; font-weight: 800; 
-                    display: flex; align-items: center; gap: 4px;
-                }
-
-                .colSubject {
-                    code {
-                        background: #f1f2f6; 
-                        padding: 2px 6px; 
-                        border-radius: 4px; 
-                        font-family: 'Courier New', Courier, monospace; 
-                        font-size: 0.75rem; 
-                        color: #4e73df;
-                    }
-                }
-
-                .colAction {
-                    color: #2d3436;
-                    strong { font-weight: 700; }
-                }
-
-                .colDetails {
-                    color: #636e72; 
-                    line-height: 1.4; 
-                    padding-right: 1.5rem;
-                }
-
-                .colTime { 
-                    text-align: right; 
-                    color: #b2bec3; 
-                    font-size: 0.8rem; 
-                    font-weight: 500;
-                }
-
-                // Estados de fila por severidad
-                &.error { 
-                    border-left: 4px solid #e74c3c;
-                    background: rgba(231, 76, 60, 0.02);
-                    .colAction { color: #c0392b; }
-                }
-                &.warning { 
-                    border-left: 4px solid #f39c12;
-                    background: rgba(243, 156, 18, 0.02);
-                }
-                &.info { 
-                    border-left: 4px solid #3498db;
-                }
-            }
+        svg {
+          color: #a4b0be;
         }
+      }
+
+      .filterChips {
+        display: flex;
+        background: #eee;
+        padding: 4px;
+        border-radius: 10px;
+        gap: 2px;
+
+        button {
+          background: transparent;
+          border: none;
+          color: #7f8c8d;
+          padding: 6px 14px;
+          border-radius: 8px;
+          cursor: pointer;
+          font-size: 1.2rem;
+          font-weight: 700;
+          transition: all 0.2s;
+
+          &.active {
+            background: #fff;
+            color: #4e73df;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+          }
+          &:hover:not(.active) {
+            color: #2d3436;
+          }
+        }
+      }
     }
+  }
+
+  .logTable {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #edf2f7;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+
+    .tableHeader {
+      display: grid;
+      grid-template-columns: 60px 150px 300px 180px 400px 120px;
+      padding: 1.2rem 1rem;
+      background: #f1f2f6;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #a4b0be;
+      text-transform: uppercase;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+
+    .tableBody {
+      max-height: 70vh;
+      overflow-y: auto;
+
+      .row {
+        display: grid;
+        grid-template-columns: 60px 150px 300px 180px 400px 120px;
+        padding: 1rem;
+        border-bottom: 1px solid #f8f9fa;
+        font-size: 1.2rem;
+        align-items: center;
+        transition: background 0.2s;
+
+        &:hover {
+          background: #fdfdfd;
+        }
+
+        .colType {
+          font-size: 1.5rem;
+          display: flex;
+          justify-content: center;
+          .err {
+            color: #e74c3c;
+          }
+          .warn {
+            color: #f39c12;
+          }
+          .info {
+            color: #3498db;
+          }
+        }
+
+        .badgeDevice {
+          background: #e0f2fe;
+          color: #0369a1;
+          padding: 4px 8px;
+          border-radius: 6px;
+          font-size: 1.2rem;
+          font-weight: 800;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+
+        .badgeUser {
+          background: #fef3c7;
+          color: #92400e;
+          padding: 4px 8px;
+          border-radius: 6px;
+          font-size: 1.1rem;
+          font-weight: 800;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+
+        .colSubject {
+          code {
+            background: #f1f2f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 1rem;
+            color: #4e73df;
+          }
+        }
+
+        .colAction {
+          color: #2d3436;
+          strong {
+            font-weight: 700;
+          }
+        }
+
+        .colDetails {
+          color: #636e72;
+          line-height: 1.4;
+          margin-left: 50px;
+        }
+
+        .colTime {
+          text-align: center;
+          color: #b2bec3;
+          font-size: 1.3rem;
+          font-weight: 500;
+        }
+
+        // Estados de fila por severidad
+        &.error {
+          border-left: 4px solid #e74c3c;
+          background: rgba(231, 76, 60, 0.02);
+          .colAction {
+            color: #c0392b;
+          }
+        }
+        &.warning {
+          border-left: 4px solid #f39c12;
+          background: rgba(243, 156, 18, 0.02);
+        }
+        &.info {
+          border-left: 4px solid #3498db;
+        }
+      }
+    }
+  }
 }
 
 // Estilos para scrollbar personalizada (opcional, pero se ve más pro)
 .tableBody::-webkit-scrollbar {
-    width: 6px;
+  width: 6px;
 }
 .tableBody::-webkit-scrollbar-track {
-    background: #f1f1f1;
+  background: #f1f1f1;
 }
 .tableBody::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 10px;
+  background: #ccc;
+  border-radius: 10px;
 }
 .tableBody::-webkit-scrollbar-thumb:hover {
-    background: #999;
+  background: #999;
 }

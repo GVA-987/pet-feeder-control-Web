@@ -106,6 +106,8 @@ const GeneralOptions = () => {
       const logData = {
         action: "CALIBRATE_FOOD",
         userId: currentUser.uid,
+        userEmail: currentUser.email,
+        name: currentUser.nombre,
         deviceId: activeDeviceId,
         timestamp: serverTimestamp(),
         details: `Calibración ajustada a ${calibratePortion}g`,
@@ -135,6 +137,8 @@ const GeneralOptions = () => {
       await addDoc(collection(db, "system_logs"), {
         action: "SWITCH_ACTIVE_DEVICE",
         userId: currentUser.uid,
+        userEmail: currentUser.email,
+        name: currentUser.nombre,
         deviceId: deviceId,
         timestamp: serverTimestamp(),
         details: `Usuario cambió el control activo al equipo ${deviceId}`,

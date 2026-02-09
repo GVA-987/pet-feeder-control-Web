@@ -232,73 +232,112 @@ const AdminDevicesPage = () => {
         <RegisterDeviceForm onSuccess={() => setIsModalOpen(false)} />
       </Modal>
 
-      <div className={styles.deviceGrid}>
-        {filteredDevices.map((device) => (
-          <div
-            key={device.id}
-            className={`${styles.card} ${device.online !== "conectado" ? styles.offlineCard : ""}`}
-          >
-            <div className={styles.cardStatus}>
-              <span className={styles.onlineBadge}>
-                {device.online === "conectado" ? "● ONLINE" : "● OFFLINE"}
-              </span>
-              <code>ID: {device.id}</code>
-            </div>
-
-            <div className={styles.cardBody}>
-              <div className={styles.mainMetric}>
-                <div className={styles.progressCircle}>
-                  <svg viewBox="0 0 36 36" className={styles.circularChart}>
-                    <path
-                      className={styles.circleBg}
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    />
-                    <path
-                      className={styles.circle}
-                      strokeDasharray={`${device.foodLevel}, 100`}
-                      stroke={device.foodLevel < 20 ? "#ff4757" : "#2ed573"}
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    />
-                  </svg>
-                  <div className={styles.percentage}>
-                    {Math.round(device.foodLevel)}%
-                  </div>
-                </div>
-                <span className={styles.metricLabel}>Nivel de Comida</span>
-              </div>
-
-              <div className={styles.infoList}>
-                <div className={styles.infoItem}>
-                  <MdSignalWifiStatusbar4Bar />
-                  <span>Señal: {device.rssi} dBm</span>
-                </div>
-                <div className={styles.infoItem}>
-                  <MdRefresh />
-                  <span>V: {device.version || "1.0.0"}</span>
-                </div>
-                <div className={styles.infoItem}>
-                  <span>IP: {device.ip_address || "No IP"}</span>
-                </div>
-                <div className={styles.infoItem}>
-                  <span>MAC: {device.mac_address || "No MAC"}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className={styles.cardActions}>
-              <button
-                title="Reiniciar Dispositivo"
-                onClick={() => handleRemoteAction(device.id, "REBOOT")}
+      <div className={styles.tableWrapper}>
+        <table className={styles.deviceTable}>
+          <thead>
+            <tr>
+              <th>Estado</th>
+              <th>ID Dispositivo</th>
+              <th>Dueño</th>
+              <th>Nivel Comida</th>
+              <th>Señal / Versión</th>
+              <th>Red (IP/MAC)</th>
+              <th>Último Enlace</th>
+              <th>Fecha Creacion</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredDevices.map((device) => (
+              <tr
+                key={device.id}
+                className={
+                  device.online !== "conectado" ? styles.offlineRow : ""
+                }
               >
-                <MdRefresh />
-              </button>
-            </div>
-
-            <div className={styles.cardFooter}>
-              <span>Dueño: {device.ownerEmail}</span>
-            </div>
-          </div>
-        ))}
+                <td>
+                  <span
+                    className={`${styles.statusDot} ${device.online === "conectado" ? styles.online : styles.offline}`}
+                  ></span>
+                  <span className={styles.statusText}>
+                    {device.online === "conectado" ? "Online" : "Offline"}
+                  </span>
+                </td>
+                <td>
+                  <code className={styles.deviceId}>{device.id}</code>
+                </td>
+                <td>
+                  <div className={styles.ownerInfo}>
+                    <strong>{device.ownerName || "N/A"}</strong>
+                    <span>{device.ownerEmail}</span>
+                  </div>
+                </td>
+                <td>
+                  <div className={styles.foodLevelCell}>
+                    <div className={styles.miniBarContainer}>
+                      <div
+                        className={styles.miniBar}
+                        style={{
+                          width: `${device.foodLevel}%`,
+                          backgroundColor:
+                            device.foodLevel < 20 ? "#ff4757" : "#2ed573",
+                        }}
+                      ></div>
+                    </div>
+                    <span>{Math.round(device.foodLevel)}%</span>
+                  </div>
+                </td>
+                <td>
+                  <div className={styles.techInfo}>
+                    <span>
+                      <MdSignalWifiStatusbar4Bar /> {device.rssi} dBm
+                    </span>
+                    <span>
+                      <MdRefresh /> v{device.version || "1.0.0"}
+                    </span>
+                  </div>
+                </td>
+                <td>
+                  <div className={styles.networkInfo}>
+                    <small>IP: {device.ip_address || "---"}</small>
+                    <small>MAC: {device.mac_address || "---"}</small>
+                  </div>
+                </td>
+                <td>
+                  <span className={styles.dateText}>
+                    {device.last_link_date
+                      ? device.last_link_date.toDate().toLocaleString("es-ES", {
+                          dateStyle: "short",
+                          timeStyle: "short",
+                        })
+                      : "Sin registro"}
+                  </span>
+                </td>
+                <td>
+                  <span className={styles.dateText}>
+                    {device.createdAt
+                      ? device.createdAt.toDate().toLocaleString("es-ES", {
+                          dateStyle: "short",
+                          timeStyle: "short",
+                        })
+                      : "Sin registro"}
+                  </span>
+                </td>
+                <td>
+                  <div className={styles.actionButtons}>
+                    <button
+                      className={styles.btnAction}
+                      title="Reiniciar Dispositivo"
+                      onClick={() => handleRemoteAction(device.id, "REBOOT")}
+                    >
+                      <MdRefresh />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

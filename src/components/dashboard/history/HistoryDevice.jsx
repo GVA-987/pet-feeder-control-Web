@@ -1,4 +1,3 @@
-// src/pages/HistoryPage.jsx
 import React, { useState, useEffect } from "react";
 import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
 import { db } from "../../../firebase/firebase-config";
@@ -11,23 +10,20 @@ import {
   MdHistory,
 } from "react-icons/md";
 import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
   BarChart,
   Bar,
   XAxis,
   YAxis,
   CartesianGrid,
+  Legend,
+  Tooltip,
+  ResponsiveContainer,
 } from "recharts";
 
 const HistoryPage = () => {
   const { currentUser } = useAuth();
   const [history, setHistory] = useState([]);
-  const [filteredHistory, setFilteredHistory] = useState([]); // Nuevo estado
+  const [filteredHistory, setFilteredHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterRange, setFilterRange] = useState("all");
 
@@ -42,7 +38,7 @@ const HistoryPage = () => {
         const q = query(
           collection(db, "dispense_history"),
           where("deviceId", "==", currentUser.deviceId),
-          where("userId", "==", currentUser.uid),
+          // Quitamos el filtro de userId si quieres que todos en la familia vean el historial
           orderBy("timestamp", "desc"),
         );
 
@@ -67,16 +63,13 @@ const HistoryPage = () => {
     const now = new Date();
     const filtered = history.filter((item) => {
       if (filterRange === "all") return true;
-
-      const itemDate = item.timestamp.toDate
+      const itemDate = item.timestamp?.toDate
         ? item.timestamp.toDate()
-        : new Date(item.timestamp.seconds * 1000);
-      const diffTime = Math.abs(now - itemDate);
-      const diffDays = diffTime / (1000 * 60 * 60 * 24);
+        : new Date(item.timestamp);
+      const diffDays = (now - itemDate) / (1000 * 60 * 60 * 24);
 
-      if (filterRange === "today") {
+      if (filterRange === "today")
         return itemDate.toDateString() === now.toDateString();
-      }
       if (filterRange === "week") return diffDays <= 7;
       if (filterRange === "month") return diffDays <= 30;
       return true;
@@ -86,9 +79,7 @@ const HistoryPage = () => {
 
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return "N/A";
-    let date = timestamp.toDate
-      ? timestamp.toDate()
-      : new Date(timestamp.seconds * 1000 || timestamp);
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
     return date.toLocaleString("es-ES", {
       day: "2-digit",
       month: "short",
@@ -98,54 +89,53 @@ const HistoryPage = () => {
   };
 
   const calculateChartData = (hist) => {
-    const manualCount = hist.filter((item) => item.type === "manual").length;
-    const scheduledCount = hist.length - manualCount;
-
-    const pieData = [
-      { name: "Manual", value: manualCount, fill: "#f97316" },
-      { name: "Programado", value: scheduledCount, fill: "#10b981" },
-    ];
-
     const dailyDataMap = hist.reduce((acc, item) => {
       if (!item.timestamp) return acc;
       const dateObj = item.timestamp.toDate
         ? item.timestamp.toDate()
-        : new Date(item.timestamp.seconds * 1000);
+        : new Date(item.timestamp);
       const dateLabel = dateObj.toLocaleDateString("es-ES", {
         day: "2-digit",
         month: "2-digit",
       });
-      acc[dateLabel] = (acc[dateLabel] || 0) + (parseInt(item.portion) || 0);
+
+      if (!acc[dateLabel]) acc[dateLabel] = { manual: 0, programado: 0 };
+
+      const grams = parseFloat(item.portion) || 0;
+      if (item.type === "manual") {
+        acc[dateLabel].manual += grams;
+      } else {
+        acc[dateLabel].programado += grams;
+      }
       return acc;
     }, {});
 
     const barData = Object.keys(dailyDataMap)
       .map((key) => ({
         date: key,
-        portions: dailyDataMap[key],
+        Manual: Math.round(dailyDataMap[key].manual),
+        Programado: Math.round(dailyDataMap[key].programado),
       }))
       .reverse()
       .slice(-7);
 
     return {
-      pieData,
       barData,
       kpis: {
-        totalDispensed: hist.length,
-        totalPortions: hist.reduce(
-          (sum, item) => sum + (parseInt(item.portion) || 0),
-          0,
-        ),
+        totalEvents: hist.length,
+        totalGrams: hist
+          .reduce((sum, item) => sum + (parseFloat(item.realGrams) || 0), 0)
+          .toFixed(0),
       },
     };
   };
 
   const handleGenerateReport = () => {
-    const headers = ["Fecha y Hora", "Porciones", "Tipo"];
+    const headers = ["Fecha y Hora", "Gramos Consumidos", "Tipo"];
     const csvRows = history.map((item) =>
       [
         `"${formatTimestamp(item.timestamp)}"`,
-        item.portion,
+        `${item.realGrams}g`,
         item.type === "manual" ? "Manual" : "Programada",
       ].join(","),
     );
@@ -156,114 +146,87 @@ const HistoryPage = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `reporte_${currentUser.deviceId}.csv`;
+    link.download = `consumo_mascota.csv`;
     link.click();
   };
 
-  const { pieData, barData, kpis } = calculateChartData(filteredHistory);
+  const { barData, kpis } = calculateChartData(filteredHistory);
 
   if (loading)
     return <div className={styles.loading}>Cargando historial...</div>;
 
-  if (!currentUser?.deviceId || history.length === 0) {
-    return (
-      <div className={styles.noData}>
-        <MdInfoOutline />
-        <p>No hay registros disponibles para este dispositivo.</p>
-      </div>
-    );
-  }
-
   return (
     <div className={styles.containerHistory}>
       <header className={styles.header}>
-        <div className={styles.titleGroup}>
-          <h1>
-            <MdHistory /> Historial de Actividad
-          </h1>
-          <p>Monitorea las raciones de tu mascota</p>
-        </div>
-        <div className={styles.filterBar}>
-          <button
-            className={filterRange === "today" ? styles.active : ""}
-            onClick={() => setFilterRange("today")}
-          >
-            Hoy
-          </button>
-          <button
-            className={filterRange === "week" ? styles.active : ""}
-            onClick={() => setFilterRange("week")}
-          >
-            7 Días
-          </button>
-          <button
-            className={filterRange === "month" ? styles.active : ""}
-            onClick={() => setFilterRange("month")}
-          >
-            Mes
-          </button>
-          <button
-            className={filterRange === "all" ? styles.active : ""}
-            onClick={() => setFilterRange("all")}
-          >
-            Todo
-          </button>
-        </div>
-
         <button className={styles.reportButton} onClick={handleGenerateReport}>
           <MdFileDownload /> Reporte
         </button>
+        <div className={styles.filterBar}>
+          {["today", "week", "month", "all"].map((range) => (
+            <button
+              key={range}
+              className={filterRange === range ? styles.active : ""}
+              onClick={() => setFilterRange(range)}
+            >
+              {range === "today"
+                ? "Hoy"
+                : range === "week"
+                  ? "7 Días"
+                  : range === "month"
+                    ? "Mes"
+                    : "Todo"}
+            </button>
+          ))}
+        </div>
       </header>
 
       <section className={styles.dashboard}>
         <div className={styles.kpiGrid}>
           <div className={styles.kpiCard}>
-            <span>Total Eventos</span>
-            <h3>{kpis.totalDispensed}</h3>
+            <span>Total Porciones</span>
+            <h3>{kpis.totalEvents}</h3>
           </div>
           <div className={styles.kpiCard}>
-            <span>Porciones Totales</span>
-            <h3>{kpis.totalPortions}</h3>
+            <span>Total Gramos</span>
+            <h3>{kpis.totalGrams} g</h3>
           </div>
         </div>
 
-        <div className={styles.chartsGrid}>
-          <div className={styles.chartCard}>
-            <h3>Distribución por Tipo</h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  dataKey="value"
-                  nameKey="name"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell key={index} fill={entry.fill} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div className={styles.chartCard}>
-            <h3>Consumo últimos días</h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={barData}>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="#444"
-                />
-                <XAxis dataKey="date" axisLine={false} tickLine={false} />
-                <YAxis axisLine={false} tickLine={false} />
-                <Tooltip cursor={{ fill: "transparent" }} />
-                <Bar dataKey="portions" fill="#10b981" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+        <div className={styles.chartCard}>
+          <h3>Porciones de Alimentacion</h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={barData}>
+              <CartesianGrid
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke="#444"
+              />
+              <XAxis dataKey="date" axisLine={false} tickLine={false} />
+              <YAxis axisLine={false} tickLine={false} />
+              <Tooltip
+                cursor={{ fill: "rgba(255,255,255,0.05)" }}
+                contentStyle={{
+                  backgroundColor: "#1a1a1a",
+                  border: "none",
+                  borderRadius: "8px",
+                }}
+              />
+              <Legend iconType="circle" />
+              {/* StackId="a" hace que se apilen una encima de otra */}
+              <Bar
+                dataKey="Programado"
+                stackId="a"
+                fill="#10b981"
+                radius={[0, 0, 0, 0]}
+              />
+              <Bar
+                dataKey="Manual"
+                stackId="a"
+                fill="#f97316"
+                radius={[4, 4, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </section>
 
@@ -274,7 +237,9 @@ const HistoryPage = () => {
             <thead>
               <tr>
                 <th>Fecha y Hora</th>
-                <th>Porción</th>
+                <th>Cantidad Real</th>
+                <th>Cantidad Programada</th>
+                <th>Porcion</th>
                 <th>Tipo</th>
               </tr>
             </thead>
@@ -287,8 +252,14 @@ const HistoryPage = () => {
                     </div>
                   </td>
                   <td>
-                    <strong>{item.portion}</strong>
+                    <strong>{parseFloat(item.realGrams).toFixed(2)} g</strong>
                   </td>
+                  <td>
+                    <strong>
+                      {parseFloat(item.requestedGrams).toFixed(2)} g
+                    </strong>
+                  </td>
+                  <td>{item.portion} porción</td>
                   <td>
                     <span
                       className={

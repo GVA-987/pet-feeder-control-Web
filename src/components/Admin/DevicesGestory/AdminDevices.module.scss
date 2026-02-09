@@ -22,7 +22,8 @@
       p {
         margin: 5px 0 0;
         color: #636e72;
-        font-size: 0.95rem;
+        font-size: 1.2rem;
+        margin-bottom: 5px;
       }
     }
 
@@ -44,7 +45,7 @@
           position: absolute;
           left: 12px;
           color: #94a3b8;
-          font-size: 1.2rem;
+          font-size: 2rem;
         }
 
         input {
@@ -70,7 +71,7 @@
           background: none;
           border: none;
           color: #94a3b8;
-          font-size: 1.5rem;
+          font-size: 1.2rem;
           cursor: pointer;
           &:hover {
             color: white;
@@ -93,7 +94,7 @@
         padding: 8px 16px;
         border-radius: 8px;
         cursor: pointer;
-        font-size: 0.85rem;
+        font-size: 1.2rem;
         font-weight: 600;
         color: #636e72;
         transition: all 0.3s;
@@ -110,172 +111,152 @@
     }
   }
 
-  .deviceGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
+  .tableWrapper {
+    background: white;
+    border-radius: 15px;
+    padding: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow-x: auto; // Para que sea responsive si hay muchas columnas
   }
 
-  .card {
-    background: #fff;
-    border-radius: 20px;
-    padding: 1.5rem;
-    position: relative;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
-    border: 1px solid #edf2f7;
-    transition:
-      transform 0.3s,
-      box-shadow 0.3s;
+  .deviceTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
 
-    &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-    }
-
-    &.offlineCard {
-      background: #fdfdfe;
-      filter: grayscale(0.6);
-      border-style: dashed;
-
-      .onlineBadge {
-        color: #a4b0be;
-      }
-      .circle {
-        stroke: #a4b0be !important;
-      }
-    }
-
-    .cardStatus {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-
-      .onlineBadge {
-        font-size: 0.7rem;
-        font-weight: 800;
+    thead {
+      background: #f8f9fc;
+      tr th {
+        padding: 15px;
+        color: #b2bec3;
+        font-size: 0.85rem;
+        text-transform: uppercase;
         letter-spacing: 1px;
-        color: #2ecc71;
-      }
-
-      code {
-        background: #f1f2f6;
-        padding: 2px 8px;
-        border-radius: 6px;
-        font-size: 0.75rem;
-        color: #4e73df;
+        border-bottom: 2px solid #edf2f7;
       }
     }
 
-    .cardBody {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.5rem;
-
-      .mainMetric {
-        text-align: center;
-
-        .progressCircle {
-          position: relative;
-          width: 120px;
-          height: 120px;
-          margin: 0 auto 10px;
-
-          .circularChart {
-            display: block;
-            margin: 10px auto;
-            max-height: 250px;
-          }
-          .circleBg {
-            fill: none;
-            stroke: #eee;
-            stroke-width: 2.8;
-          }
-          .circle {
-            fill: none;
-            stroke-width: 2.8;
-            stroke-linecap: round;
-            transition: stroke-dasharray 1s ease;
-          }
-
-          .percentage {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #2d3436;
-          }
-        }
-
-        .metricLabel {
-          font-size: 0.8rem;
-          color: #b2bec3;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-        }
-      }
-
-      .infoList {
-        width: 100%;
-        display: flex;
-        justify-content: space-around;
-        background: #f8f9fa;
-        padding: 10px;
-        border-radius: 12px;
-
-        .infoItem {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 0.75rem;
-          color: #636e72;
-          svg {
-            color: #4e73df;
-            font-size: 1rem;
-          }
-        }
-      }
-    }
-
-    .cardActions {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 1.5rem;
-
-      button {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: 1px solid #edf2f7;
-        background: #fff;
-        color: #636e72;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        transition: all 0.2s;
+    tbody {
+      tr {
+        border-bottom: 1px solid #edf2f7;
+        transition: background 0.2s;
 
         &:hover {
-          background: #4e73df;
-          color: #fff;
-          transform: rotate(15deg);
+          background: #f8faff;
+        }
+
+        &.offlineRow {
+          background: #fcfcfc;
+          opacity: 0.8;
+        }
+
+        td {
+          padding: 15px;
+          vertical-align: middle;
         }
       }
     }
+  }
 
-    .cardFooter {
-      margin-top: 1.5rem;
-      padding-top: 1rem;
-      border-top: 1px solid #f1f2f6;
-      text-align: center;
-      span {
-        font-size: 0.75rem;
-        color: #a4b0be;
+  // Celdas específicas
+  .statusDot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+    &.online {
+      background: #2ecc71;
+      box-shadow: 0 0 8px #2ecc71;
+    }
+    &.offline {
+      background: #a4b0be;
+    }
+  }
+
+  .statusText {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2d3436;
+  }
+
+  .deviceId {
+    background: #f1f2f6;
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: #4e73df;
+    font-family: monospace;
+    font-size: 1.2rem;
+  }
+
+  .ownerInfo {
+    display: flex;
+    flex-direction: column;
+    strong {
+      font-size: 1.2rem;
+      color: #2d3436;
+    }
+    span {
+      font-size: 1.1rem;
+      color: #b2bec3;
+    }
+  }
+
+  .foodLevelCell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    .miniBarContainer {
+      width: 60px;
+      height: 6px;
+      background: #eee;
+      border-radius: 10px;
+      overflow: hidden;
+      .miniBar {
+        height: 100%;
+        transition: width 0.5s;
+      }
+    }
+    span {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #636e72;
+    }
+  }
+
+  .techInfo,
+  .networkInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 1.2rem;
+    color: #636e72;
+    svg {
+      color: #4e73df;
+    }
+  }
+
+  .dateText {
+    font-size: 1.2rem;
+    color: #636e72;
+  }
+
+  .actionButtons {
+    .btnAction {
+      width: 35px;
+      height: 35px;
+      border-radius: 8px;
+      border: 1px solid #edf2f7;
+      background: white;
+      color: #636e72;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      &:hover {
+        background: #4e73df;
+        color: white;
       }
     }
   }
@@ -303,8 +284,8 @@
 
     label {
       font-weight: 600;
-      color: #444;
-      font-size: 0.9rem;
+      color: #8c8c8c;
+      font-size: 1.2rem;
     }
     input {
       padding: 12px;
@@ -317,7 +298,7 @@
     }
     small {
       color: #888;
-      font-size: 0.75rem;
+      font-size: 1.1rem;
     }
   }
 

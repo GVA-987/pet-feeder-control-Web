@@ -134,6 +134,7 @@ function HomeControl() {
   const [foodPortion, setFoodPortion] = useState("");
   const DIAS_SEMANA = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
   const [isProcessing, setIsProcessing] = useState(false);
+  const [gramsPerPortion, setGramsPerPortion] = useState(0);
   const getProgressColor = (percent) => {
     if (percent > 50) return "#10b981";
     if (percent > 20) return "#f59e0b";
@@ -194,9 +195,18 @@ function HomeControl() {
       if (snapshot.exists()) setRtdbData(snapshot.val());
     });
 
+    const weightConfigRef = ref(
+      dbRT,
+      `${currentUser.deviceId}/commands/weight_portion`,
+    );
+    const unsubWeight = onValue(weightConfigRef, (snapshot) => {
+      if (snapshot.exists()) setGramsPerPortion(parseFloat(snapshot.val()));
+    });
+
     return () => {
       unsubFirestore();
       off(statusRef, "value", unsubRTDB);
+      off(weightConfigRef, "value", unsubWeight);
     };
   }, [currentUser?.deviceId]);
 
@@ -296,24 +306,6 @@ function HomeControl() {
     );
   }
 
-  const calculateFoodPercentage = (rawValue) => {
-    if (rawValue === null || rawValue === undefined || rawValue === "--")
-      return 0;
-
-    const DISTANCIA_LLENO = 200.0; // Mayor valor mas comida
-    const DISTANCIA_VACIO = 65.0; // Menor valor menos comida
-
-    if (rawValue <= DISTANCIA_VACIO) return 0;
-
-    if (rawValue >= DISTANCIA_LLENO) return 100;
-
-    const percentage =
-      ((rawValue - DISTANCIA_VACIO) / (DISTANCIA_LLENO - DISTANCIA_VACIO)) *
-      100;
-
-    return Math.round(percentage);
-  };
-
   const lastSeenSeconds = rtdbData?.lastSeen || 0; // en segundos
   const lastSeenMs = lastSeenSeconds * 1000; // convertir a milisegundos
   const CONNECTION_THRESHOLD_MS = 16000; // 16 segundos
@@ -323,7 +315,8 @@ function HomeControl() {
   // const foodLevel = 50;
 
   const rawFoodLevel = rtdbData?.foodLevel || 0;
-  const foodLevel = calculateFoodPercentage(rawFoodLevel);
+  const totalGramsToDispense = (parseFloat(foodPortion) || 0) * gramsPerPortion;
+  // const foodLevel = calculateFoodPercentage(rawFoodLevel);
   const rssi = rtdbData?.rssi || "--";
   const chipTemp = rtdbData?.temperature || "--";
   const uptime = rtdbData?.uptime || "--";
@@ -341,6 +334,36 @@ function HomeControl() {
   const eventosHoy = schedule
     .filter((item) => item.days && item.days.includes(diaHoy))
     .sort((a, b) => moment(a.time, "HH:mm").diff(moment(b.time, "HH:mm")));
+  // const rawFoodLevel = data.foodLevel;
+
+  const formatGrams = (grams) => {
+    if (grams === null || grams === undefined || grams === "--") return "--";
+
+    // Convertimos a número por si acaso viene como string
+    const num = parseFloat(grams);
+
+    // .toFixed(2) asegura 2 decimales siempre (ej: 500.00)
+    return num.toFixed(1);
+  };
+
+  const displayGrams = formatGrams(rawFoodLevel);
+
+  const calculatePercentage = (grams) => {
+    const MAX_GRAMS = 400; // Tu tolva llena
+    const MIN_GRAMS = 0; // Considerar vacío
+    if (!grams || grams < MIN_GRAMS) return 0;
+    if (grams > MAX_GRAMS) return 100;
+    return Math.round(((grams - MIN_GRAMS) / (MAX_GRAMS - MIN_GRAMS)) * 100);
+  };
+
+  const foodPercentage = calculatePercentage(displayGrams);
+
+  const getLabel = (pct) => {
+    if (pct <= 10) return "VACÍO";
+    if (pct <= 30) return "BAJO";
+    if (pct >= 90) return "LLENO";
+    return "DISPONIBLE";
+  };
 
   const todayStr = new Date().toISOString().split("T")[0];
   const agendaHoy = (deviceData?.schedule || [])
@@ -393,8 +416,7 @@ function HomeControl() {
         <div className={styles.offlineBanner}>
           <PiWifiSlashFill />
           <span>
-            El alimentador <strong>Pet-GVA</strong> no responde. Comprueba la
-            conexión del equipo.
+            El alimentador no responde. Comprueba la conexión del equipo.
           </span>
         </div>
       )}
@@ -408,8 +430,11 @@ function HomeControl() {
             <div className={styles.foodControlWrapper}>
               <div className={styles.progressContainer}>
                 <CircularProgressBar
-                  percentage={foodLevel}
-                  color={getProgressColor(foodLevel)}
+                  percentage={foodPercentage}
+                  size={window.innerWidth < 480 ? 200 : 280}
+                  subLabel={displayGrams !== "--" ? `${displayGrams}g` : "--"}
+                  label={getLabel(foodPercentage)}
+                  color="#00bcd4"
                 />
               </div>
 
@@ -435,13 +460,24 @@ function HomeControl() {
                 >
                   {isProcessing ? "Procesando..." : "Dosificar"}
                 </span>
-                <input
-                  type="number"
-                  className={styles.inputMinimalist}
-                  placeholder="Porciones"
-                  value={foodPortion}
-                  onChange={(e) => setFoodPortion(e.target.value)}
-                />
+
+                <div className={styles.manualInputGroup}>
+                  <input
+                    type="number"
+                    className={styles.inputMinimalist}
+                    placeholder="Porciones"
+                    min="1"
+                    max="10"
+                    value={foodPortion}
+                    onChange={(e) => setFoodPortion(e.target.value)}
+                  />
+
+                  {foodPortion > 0 && gramsPerPortion > 0 && (
+                    <div className={styles.gramsHint}>
+                      ≈ {totalGramsToDispense.toFixed(1)} g
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </section>
