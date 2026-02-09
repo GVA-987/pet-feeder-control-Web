@@ -5,7 +5,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://apis.google.com; connect-src 'self' https://firebase.googleapis.com https://*.googleapis.com https://*.google-analytics.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com wss://*.firebaseio.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.googleusercontent.com https://www.googletagmanager.com;"
+          "value": "default-src * 'unsafe-inline' 'unsafe-eval'; connect-src * 'unsafe-inline'; img-src * data: blob:; style-src * 'unsafe-inline';"
         },
         {
           "key": "X-Frame-Options",
