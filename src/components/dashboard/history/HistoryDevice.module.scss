@@ -202,6 +202,78 @@
   }
 }
 
+.filterControls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; // Alinea a la derecha en desktop
+  gap: 1rem;
+
+  @include m.telefono {
+    align-items: center; // Centra en móvil
+    width: 100%;
+  }
+}
+
+.datePickerContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: color.adjust(va.$background-card, $lightness: 5%);
+  padding: 10px 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: slideDown 0.3s ease-out;
+
+  span {
+    color: va.$primary-color;
+    font-weight: bold;
+    font-size: 1rem;
+  }
+
+  @include m.telefono {
+    flex-direction: column;
+    width: 300px;
+    gap: 8px;
+  }
+}
+
+.dateInput {
+  background: color.adjust(va.$background-card, $lightness: 10%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: va.$color-text;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  cursor: pointer;
+
+  &::-webkit-calendar-picker-indicator {
+    filter: invert(1); // Hace que el icono del calendario sea blanco/visible
+    cursor: pointer;
+  }
+
+  &:focus {
+    border-color: va.$primary-color;
+    box-shadow: 0 0 0 2px rgba(va.$primary-color, 0.2);
+  }
+
+  @include m.telefono {
+    width: 100%;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .loading,
 .noData {
   height: 60vh;

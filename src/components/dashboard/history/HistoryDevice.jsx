@@ -22,6 +22,8 @@ import {
 
 const HistoryPage = () => {
   const { currentUser } = useAuth();
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [history, setHistory] = useState([]);
   const [filteredHistory, setFilteredHistory] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -72,10 +74,19 @@ const HistoryPage = () => {
         return itemDate.toDateString() === now.toDateString();
       if (filterRange === "week") return diffDays <= 7;
       if (filterRange === "month") return diffDays <= 30;
+
+      if (filterRange === "custom") {
+        if (!startDate || !endDate) return true;
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        return itemDate >= start && itemDate <= end;
+      }
       return true;
     });
     setFilteredHistory(filtered);
-  }, [filterRange, history]);
+  }, [filterRange, startDate, endDate, history]);
 
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return "N/A";
@@ -131,22 +142,32 @@ const HistoryPage = () => {
   };
 
   const handleGenerateReport = () => {
-    const headers = ["Fecha y Hora", "Gramos Consumidos", "Tipo"];
-    const csvRows = history.map((item) =>
+    const headers = [
+      "Fecha y Hora",
+      "Gramos Consumidos (Real)",
+      "Gramos Programados",
+      "Tipo",
+    ];
+
+    // Usamos filteredHistory para que el CSV respete el filtro de fecha actual
+    const csvRows = filteredHistory.map((item) =>
       [
         `"${formatTimestamp(item.timestamp)}"`,
         `${item.realGrams}g`,
+        `${item.requestedGrams}g`,
         item.type === "manual" ? "Manual" : "Programada",
       ].join(","),
     );
 
     const blob = new Blob([[headers.join(","), ...csvRows].join("\n")], {
-      type: "text/csv",
+      type: "text/csv;charset=utf-8;",
     });
+
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `consumo_mascota.csv`;
+    const fileName = `reporte_consumo_${filterRange}_${new Date().toISOString().split("T")[0]}.csv`;
+    link.download = fileName;
     link.click();
   };
 
@@ -159,24 +180,55 @@ const HistoryPage = () => {
     <div className={styles.containerHistory}>
       <header className={styles.header}>
         <button className={styles.reportButton} onClick={handleGenerateReport}>
-          <MdFileDownload /> Reporte
+          <MdFileDownload /> Reporte ({filteredHistory.length})
         </button>
-        <div className={styles.filterBar}>
-          {["today", "week", "month", "all"].map((range) => (
-            <button
-              key={range}
-              className={filterRange === range ? styles.active : ""}
-              onClick={() => setFilterRange(range)}
-            >
-              {range === "today"
-                ? "Hoy"
-                : range === "week"
-                  ? "7 Días"
-                  : range === "month"
-                    ? "Mes"
-                    : "Todo"}
-            </button>
-          ))}
+        <div className={styles.filterControls}>
+          <div className={styles.filterBar}>
+            {["today", "week", "month", "custom", "all"].map((range) => (
+              <button
+                key={range}
+                className={filterRange === range ? styles.active : ""}
+                onClick={() => {
+                  setFilterRange(range);
+                  if (range === "custom") {
+                    const today = new Date().toISOString().split("T")[0];
+                    setEndDate(today);
+                    // Opcionalmente poner startDate una semana atrás por defecto
+                    const lastWeek = new Date();
+                    lastWeek.setDate(lastWeek.getDate() - 7);
+                    setStartDate(lastWeek.toISOString().split("T")[0]);
+                  }
+                }}
+              >
+                {range === "today"
+                  ? "Hoy"
+                  : range === "week"
+                    ? "7 Días"
+                    : range === "month"
+                      ? "Mes"
+                      : range === "custom"
+                        ? "Calendario"
+                        : "Todo"}
+              </button>
+            ))}
+          </div>
+          {filterRange === "custom" && (
+            <div className={styles.datePickerContainer}>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className={styles.dateInput}
+              />
+              <span>al</span>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className={styles.dateInput}
+              />
+            </div>
+          )}
         </div>
       </header>
 
