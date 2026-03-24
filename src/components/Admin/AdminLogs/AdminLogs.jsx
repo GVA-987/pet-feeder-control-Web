@@ -26,19 +26,56 @@ const AdminLogsPage = () => {
   const [logSources, setLogSources] = useState({ devices: [], users: [] });
   const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [dateRange, setDateRange] = useState({ start: "", end: "" });
+  const [originFilter, setOriginFilter] = useState("all");
 
   const exportToCSV = () => {
-    const headers = ["ID,Origen,Accion,Detalles,Tipo,Fecha\n"];
-    const rows = logs.map(
-      (log) =>
-        `${log.id},${log.origin},${log.action},${log.details},${log.type},${log.timestamp?.toDate().toLocaleString()}`,
-    );
-    const blob = new Blob([headers + rows.join("\n")], { type: "text/csv" });
+    if (filteredLogs.length === 0) {
+      toast.error("No hay datos para exportar con los filtros actuales.");
+      return;
+    }
+
+    // 1. Definir cabeceras
+    const headers = [
+      "ID",
+      "Origen",
+      "Acción",
+      "Detalles",
+      "Tipo",
+      "Sujeto",
+      "Fecha",
+    ];
+
+    const rows = filteredLogs.map((log) => {
+      const cleanDetails = log.details?.replace(/,/g, ";") || "N/A";
+      const date = log.timestamp?.toDate().toISOString() || "N/A";
+
+      return [
+        log.id,
+        log.origin,
+        log.action,
+        cleanDetails,
+        log.type.toUpperCase(),
+        log.displaySubject,
+        date,
+      ].join(",");
+    });
+
+    const csvContent = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
+    const fileName = `Reporte_Logs_${filter}_${new Date().toISOString().split("T")[0]}.csv`;
+
     a.href = url;
-    a.download = `reporte_logs_${new Date().toISOString().split("T")[0]}.csv`;
+    a.download = fileName;
     a.click();
+    window.URL.revokeObjectURL(url);
+
+    toast.success(
+      `Reporte generado: ${filteredLogs.length} registros exportados.`,
+    );
   };
 
   const chartData = [
@@ -71,10 +108,10 @@ const AdminLogsPage = () => {
 
     return {
       id: doc.id,
-      origin: origin, // "DEVICE" o "USER_ACTION"
+      origin: origin,
       ...data,
-      type: rawType, // Tipo normalizado para el filtro y CSS
-      // Campo unificado para mostrar en la columna "SUJETO"
+      type: rawType,
+
       displaySubject:
         data.deviceId ||
         data.userEmail ||
@@ -84,30 +121,6 @@ const AdminLogsPage = () => {
       // Timestamp seguro para ordenar
       sortTime: data.timestamp?.seconds || 0,
     };
-  };
-
-  const registerNewDevice = async (newId) => {
-    try {
-      await setDoc(doc(db, "devicesPet", newId), {
-        status: "disconnected",
-        lifecycle: "available", // Se registra como disponible para vinculación
-        linked_user_id: null,
-        foodLevel: 0,
-        createdAt: new Date().toISOString(),
-      });
-
-      // Log de auditoría
-      await addDoc(collection(db, "system_logs"), {
-        action: "DEVICE_PROVISIONED",
-        details: `Nuevo dispositivo registrado en sistema: ${newId}`,
-        type: "info",
-        timestamp: new Date(),
-      });
-
-      toast.success("Equipo provisionado correctamente");
-    } catch (error) {
-      toast.error("Error al registrar equipo");
-    }
   };
 
   useEffect(() => {
@@ -149,19 +162,28 @@ const AdminLogsPage = () => {
     };
   }, []);
 
-  // 2. FILTRO INTELIGENTE (Busca en cualquier parte del objeto)
   const filteredLogs = logs.filter((log) => {
     const matchesType = filter === "all" || log.type === filter;
+    const matchesOrigin = originFilter === "all" || log.origin === originFilter;
 
-    // Buscamos en el ID, Acción, Detalles y Sujeto al mismo tiempo
-    const searchableText = `
-      ${log.action} 
-      ${log.details} 
-      ${log.displaySubject} 
-      ${log.type}
-    `.toLowerCase();
+    const logDate = log.timestamp?.toDate();
+    const startDate = dateRange.start ? new Date(dateRange.start) : null;
+    const endDate = dateRange.end ? new Date(dateRange.end) : null;
 
-    return matchesType && searchableText.includes(searchTerm.toLowerCase());
+    if (endDate) endDate.setHours(23, 59, 59, 999);
+
+    const matchesDate =
+      (!startDate || logDate >= startDate) && (!endDate || logDate <= endDate);
+
+    const searchableText =
+      `${log.action} ${log.details} ${log.displaySubject}`.toLowerCase();
+
+    return (
+      matchesType &&
+      matchesOrigin &&
+      matchesDate &&
+      searchableText.includes(searchTerm.toLowerCase())
+    );
   });
 
   return (
@@ -173,8 +195,13 @@ const AdminLogsPage = () => {
               <RiTerminalBoxLine /> Consola Unificada
             </h2>
             <div className={styles.actions}>
-              <button onClick={exportToCSV} className={styles.btnExport}>
-                <RiDownload2Line /> Exportar CSV
+              <button
+                onClick={exportToCSV}
+                className={styles.btnExport}
+                disabled={filteredLogs.length === 0}
+              >
+                <RiDownload2Line />
+                Exportar {filteredLogs.length} registros
               </button>
             </div>
           </div>
@@ -225,6 +252,46 @@ const AdminLogsPage = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+          </div>
+          <select
+            value={originFilter}
+            onChange={(e) => setOriginFilter(e.target.value)}
+          >
+            <option value="all">Todo Origen</option>
+            <option value="DEVICE">Hardware</option>
+            <option value="USER_ACTION">Usuarios</option>
+          </select>
+
+          <div className={styles.datePickerGroup}>
+            <div className={styles.dateInput}>
+              <span>Desde:</span>
+              <input
+                type="date"
+                value={dateRange.start}
+                onChange={(e) =>
+                  setDateRange({ ...dateRange, start: e.target.value })
+                }
+              />
+            </div>
+            <div className={styles.dateInput}>
+              <span>Hasta:</span>
+              <input
+                type="date"
+                value={dateRange.end}
+                onChange={(e) =>
+                  setDateRange({ ...dateRange, end: e.target.value })
+                }
+              />
+            </div>
+            {(dateRange.start || dateRange.end) && (
+              <button
+                className={styles.btnReset}
+                onClick={() => setDateRange({ start: "", end: "" })}
+                title="Limpiar fechas"
+              >
+                ×
+              </button>
+            )}
           </div>
           <div className={styles.filterChips}>
             {["all", "info", "warning", "error"].map((t) => (

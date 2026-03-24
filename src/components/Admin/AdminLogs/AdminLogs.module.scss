@@ -117,6 +117,58 @@
           color: #a4b0be;
         }
       }
+      input[type="date"],
+      select {
+        background: white;
+        border: 1px solid #edf2f7;
+        padding: 0.6rem;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        color: #636e72;
+        cursor: pointer;
+      }
+      .datePickerGroup {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #fff;
+        padding: 0.4rem 0.8rem;
+        border-radius: 10px;
+        border: 1px solid #edf2f7;
+
+        .dateInput {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          span {
+            font-size: 1rem;
+            color: #7f8c8d;
+            font-weight: 600;
+          }
+          input {
+            border: none;
+            font-size: 1.1rem;
+            color: #2d3436;
+            cursor: pointer;
+          }
+        }
+
+        .btnReset {
+          background: #f1f2f6;
+          border: none;
+          width: 25px;
+          height: 25px;
+          border-radius: 50%;
+          cursor: pointer;
+          font-weight: bold;
+          color: #636e72;
+          transition: all 0.2s;
+          &:hover {
+            background: #ff4757;
+            color: white;
+          }
+        }
+      }
 
       .filterChips {
         display: flex;

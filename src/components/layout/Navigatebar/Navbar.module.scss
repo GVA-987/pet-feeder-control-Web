@@ -197,6 +197,44 @@ $red-500: #ef4444;
     }
   }
 }
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 25px;
+
+  .modalActionButton {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+  }
+
+  .primaryButton {
+    background-color: #ff4757;
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 71, 87, 0.2);
+
+    &:hover {
+      background-color: color.scale(#ff4757, $lightness: -10%);
+      transform: translateY(-1px);
+    }
+  }
+
+  .secondaryButton {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: va.$color-text;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
 
 .adminSidebar {
   background-color: $slate-900;

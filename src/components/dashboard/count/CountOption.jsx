@@ -315,7 +315,7 @@ const GeneralOptions = () => {
           />
         </div>
       </div>
-      <Toaster position="bottom-right" />
+      <Toaster position="top-center" />
     </div>
   );
 };

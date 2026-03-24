@@ -5,8 +5,6 @@ import {
   doc,
   onSnapshot,
   updateDoc,
-  arrayUnion,
-  arrayRemove,
   addDoc,
   collection,
   serverTimestamp,
@@ -14,6 +12,7 @@ import {
 import { useAuth } from "../../../context/AuthContext";
 import { db } from "../../../firebase/firebase-config";
 import { MdDelete, MdEdit } from "react-icons/md";
+import Modal from "../../common/modal/Modal";
 import moment from "moment";
 import toast, { Toaster } from "react-hot-toast";
 import Switch from "../../common/switch/Switch";
@@ -23,6 +22,8 @@ const ConfigDevice = () => {
   const [loading, setLoading] = useState(true);
   const [schedules, setSchedules] = useState([]);
   const [editingSchedule, setEditingSchedule] = useState(null);
+  const [modalContent, setModalContent] = useState(null);
+  const [scheduleToDelete, setScheduleToDelete] = useState(null);
   const dayNames = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
   useEffect(() => {
@@ -47,9 +48,19 @@ const ConfigDevice = () => {
     }
   }, [currentUser]);
 
-  const handleDeleteSchedule = async (scheduleToDelete) => {
-    if (!window.confirm("¿Estás seguro de eliminar este horario?")) return;
+  const closeModal = () => {
+    setModalContent(null);
+    setScheduleToDelete(null);
+  };
+
+  const confirmDeleteSchedule = async () => {
+    console.log("Iniciando eliminación...");
+    if (!scheduleToDelete) {
+      console.log("Error: No hay un horario seleccionado para eliminar");
+      return;
+    }
     try {
+      console.log("Eliminando horario ID:", scheduleToDelete.id);
       const deviceRef = doc(db, "devicesPet", currentUser.deviceId);
 
       const updatedSchedules = schedules.filter(
@@ -79,10 +90,16 @@ const ConfigDevice = () => {
       });
 
       toast.success("Horario eliminado", { className: "custom-toast-success" });
+      closeModal();
     } catch (error) {
       toast.error("Error al eliminar", { className: "custom-toast-error" });
       console.error(error);
     }
+  };
+
+  const openDeleteModal = (schedule) => {
+    setScheduleToDelete(schedule);
+    setModalContent("delete_schedule");
   };
 
   const handleToggleStatus = async (schedule) => {
@@ -111,6 +128,42 @@ const ConfigDevice = () => {
       toast.error("Error al cambiar estado");
     }
   };
+
+  const renderModalContent = (type) => {
+    switch (type) {
+      case "delete_schedule":
+        return {
+          title: "Eliminar Horario",
+          size: "small",
+          body: (
+            <div className={styles.logoutModalContainer}>
+              <p>
+                ¿Estás seguro de que quieres eliminar la rutina de las{" "}
+                <strong>{scheduleToDelete?.time}</strong>?
+              </p>
+              <div className={styles.modalActions}>
+                <button
+                  onClick={closeModal}
+                  className={`${styles.modalActionButton} ${styles.secondaryButton}`}
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => confirmDeleteSchedule()}
+                  className={`${styles.modalActionButton} ${styles.primaryButton}`}
+                >
+                  Confirmar Eliminación
+                </button>
+              </div>
+            </div>
+          ),
+        };
+      default:
+        return { title: "", size: "medium", body: null };
+    }
+  };
+
+  const modalInfo = renderModalContent(modalContent);
 
   const handleEditClick = (schedule) => {
     setEditingSchedule(schedule);
@@ -171,7 +224,7 @@ const ConfigDevice = () => {
                         <MdEdit />
                       </button>
                       <button
-                        onClick={() => handleDeleteSchedule(schedule)}
+                        onClick={() => openDeleteModal(schedule)}
                         className={styles.deleteBtn}
                       >
                         <MdDelete />
@@ -186,8 +239,18 @@ const ConfigDevice = () => {
             )}
           </div>
         </div>
-        <Toaster position="bottom-right" />
+        <Toaster position="top-center" />
       </div>
+      {modalContent && (
+        <Modal
+          isOpen={!!modalContent}
+          onClose={closeModal}
+          title={modalInfo.title}
+          size={modalInfo.size}
+        >
+          {modalInfo.body}
+        </Modal>
+      )}
     </div>
   );
 };

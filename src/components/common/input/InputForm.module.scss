@@ -1,39 +1,40 @@
-@use '../../../scss/base/variables' as va;
-@use 'sass:color';
-
+@use "../../../scss/base/variables" as va;
+@use "sass:color";
 
 .inputContainer {
-    display: flex;
-    align-items: center;
-    outline: none;
-    border-radius: 10px;
-    background-color: color.scale(va.$secondary-color, $lightness: 15%);
-    padding: 1.3rem;
-    margin-bottom: 2rem;  
-    &:focus-within {
-        border: 1px solid va.$primary-color;
-        border-radius: 15px;
-        // border-color: color.scale(#dfe9ed, $lightness: -10%);
-        transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out
+  display: flex;
+  align-items: center;
+  outline: none;
+  border-radius: 10px;
+  background-color: color.scale(va.$secondary-color, $lightness: 15%);
+  padding: 1.3rem;
+  margin-bottom: 2rem;
+  &:focus-within {
+    border: 1px solid va.$primary-color;
+    border-radius: 15px;
+    // border-color: color.scale(#dfe9ed, $lightness: -10%);
+    transition:
+      border-color 0.3s ease-in-out,
+      box-shadow 0.3s ease-in-out;
+  }
+  input {
+    &::placeholder {
+      color: color.adjust(va.$secondary-color, $lightness: 50%);
     }
-    input{
-        &::placeholder {
-            color: color.adjust(va.$secondary-color, $lightness: 50%);
-        }
-    }
-    .icon {
-        color: color.adjust(va.$secondary-color, $lightness: 80%);
-        margin-right: 0.75rem;
-        font-size: 1.5rem;
-    }
+  }
+  .icon {
+    color: color.adjust(va.$secondary-color, $lightness: 80%);
+    margin-right: 0.75rem;
+    font-size: 1.5rem;
+  }
 
-    .input {
-        width: 100%;
-        border: none;
-        outline: none;
-        background-color: transparent;
-        font-size: 1rem;
-        color: va.$color-text;
-        font-size: 1.3rem;
-    }
+  .input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    font-size: 1rem;
+    color: va.$color-text;
+    font-size: 1.3rem;
+  }
 }

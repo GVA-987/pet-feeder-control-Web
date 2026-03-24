@@ -607,7 +607,7 @@ function HomeControl() {
           </section>
         </div>
       </div>
-      <Toaster position="bottom-right" />
+      <Toaster position="top-center" />
     </div>
   );
 }

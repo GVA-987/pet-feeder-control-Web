@@ -21,6 +21,7 @@ const RegisterDeviceForm = ({ onSuccess }) => {
         linked_user_id: null,
         foodLevel: 0,
         rssi: 0,
+        isActive: true,
         version: "1.0.0",
         createdAt: serverTimestamp(),
         lastUpdated: serverTimestamp(),

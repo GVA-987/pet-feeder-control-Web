@@ -19,6 +19,8 @@ import {
   MdWifiOff,
   MdRefresh,
   MdFastfood,
+  MdDeleteOutline,
+  MdSettingsBackupRestore,
 } from "react-icons/md";
 import { RiBaseStationLine, RiFilter3Line } from "react-icons/ri";
 import Modal from "../../common/modal/Modal";
@@ -127,41 +129,54 @@ const AdminDevicesPage = () => {
     }
   };
 
-  const handleRemoteAction = async (deviceId, action) => {
-    const actionRef = ref(rtdb, `${deviceId}/control`);
-    try {
-      await update(actionRef, {
-        command: action,
-        timestamp: Date.now(),
-        executed: false,
-      });
-      await logAdminAction(
-        `ADMIN_COMMAND_${action}`,
-        deviceId,
-        `El administrador envió el comando ${action} al dispositivo.`,
+  const toggleDeviceStatus = async (device) => {
+    const isCurrentlyActive = device.isActive !== false;
+    const newStatus = !isCurrentlyActive;
+    if (device.isActive !== false) {
+      const confirm = window.confirm(
+        "¿Estás seguro de que deseas dar de baja este dispositivo?",
       );
+      if (!confirm) return;
+    }
+    try {
+      await updateDoc(doc(db, "devicesPet", device.id), {
+        isActive: newStatus,
+        lastActionDate: serverTimestamp(),
+        deactivatedAt: newStatus ? null : serverTimestamp(),
+      });
 
-      toast.success(`Comando ${action} enviado a ${deviceId}`);
+      const action = newStatus ? "DEVICE_RESTORED" : "DEVICE_DEACTIVATED";
+      const details = `El administrador ${currentUser.email} ha marcado el equipo ${device.id} como ${newStatus ? "ACTIVO (Reactivado)" : "INACTIVO (Dado de baja)"}.`;
+
+      await addDoc(collection(db, "system_logs"), {
+        action: action,
+        category: "ADMIN_CONTROL",
+        type: "warning",
+        deviceId: device.id,
+        userId: currentUser.uid,
+        userEmail: currentUser.email,
+        details: details,
+        timestamp: serverTimestamp(),
+        metadata: {
+          platform: "Admin Panel",
+          userAgent: navigator.userAgent,
+        },
+      });
+      toast.success(
+        `Dispositivo ${device.id} ${newStatus ? "reactivado" : "dado de baja"} correctamente.`,
+      );
     } catch (error) {
-      toast.error("Error al enviar comando");
+      toast.error("Error al actualizar el estado del dispositivo.");
     }
   };
 
   const filteredDevices = devices.filter((d) => {
-    const matchesTab =
-      filter === "all" ||
-      (filter === "online" && d.online === "conectado") ||
-      (filter === "stock" && d.foodLevel < 20) ||
-      (filter === "new" && (!d.linked_user_id || d.linked_user_id === "null"));
-
-    const search = searchTerm.toLowerCase();
-    const matchesSearch =
-      d.id?.toLowerCase().includes(search) ||
-      d.ownerEmail?.toLowerCase().includes(search) ||
-      d.ownerName?.toLowerCase().includes(search) ||
-      d.mac?.toLowerCase().includes(search);
-
-    return matchesTab && matchesSearch;
+    if (filter === "deleted") return d.isActive === false;
+    if (filter === "available")
+      return !d.linked_user_id || d.linked_user_id === "null";
+    if (filter === "registered")
+      return d.linked_user_id && d.linked_user_id !== "null";
+    return d.isActive !== false; // "all" muestra solo los activos
   });
 
   if (loading)
@@ -209,16 +224,22 @@ const AdminDevicesPage = () => {
               Todos
             </button>
             <button
-              className={filter === "new" ? styles.active : ""}
-              onClick={() => setFilter("new")}
+              className={filter === "available" ? styles.active : ""}
+              onClick={() => setFilter("available")}
             >
-              Disponibles
+              Sin Registro
             </button>
             <button
-              className={filter === "online" ? styles.active : ""}
-              onClick={() => setFilter("online")}
+              className={filter === "registered" ? styles.active : ""}
+              onClick={() => setFilter("registered")}
             >
-              Online
+              Registrados
+            </button>
+            <button
+              className={filter === "deleted" ? styles.active : ""}
+              onClick={() => setFilter("deleted")}
+            >
+              Bajas
             </button>
           </div>
         </div>
@@ -239,7 +260,7 @@ const AdminDevicesPage = () => {
               <th>Estado</th>
               <th>ID Dispositivo</th>
               <th>Dueño</th>
-              <th>Nivel Comida</th>
+              <th>{filter === "deleted" ? "Fecha de Baja" : "Nivel Comida"}</th>
               <th>Señal / Versión</th>
               <th>Red (IP/MAC)</th>
               <th>Último Enlace</th>
@@ -251,9 +272,7 @@ const AdminDevicesPage = () => {
             {filteredDevices.map((device) => (
               <tr
                 key={device.id}
-                className={
-                  device.online !== "conectado" ? styles.offlineRow : ""
-                }
+                className={device.isActive === false ? styles.deletedRow : ""}
               >
                 <td>
                   <span
@@ -273,19 +292,27 @@ const AdminDevicesPage = () => {
                   </div>
                 </td>
                 <td>
-                  <div className={styles.foodLevelCell}>
-                    <div className={styles.miniBarContainer}>
-                      <div
-                        className={styles.miniBar}
-                        style={{
-                          width: `${device.foodLevel}%`,
-                          backgroundColor:
-                            device.foodLevel < 20 ? "#ff4757" : "#2ed573",
-                        }}
-                      ></div>
+                  {filter === "deleted" ? (
+                    <span className={styles.dateText}>
+                      {device.deactivatedAt
+                        ? device.deactivatedAt.toDate().toLocaleDateString()
+                        : "N/A"}
+                    </span>
+                  ) : (
+                    <div className={styles.foodLevelCell}>
+                      <div className={styles.miniBarContainer}>
+                        <div
+                          className={styles.miniBar}
+                          style={{
+                            width: `${device.foodLevel}%`,
+                            backgroundColor:
+                              device.foodLevel < 20 ? "#ff4757" : "#2ed573",
+                          }}
+                        ></div>
+                      </div>
+                      <span>{Math.round(device.foodLevel)}%</span>
                     </div>
-                    <span>{Math.round(device.foodLevel)}%</span>
-                  </div>
+                  )}
                 </td>
                 <td>
                   <div className={styles.techInfo}>
@@ -326,11 +353,19 @@ const AdminDevicesPage = () => {
                 <td>
                   <div className={styles.actionButtons}>
                     <button
-                      className={styles.btnAction}
-                      title="Reiniciar Dispositivo"
-                      onClick={() => handleRemoteAction(device.id, "REBOOT")}
+                      className={`${styles.btnAction} ${device.isActive === false ? styles.restore : ""}`}
+                      title={
+                        device.isActive === false
+                          ? "Reactivar Dispositivo"
+                          : "Dar de baja"
+                      }
+                      onClick={() => toggleDeviceStatus(device)}
                     >
-                      <MdRefresh />
+                      {device.isActive === false ? (
+                        <MdSettingsBackupRestore />
+                      ) : (
+                        <MdDeleteOutline />
+                      )}
                     </button>
                   </div>
                 </td>
