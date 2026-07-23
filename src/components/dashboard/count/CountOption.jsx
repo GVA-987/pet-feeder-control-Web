@@ -100,7 +100,7 @@ const GeneralOptions = () => {
     try {
       const deviceRefRTDB = ref(rtdb, `${currentUser.deviceId}/commands`);
       await update(deviceRefRTDB, {
-        weight_portion: String(calibratePortion),
+        weight_adjust: String(calibratePortion),
       });
 
       const logData = {

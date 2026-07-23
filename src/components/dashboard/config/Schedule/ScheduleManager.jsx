@@ -62,7 +62,7 @@ const ScheduleManager = ({ editData, onClearEdit }) => {
 
     const weightRef = ref(
       rtdb,
-      `${currentUser.deviceId}/commands/weight_portion`,
+      `${currentUser.deviceId}/commands/weight_adjust`,
     );
     const unsubscribe = onValue(weightRef, (snapshot) => {
       const val = snapshot.val();

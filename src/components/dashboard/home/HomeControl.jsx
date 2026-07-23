@@ -197,7 +197,7 @@ function HomeControl() {
 
     const weightConfigRef = ref(
       dbRT,
-      `${currentUser.deviceId}/commands/weight_portion`,
+      `${currentUser.deviceId}/commands/weight_adjust`,
     );
     const unsubWeight = onValue(weightConfigRef, (snapshot) => {
       if (snapshot.exists()) setGramsPerPortion(parseFloat(snapshot.val()));
@@ -258,6 +258,7 @@ function HomeControl() {
       await update(deviceRefRTDB, {
         dispense_manual: "activado",
         food_portion: String(foodPortion),
+        weight_portion: String(totalGramsToDispense),
       });
 
       await addDoc(collection(db, "system_logs"), {
