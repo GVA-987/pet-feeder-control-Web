@@ -305,7 +305,7 @@ const GeneralOptions = () => {
           <p className={styles.deviceInfo}>
             <label>Porción actual:</label>
             <strong>
-              1 porcion = {commands?.weight_portion || "fija Una Medida"} g.
+              1 porcion = {commands?.weight_adjust || "fija Una Medida"} g.
             </strong>
           </p>
           <Form

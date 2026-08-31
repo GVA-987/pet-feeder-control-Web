@@ -73,7 +73,9 @@ const AdminDevicesPage = () => {
                     fsDev.linked_user_id !== ""
                   ? "Cargando..."
                   : "Disponible",
-              ownerName: owner ? owner.name : "",
+              ownerName: owner
+                ? `${owner.nombre || ""} ${owner.apellido || ""}`.trim()
+                : "",
               foodLevel: rtDev.status?.foodLevel ?? 0,
               online: rtDev.status?.online || "desconectado",
             };
